@@ -1,15 +1,7 @@
-/* Professional dark theme aligned with cybersecurity focus */
-:root {
-    --primary-color: #00ff00;
-    --bg-color: #1a1a1a;
-    --card-bg: #2a2a2a;
-    --text-color: #e0e0e0;
-    --accent-color: #00ff00;
-}
-
+/* Writeups specific styles */
 .writeups-container {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 80px auto 0;
     padding: 2rem;
 }
 
@@ -19,7 +11,7 @@
     padding: 2rem;
     background: var(--card-bg);
     border-radius: 8px;
-    border-left: 4px solid var(--accent-color);
+    border-left: 4px solid var(--primary-color);
 }
 
 .writeups-header h1 {
@@ -74,17 +66,24 @@
     font-size: 0.8rem;
 }
 
-.read-more {
-    display: inline-block;
-    background: var(--primary-color);
-    color: var(--bg-color);
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: opacity 0.3s ease;
+.writeup-content {
+    margin-top: 2rem;
 }
 
-.read-more:hover {
-    opacity: 0.9;
+.writeup-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.writeup-content pre {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.writeup-content code {
+    font-family: 'Monaco', 'Consolas', monospace;
 }
