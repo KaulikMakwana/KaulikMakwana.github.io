@@ -1,18 +1,10 @@
 ---
-title: "CTF Write-up: DJANGO (10.150.150.212) - Windows Machine Exploitation"
-date: "2025-06-07"
-author: "Kaulik Makwana"
+title: "DJANGO Machine"
+date: 2025-06-08
 difficulty: "Medium"
-tags: ["Windows", "XAMPP", "FTP", "Web Exploitation", "Privilege Escalation"]
-flags:
-  - name: "FLAG11"
-    value: "7a763d39f68ece1edd1037074ff8d129451af0b1"
-  - name: "FLAG18"
-    value: "ad1357d394eba91febe5a6d33dd3ec6dd0abc056"
-  - name: "FLAG19"
-    value: "a393b6fb540379e942b0010afa3058985fb8cec3"
-  - name: "FLAG20"
-    value: "a9435c140b6667cf2f24fcf6a9a1ea6b8574c3e7"
+tags: ["Windows", "Web", "Privilege Escalation"]
+layout: writeup
+description: "Detailed walkthrough of DJANGO machine exploitation featuring XAMPP stack and privilege escalation to SYSTEM"
 ---
 
 # DJANGO Machine Write-up

@@ -1,0 +1,51 @@
+---
+layout: default
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} | Kaulik Makwana</title>
+    <meta name="description" content="{{ page.description | default: site.description }}">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/writeups.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav>
+            <a href="/" class="logo">KM</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/writeups" class="active">CTF Writeups</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="writeup-container">
+        <article class="writeup-content">
+            <header class="writeup-header">
+                <h1>{{ page.title }}</h1>
+                <div class="writeup-meta">
+                    <span class="date">{{ page.date | date: "%B %d, %Y" }}</span>
+                    <span class="difficulty">{{ page.difficulty }}</span>
+                </div>
+                <div class="writeup-tags">
+                    {% for tag in page.tags %}
+                    <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </header>
+
+            <div class="writeup-body">
+                {{ content }}
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Kaulik Makwana | Last Updated: {{ "now" | date: "%B %d, %Y" }}</p>
+    </footer>
+</body>
+</html>
