@@ -6,6 +6,7 @@
     --accent: #58a6ff;
     --border: #30363d;
     --card-bg: rgba(22, 27, 34, 0.8);
+    --primary-color: #58a6ff;
 }
 
 * {
@@ -39,6 +40,7 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--accent);
+    text-decoration: none;
 }
 
 .nav-links {
@@ -53,6 +55,7 @@ body {
     transition: color 0.3s;
 }
 
+.nav-links a.active,
 .nav-links a:hover {
     color: var(--accent);
 }
@@ -228,19 +231,19 @@ footer {
     .nav-links {
         display: none;
     }
-    
+
     .hero-content h1 {
         font-size: 2.5rem;
     }
-    
+
     .hero-content h2 {
         font-size: 1.5rem;
     }
-    
+
     .section {
         padding: 3rem 1rem;
     }
-    
+
     .section h2 {
         font-size: 2rem;
     }
@@ -360,18 +363,18 @@ footer {
     .writeups-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .writeup-header {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .writeup-meta, .collection-meta {
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
     }
-    
+
     .writeup-tags {
         justify-content: center;
     }
