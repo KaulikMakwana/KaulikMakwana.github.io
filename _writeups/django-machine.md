@@ -8,24 +8,20 @@ description: "Detailed walkthrough of DJANGO machine exploitation featuring XAMP
 ---
 
 # DJANGO Machine Write-up
-
 **Target IP**: 10.150.150.212
 
 ## TL;DR
-
 Successfully compromised a Windows 7 machine running XAMPP, escalated privileges to SYSTEM, and captured multiple flags through FTP enumeration, web application exploitation, and local privilege escalation.
 
 ## Machine Overview
-
-| Detail           | Value                                      |
-|------------------|--------------------------------------------|
-| Hostname         | DJANGO                                     |
-| Operating System | Windows 7 Home Basic 7601 Service Pack 1   |
-| Domain           | PWNTILLDAWN                                |
-| Architecture     | x64                                        |
+| Detail | Value |
+|--------|--------|
+| Hostname | DJANGO |
+| Operating System | Windows 7 Home Basic 7601 Service Pack 1 |
+| Domain | PWNTILLDAWN |
+| Architecture | x64 |
 
 ## Captured Flags
-
 - FLAG11: `7a763d39f68ece1edd1037074ff8d129451af0b1`
 - FLAG18: `ad1357d394eba91febe5a6d33dd3ec6dd0abc056`
 - FLAG19: `a393b6fb540379e942b0010afa3058985fb8cec3`
@@ -34,8 +30,7 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 ## Initial Reconnaissance
 
 ### Port Scan Results
-
-```text
+```
 21/tcp    - FTP
 80/tcp    - HTTP (Apache 2.4.34)
 135/tcp   - MSRPC
@@ -48,7 +43,6 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 ```
 
 ### Initial Access Vector
-
 1. **Anonymous FTP Access**
    - Anonymous FTP login was enabled
    - Retrieved critical files:
@@ -66,24 +60,20 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 ## Exploitation Path
 
 ### 1. Credential Discovery
-
 - Located XAMPP password file reference in xampp-control.log
 - Retrieved passwords.txt through FTP
 - Successfully accessed phpMyAdmin where FLAG18 was discovered
 
 ### 2. Web Application Exploitation
-
 - Leveraged phpMyAdmin access to upload PHP webshell
 - Executed commands via webshell: `http://10.150.150.212/shell.php?cmd=`
 - Established reverse shell using Metasploit's web_delivery module
 
 ### 3. Post Exploitation
-
 1. **Initial Access**
    - Gained meterpreter shell as limited user
    - System Information:
-   
-     ```text
+     ```
      OS: Windows 7 (6.1 Build 7601, SP1)
      Architecture: x64
      Domain: PWNTILLDAWN
@@ -97,12 +87,10 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 3. **Flag Collection**
    - FLAG20 found in C:\xampp
    - FLAG11 located in C:\Users\chuck.norris\Desktop
-
+   
 ### System Access
-
 Post exploitation revealed the following user accounts:
-
-```text
+```
 Administrator
 chuck.norris
 Guest
@@ -134,7 +122,6 @@ rambo
    - Enable proper logging and monitoring
 
 ## Tools Used
-
 - nmap
 - Metasploit Framework
 - FTP client
@@ -142,7 +129,6 @@ rambo
 - curl
 
 ## Timeline
-
 1. Initial Enumeration - Port scanning and service identification
 2. FTP Exploitation - Anonymous access and file retrieval
 3. Web Application Attack - PHP webshell upload
