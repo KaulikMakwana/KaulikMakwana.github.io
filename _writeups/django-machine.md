@@ -1,144 +1,45 @@
 ---
 title: "DJANGO Machine"
-date: 2025-06-09 11:20:24
+date: 2025-06-09 11:46:00
 difficulty: "Medium"
 tags: ["Windows", "Web", "Privilege Escalation"]
 layout: writeup
 description: "Detailed walkthrough of DJANGO machine exploitation featuring XAMPP stack and privilege escalation to SYSTEM"
-author: "Kaulik Makwana"
 ---
 
 # DJANGO Machine Write-up
-**Target IP**: 10.150.150.212
+
+**Target IP:** 10.150.150.212
 
 ## TL;DR
-Successfully compromised a Windows 7 machine running XAMPP, escalated privileges to SYSTEM, and captured multiple flags through FTP enumeration, web application exploitation, and local privilege escalation.
+Compromise of a Windows 7 XAMPP machine, privilege escalation to SYSTEM, and flag capture through FTP, web, and local exploitation.
 
 ## Machine Overview
-| Detail | Value |
-|--------|--------|
+| Key | Value |
+|-----|-------|
 | Hostname | DJANGO |
-| Operating System | Windows 7 Home Basic 7601 Service Pack 1 |
+| OS | Windows 7 SP1 x64 |
 | Domain | PWNTILLDAWN |
-| Architecture | x64 |
 
-## Captured Flags
+## Flags
 - FLAG11: `7a763d39f68ece1edd1037074ff8d129451af0b1`
 - FLAG18: `ad1357d394eba91febe5a6d33dd3ec6dd0abc056`
 - FLAG19: `a393b6fb540379e942b0010afa3058985fb8cec3`
 - FLAG20: `a9435c140b6667cf2f24fcf6a9a1ea6b8574c3e7`
 
-## Initial Reconnaissance
+## Steps
+1. **Port Scan:** FTP, HTTP, HTTPS, SMB, MySQL, and others open.
+2. **FTP:** Anonymous login, found logs/passwords/flag.
+3. **Web Enum:** Found phpMyAdmin, uploaded shell, got reverse shell.
+4. **Privilege Escalation:** Used tokenmagic, became SYSTEM.
+5. **Collected Flags:** From FTP, user Desktop, XAMPP dir, etc.
 
-### Port Scan Results
-```shell
-21/tcp - FTP 
-80/tcp - HTTP (Apache 2.4.34) 
-135/tcp - MSRPC 
-139/tcp - NetBIOS 
-443/tcp - HTTPS 
-445/tcp - SMB 
-3306/tcp - MySQL 
-8089/tcp - Splunkd 
-49152-49158/tcp - MSRPC
-```
+## Mitigations
+- Disable anonymous FTP.
+- Remove sensitive files.
+- Harden XAMPP and web admin areas.
+- Patch Windows and restrict services.
 
-### Initial Access Vector
-1. **Anonymous FTP Access**
-   - Anonymous FTP login was enabled
-   - Retrieved critical files:
-     - xampp-control.log
-     - zen.txt
-     - Found FLAG19 in /FLAG directory
+---
 
-2. **Web Enumeration**
-   - Discovered multiple endpoints:
-     - /cgi-bin/printenv.pl
-     - /dashboard/phpinfo.php
-     - /Webalizer/
-     - /xampp/
-
-## Exploitation Path
-
-### 1. Credential Discovery
-- Located XAMPP password file reference in xampp-control.log
-- Retrieved passwords.txt through FTP
-- Successfully accessed phpMyAdmin where FLAG18 was discovered
-
-### 2. Web Application Exploitation
-- Leveraged phpMyAdmin access to upload PHP webshell
-- Executed commands via webshell: `http://10.150.150.212/shell.php?cmd=`
-- Established reverse shell using Metasploit's web_delivery module
-
-### 3. Post Exploitation
-1. **Initial Access**
-   - Gained meterpreter shell as limited user
-   - System Information:
-     ```
-     OS: Windows 7 (6.1 Build 7601, SP1)
-     Architecture: x64
-     Domain: PWNTILLDAWN
-     ```
-
-2. **Privilege Escalation**
-   - Used local exploit suggester to identify vulnerabilities
-   - Successfully exploited using windows/local/tokenmagic
-   - Elevated to NT AUTHORITY\SYSTEM
-
-3. **Flag Collection**
-   - FLAG20 found in C:\xampp
-   - FLAG11 located in C:\Users\chuck.norris\Desktop
-   
-### System Access
-Post exploitation revealed the following user accounts:
-```shell
-Administrator chuck.norris Guest rambo
-```
-
-
-## Mitigation Recommendations
-
-1. **FTP Security**
-   - Disable anonymous FTP access
-   - Implement strong authentication
-   - Remove sensitive files from FTP root
-
-2. **Web Application Security**
-   - Remove unnecessary debug endpoints (phpinfo.php)
-   - Implement proper access controls for phpMyAdmin
-   - Regular security updates for XAMPP stack
-
-3. **System Hardening**
-   - Apply Windows security updates
-   - Implement proper file permissions
-   - Remove unnecessary services
-   - Enable Windows Defender
-   - Implement proper password policies
-
-4. **Network Security**
-   - Implement proper network segmentation
-   - Restrict unnecessary open ports
-   - Enable proper logging and monitoring
-
-## Tools Used
-- nmap
-- Metasploit Framework
-- FTP client
-- Web browser
-- curl
-
-## Timeline
-1. Initial Enumeration - Port scanning and service identification
-2. FTP Exploitation - Anonymous access and file retrieval
-3. Web Application Attack - PHP webshell upload
-4. Shell Access - Reverse shell establishment
-5. Privilege Escalation - SYSTEM access obtained
-6. Post-Exploitation - Flag collection and system enumeration
-
-## Author Details
-**Author**: Kaulik Makwana  
-**Last Updated**: 2025-06-09 11:20:24 UTC  
-**Role**: Cybersecurity Engineer & Penetration Tester  
-
-### About the Author
-I work in offensive security, with a primary focus on ethical hacking and securing digital infrastructure through advanced techniques. My core expertise lies in simulating real-world attacks, identifying vulnerabilities, and assessing the security posture of systems
+*Written by Kaulik Makwana — Offensive Security Engineer & Penetration Tester*
