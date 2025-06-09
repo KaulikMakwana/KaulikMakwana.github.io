@@ -21,13 +21,11 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 | Domain | PWNTILLDAWN |
 | Architecture | x64 |
 
----
 ## flags are 
 ```
 pwd
 ls
 ```
----
 
 ## Captured Flags
 - FLAG11: `7a763d39f68ece1edd1037074ff8d129451af0b1`
