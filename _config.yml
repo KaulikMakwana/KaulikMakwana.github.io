@@ -6,28 +6,24 @@ author:
   name: Kaulik Makwana
   bio: |
     Cybersecurity Engineer:
-    - I work in offensive security, with a primary focus on ethical hacking and securing digital infrastructure through advanced techniques.
+    - Work in offensive security, with a primary focus on ethical hacking and securing digital infrastructure through advanced techniques.
 
     Penetration Tester:
-    - My core expertise lies in simulating real-world attacks, identifying vulnerabilities, and assessing the security posture of systems and networks.
-  updated: "2025-06-09 11:46:00 UTC"
+    - Core expertise lies in simulating real-world attacks, identifying vulnerabilities, and assessing the security posture of systems and networks.
 
 baseurl: ""
 url: "https://kaulikmakwana.github.io"
 
+# Build settings
 markdown: kramdown
 highlighter: rouge
 
 collections:
   writeups:
     output: true
-    permalink: /writeups/:title/
+    permalink: /writeups/:path/
 
 defaults:
-  - scope:
-      path: ""
-    values:
-      layout: "default"
   - scope:
       path: ""
       type: "writeups"

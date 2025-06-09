@@ -1,8 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-{% include head.html %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaulik Makwana - Offensive Security Engineer & Penetration Tester</title>
+    <meta name="description" content="Professional portfolio of Kaulik Makwana, specializing in offensive security, ethical hacking, and advanced penetration testing.">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
 <body>
-    {% include navbar.html %}
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">KM</div>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#expertise">Expertise</a></li>
+            <li><a href="#writeups">CTF Writeups</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
 
     <!-- Hero Section -->
     <header class="hero">
@@ -28,12 +44,10 @@
                 <div class="highlight">
                     <i class="fas fa-shield-alt"></i>
                     <h3>Offensive Security</h3>
-                    <p>Ethical Hacking & Security Research</p>
                 </div>
                 <div class="highlight">
                     <i class="fas fa-bug"></i>
                     <h3>Penetration Testing</h3>
-                    <p>Web, Network & Infrastructure Testing</p>
                 </div>
             </div>
         </div>
@@ -66,53 +80,78 @@
         </div>
     </section>
 
-    <!-- CTF Writeups Section -->
+    <!-- Updated CTF Writeups Section -->
     <section id="writeups" class="section">
-        <h2>Latest CTF Writeups</h2>
+        <h2>CTF Writeups</h2>
         <div class="writeups-grid">
-            {% assign latest_writeups = site.writeups | sort: "date" | reverse | limit: 3 %}
-            {% for writeup in latest_writeups %}
-            <article class="writeup-card">
+            <!-- Featured Writeup Card - DJANGO -->
+            <div class="writeup-card featured">
                 <div class="writeup-header">
-                    <h3>{{ writeup.title }}</h3>
+                    <i class="fas fa-flag"></i>
+                    <h3>DJANGO Machine</h3>
                 </div>
                 <div class="writeup-meta">
-                    <span class="date"><i class="fas fa-calendar"></i> {{ writeup.date | date: "%B %d, %Y" }}</span>
-                    <span class="difficulty"><i class="fas fa-layer-group"></i> {{ writeup.difficulty }}</span>
+                    <span class="difficulty">Medium</span>
+                    <span class="date">June 7, 2025</span>
                 </div>
                 <div class="writeup-tags">
-                    {% for tag in writeup.tags %}
-                    <span class="tag"><i class="fas fa-tag"></i> {{ tag }}</span>
-                    {% endfor %}
+                    <span class="tag">Windows</span>
+                    <span class="tag">XAMPP</span>
+                    <span class="tag">Web Exploitation</span>
                 </div>
-                <p class="writeup-description">{{ writeup.description }}</p>
-                <a href="{{ writeup.url }}" class="btn">Read Writeup</a>
-            </article>
-            {% endfor %}
-        </div>
-        <div class="section-cta">
-            <a href="/writeups" class="btn btn-large">View All Writeups</a>
+                <p class="writeup-description">
+                    Windows 7 machine exploitation featuring XAMPP stack, privilege escalation to SYSTEM, and multiple flag captures.
+                </p>
+                <div class="writeup-flags">
+                    <span class="flag-count">4 Flags Captured</span>
+                </div>
+                <a href="/writeups/content/django-machine" class="btn">View Writeup</a>
+            </div>
+
+            <!-- PwnTillDawn Collection Card -->
+            <div class="writeup-card collection">
+                <div class="writeup-header">
+                    <i class="fas fa-book"></i>
+                    <h3>PwnTillDawn Series</h3>
+                </div>
+                <p class="writeup-description">
+                    Comprehensive collection of machine walkthroughs, techniques, and methodologies from the PwnTillDawn platform.
+                </p>
+                <div class="collection-meta">
+                    <span class="machine-count">Multiple Machines</span>
+                    <span class="updated">Last Updated: June 2025</span>
+                </div>
+                <a href="/writeups" class="btn">Browse Collection</a>
+            </div>
+
+            <!-- Coming Soon Card -->
+            <div class="writeup-card coming-soon">
+                <div class="writeup-header">
+                    <i class="fas fa-clock"></i>
+                    <h3>More Coming Soon</h3>
+                </div>
+                <p class="writeup-description">
+                    New writeups are being added regularly. Stay tuned for more detailed walkthroughs and exploitation techniques.
+                </p>
+                <div class="notification-hint">
+                    <i class="fas fa-bell"></i>
+                    <span>Check back regularly for updates</span>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Contact Section -->
     <section id="contact" class="section">
         <h2>Contact</h2>
-        <div class="contact-content">
-            <div class="contact-links">
-                <a href="https://github.com/KaulikMakwana" target="_blank" title="GitHub Profile">
-                    <i class="fab fa-github"></i>
-                    <span>GitHub</span>
-                </a>
-                <a href="https://linkedin.com/in/" target="_blank" title="LinkedIn Profile">
-                    <i class="fab fa-linkedin"></i>
-                    <span>LinkedIn</span>
-                </a>
-            </div>
-            <p class="contact-info">Last Updated: 2025-06-09 11:46:00 UTC</p>
+        <div class="contact-links">
+            <a href="https://github.com/KaulikMakwana" target="_blank" title="GitHub Profile"><i class="fab fa-github"></i></a>
+            <a href="https://linkedin.com/in/" target="_blank" title="LinkedIn Profile"><i class="fab fa-linkedin"></i></a>
         </div>
     </section>
 
-    {% include footer.html %}
+    <footer>
+        <p>&copy; 2025 Kaulik Makwana | Last Updated: June 7, 2025</p>
+    </footer>
 </body>
 </html>

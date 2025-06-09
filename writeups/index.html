@@ -1,0 +1,36 @@
+---
+layout: default
+title: CTF Writeups
+description: "Detailed CTF writeups and machine exploitations by Kaulik Makwana, focusing on offensive security and ethical hacking techniques."
+---
+
+<main class="writeups-container">
+    <section class="writeups-header">
+        <h1>CTF Writeups</h1>
+        <p>Detailed documentation of various Capture The Flag challenges and machine exploitations.</p>
+    </section>
+
+    <section class="writeups-grid">
+        {% assign writeups = site.pages | where: "layout", "writeup" | sort: "date" | reverse %}
+        {% for writeup in writeups %}
+        <article class="writeup-card">
+            <div class="writeup-header">
+                <h3 class="writeup-title">{{ writeup.title }}</h3>
+            </div>
+            <div class="writeup-meta">
+                <span class="date"><i class="fas fa-calendar"></i> {{ writeup.date | date: "%B %d, %Y" }}</span>
+                <span class="difficulty"><i class="fas fa-layer-group"></i> {{ writeup.difficulty }}</span>
+            </div>
+            <div class="writeup-tags">
+                {% for tag in writeup.tags %}
+                <span class="tag"><i class="fas fa-tag"></i> {{ tag }}</span>
+                {% endfor %}
+            </div>
+            {% if writeup.description %}
+            <p class="writeup-description">{{ writeup.description }}</p>
+            {% endif %}
+            <a href="{{ writeup.url }}" class="btn">Read Writeup</a>
+        </article>
+        {% endfor %}
+    </section>
+</main>
