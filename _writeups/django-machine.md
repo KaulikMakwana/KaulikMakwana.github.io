@@ -30,7 +30,7 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 ## Initial Reconnaissance
 
 ### Port Scan Results
-```
+```shell
 21/tcp    - FTP
 80/tcp    - HTTP (Apache 2.4.34)
 135/tcp   - MSRPC
@@ -73,7 +73,7 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 1. **Initial Access**
    - Gained meterpreter shell as limited user
    - System Information:
-     ```
+     ```shell
      OS: Windows 7 (6.1 Build 7601, SP1)
      Architecture: x64
      Domain: PWNTILLDAWN
