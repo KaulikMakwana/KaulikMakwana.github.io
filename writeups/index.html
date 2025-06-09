@@ -11,7 +11,7 @@ description: "Detailed CTF writeups and machine exploitations by Kaulik Makwana,
     </section>
 
     <section class="writeups-grid">
-        {% assign writeups = site.pages | where: "layout", "writeup" | sort: "date" | reverse %}
+        {% assign writeups = site.writeups | sort: "date" | reverse %}
         {% for writeup in writeups %}
         <article class="writeup-card">
             <div class="writeup-header">

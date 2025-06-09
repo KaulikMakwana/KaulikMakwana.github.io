@@ -9,16 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-brand">KM</div>
-        <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#expertise">Expertise</a></li>
-            <li><a href="#writeups">CTF Writeups</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
+    {% include navbar.html %}
 
     <!-- Hero Section -->
     <header class="hero">
@@ -80,7 +71,7 @@
         </div>
     </section>
 
-    <!-- Updated CTF Writeups Section -->
+    <!-- CTF Writeups Section -->
     <section id="writeups" class="section">
         <h2>CTF Writeups</h2>
         <div class="writeups-grid">
@@ -92,12 +83,12 @@
                 </div>
                 <div class="writeup-meta">
                     <span class="difficulty">Medium</span>
-                    <span class="date">June 7, 2025</span>
+                    <span class="date">June 9, 2025</span>
                 </div>
                 <div class="writeup-tags">
                     <span class="tag">Windows</span>
-                    <span class="tag">XAMPP</span>
-                    <span class="tag">Web Exploitation</span>
+                    <span class="tag">Web</span>
+                    <span class="tag">Privilege Escalation</span>
                 </div>
                 <p class="writeup-description">
                     Windows 7 machine exploitation featuring XAMPP stack, privilege escalation to SYSTEM, and multiple flag captures.
@@ -105,7 +96,7 @@
                 <div class="writeup-flags">
                     <span class="flag-count">4 Flags Captured</span>
                 </div>
-                <a href="/writeups/content/django-machine" class="btn">View Writeup</a>
+                <a href="/writeups/django-machine/" class="btn">View Writeup</a>
             </div>
 
             <!-- PwnTillDawn Collection Card -->
@@ -151,7 +142,7 @@
     </section>
 
     <footer>
-        <p>&copy; 2025 Kaulik Makwana | Last Updated: June 7, 2025</p>
+        <p>&copy; 2025 Kaulik Makwana | Last Updated: June 9, 2025</p>
     </footer>
 </body>
 </html>

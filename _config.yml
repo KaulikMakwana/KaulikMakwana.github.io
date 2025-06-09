@@ -21,7 +21,7 @@ highlighter: rouge
 collections:
   writeups:
     output: true
-    permalink: /writeups/:path/
+    permalink: /writeups/:name/
 
 defaults:
   - scope:
