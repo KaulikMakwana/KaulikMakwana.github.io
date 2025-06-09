@@ -18,12 +18,10 @@ url: "https://kaulikmakwana.github.io"
 markdown: kramdown
 highlighter: rouge
 
-# Use existing writeups folder
 collections:
   writeups:
     output: true
     permalink: /writeups/:path/
-    source: writeups/content
 
 defaults:
   - scope:

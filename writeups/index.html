@@ -4,55 +4,33 @@ title: CTF Writeups
 description: "Detailed CTF writeups and machine exploitations by Kaulik Makwana, focusing on offensive security and ethical hacking techniques."
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page.title }} | Kaulik Makwana - Cybersecurity Engineer & Penetration Tester</title>
-    <meta name="description" content="{{ page.description }}">
-    <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/writeups.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <nav class="navbar">
-        <a href="/" class="nav-brand">KM</a>
-        <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/writeups" class="active">CTF Writeups</a></li>
-            <li><a href="/#contact">Contact</a></li>
-        </ul>
-    </nav>
-    <main class="writeups-container" style="margin-top:80px">
-        <section class="writeups-header">
-            <h1>CTF Writeups</h1>
-            <p>Detailed documentation of various Capture The Flag challenges, focusing on advanced exploitation techniques
-               and offensive security methodologies.</p>
-        </section>
-        <section class="writeups-grid">
-            {% for writeup in site.writeups %}
-            <article class="writeup-card">
+<main class="writeups-container">
+    <section class="writeups-header">
+        <h1>CTF Writeups</h1>
+        <p>Detailed documentation of various Capture The Flag challenges and machine exploitations.</p>
+    </section>
+
+    <section class="writeups-grid">
+        {% assign writeups = site.pages | where: "layout", "writeup" | sort: "date" | reverse %}
+        {% for writeup in writeups %}
+        <article class="writeup-card">
+            <div class="writeup-header">
                 <h3 class="writeup-title">{{ writeup.title }}</h3>
-                <div class="writeup-meta">
-                    <span class="date">{{ writeup.date | date: "%B %d, %Y" }}</span>
-                    <span class="difficulty">{{ writeup.difficulty }}</span>
-                </div>
-                <div class="writeup-tags">
-                    {% for tag in writeup.tags %}
-                    <span class="tag">{{ tag }}</span>
-                    {% endfor %}
-                </div>
-                {% if writeup.description %}
-                <p class="writeup-excerpt">{{ writeup.description }}</p>
-                {% endif %}
-                <a href="{{ writeup.url }}" class="btn">Read Writeup</a>
-            </article>
-            {% endfor %}
-        </section>
-    </main>
-    <footer>
-        <p>&copy; {{ "now" | date: "%Y" }} Kaulik Makwana | Cybersecurity Engineer & Penetration Tester</p>
-    </footer>
-</body>
-</html>
+            </div>
+            <div class="writeup-meta">
+                <span class="date"><i class="fas fa-calendar"></i> {{ writeup.date | date: "%B %d, %Y" }}</span>
+                <span class="difficulty"><i class="fas fa-layer-group"></i> {{ writeup.difficulty }}</span>
+            </div>
+            <div class="writeup-tags">
+                {% for tag in writeup.tags %}
+                <span class="tag"><i class="fas fa-tag"></i> {{ tag }}</span>
+                {% endfor %}
+            </div>
+            {% if writeup.description %}
+            <p class="writeup-description">{{ writeup.description }}</p>
+            {% endif %}
+            <a href="{{ writeup.url }}" class="btn">Read Writeup</a>
+        </article>
+        {% endfor %}
+    </section>
+</main>

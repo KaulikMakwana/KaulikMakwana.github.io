@@ -1,6 +1,6 @@
 ---
 title: "DJANGO Machine"
-date: 2025-06-08
+date: 2025-06-09
 difficulty: "Medium"
 tags: ["Windows", "Web", "Privilege Escalation"]
 layout: writeup
