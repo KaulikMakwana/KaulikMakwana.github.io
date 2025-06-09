@@ -1,10 +1,11 @@
 ---
 title: "DJANGO Machine"
-date: 2025-06-09
+date: 2025-06-09 11:20:24
 difficulty: "Medium"
 tags: ["Windows", "Web", "Privilege Escalation"]
 layout: writeup
 description: "Detailed walkthrough of DJANGO machine exploitation featuring XAMPP stack and privilege escalation to SYSTEM"
+author: "Kaulik Makwana"
 ---
 
 # DJANGO Machine Write-up
@@ -30,15 +31,15 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 ## Initial Reconnaissance
 
 ### Port Scan Results
-```
-21/tcp    - FTP
-80/tcp    - HTTP (Apache 2.4.34)
-135/tcp   - MSRPC
-139/tcp   - NetBIOS
-443/tcp   - HTTPS
-445/tcp   - SMB
-3306/tcp  - MySQL
-8089/tcp  - Splunkd
+```shell
+21/tcp - FTP 
+80/tcp - HTTP (Apache 2.4.34) 
+135/tcp - MSRPC 
+139/tcp - NetBIOS 
+443/tcp - HTTPS 
+445/tcp - SMB 
+3306/tcp - MySQL 
+8089/tcp - Splunkd 
 49152-49158/tcp - MSRPC
 ```
 
@@ -90,12 +91,10 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
    
 ### System Access
 Post exploitation revealed the following user accounts:
+```shell
+Administrator chuck.norris Guest rambo
 ```
-Administrator
-chuck.norris
-Guest
-rambo
-```
+
 
 ## Mitigation Recommendations
 
@@ -135,3 +134,11 @@ rambo
 4. Shell Access - Reverse shell establishment
 5. Privilege Escalation - SYSTEM access obtained
 6. Post-Exploitation - Flag collection and system enumeration
+
+## Author Details
+**Author**: Kaulik Makwana  
+**Last Updated**: 2025-06-09 11:20:24 UTC  
+**Role**: Cybersecurity Engineer & Penetration Tester  
+
+### About the Author
+I work in offensive security, with a primary focus on ethical hacking and securing digital infrastructure through advanced techniques. My core expertise lies in simulating real-world attacks, identifying vulnerabilities, and assessing the security posture of systems

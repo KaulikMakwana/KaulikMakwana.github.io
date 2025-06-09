@@ -1,9 +1,9 @@
 ---
 layout: default
 title: CTF Writeups
-description: "Detailed CTF writeups and machine exploitations by Kaulik Makwana, focusing on offensive security and ethical hacking techniques."
+permalink: /writeups/
+description: "Collection of detailed CTF writeups and machine exploitation guides by Kaulik Makwana"
 ---
-
 <main class="writeups-container">
     <section class="writeups-header">
         <h1>CTF Writeups</h1>
@@ -11,11 +11,11 @@ description: "Detailed CTF writeups and machine exploitations by Kaulik Makwana,
     </section>
 
     <section class="writeups-grid">
-        {% assign writeups = site.pages | where: "layout", "writeup" | sort: "date" | reverse %}
+        {% assign writeups = site.writeups | sort: "date" | reverse %}
         {% for writeup in writeups %}
         <article class="writeup-card">
             <div class="writeup-header">
-                <h3 class="writeup-title">{{ writeup.title }}</h3>
+                <h3>{{ writeup.title }}</h3>
             </div>
             <div class="writeup-meta">
                 <span class="date"><i class="fas fa-calendar"></i> {{ writeup.date | date: "%B %d, %Y" }}</span>
