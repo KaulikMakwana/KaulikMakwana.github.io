@@ -1,12 +1,24 @@
-# Add these configurations to your existing _config.yml
+# Site settings
+title: "Kaulik Makwana"
+description: "Cybersecurity Engineer & Penetration Tester specializing in offensive security"
+baseurl: ""
+url: "https://kaulikmakwana.github.io"
+timezone: UTC
+
+# Collections
 collections:
   writeups:
     output: true
     permalink: /writeups/:title/
 
+# Default front matter
 defaults:
   - scope:
       path: ""
       type: "writeups"
     values:
       layout: "writeup"
+      
+# Build settings
+markdown: kramdown
+highlighter: rouge

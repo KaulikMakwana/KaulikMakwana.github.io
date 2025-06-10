@@ -4,11 +4,13 @@ layout: default
 <article class="section pt-24 min-h-screen">
     <div class="max-w-4xl mx-auto" data-aos="fade-up">
         <header class="mb-8">
-            <h1 class="text-4xl font-bold text-green-400">{{ page.title }}</h1>
+            <h1 class="text-4xl font-bold text-green-400">{{ page.title | default: "Untitled Writeup" }}</h1>
             <div class="text-gray-400 mt-2">
-                {{ page.date | date: "%B %d, %Y" }}
-                {% if page.platform %}
-                • <span class="text-green-400">{{ page.platform }}</span>
+                {% if page.date %}
+                    {{ page.date | date: "%B %d, %Y" }}
+                    {% if page.platform %}
+                    • <span class="text-green-400">{{ page.platform }}</span>
+                    {% endif %}
                 {% endif %}
             </div>
         </header>
