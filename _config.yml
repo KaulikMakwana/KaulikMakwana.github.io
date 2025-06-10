@@ -1,20 +1,12 @@
-title: Kaulik Makwana | Cybersecurity Engineer
-description: Portfolio of Kaulik Makwana - Penetration Tester & Offensive Security Engineer
-baseurl: ""
-url: "https://kaulikmakwana.github.io"
-
-# Build settings
-markdown: kramdown
-permalink: pretty
-
+# Add these configurations to your existing _config.yml
 collections:
   writeups:
     output: true
     permalink: /writeups/:title/
 
-plugins:
-  - jekyll-seo-tag
-
-exclude:
-  - README.md
-  - LICENSE
+defaults:
+  - scope:
+      path: ""
+      type: "writeups"
+    values:
+      layout: "writeup"
