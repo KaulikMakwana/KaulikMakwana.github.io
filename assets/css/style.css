@@ -97,39 +97,62 @@
 
 /* Markdown content styling */
 .markdown-content {
-    @apply text-gray-300 leading-relaxed;
+    color: #d1d5db;
+    line-height: 1.625;
 }
 
 .markdown-content h1 {
-    @apply text-3xl font-bold mb-6 text-green-400;
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #4ade80;
 }
 
 .markdown-content h2 {
-    @apply text-2xl font-bold mt-8 mb-4 text-gray-100;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #f3f4f6;
 }
 
 .markdown-content h3 {
-    @apply text-xl font-bold mt-6 mb-3 text-gray-200;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #e5e7eb;
 }
 
 .markdown-content p {
-    @apply mb-4;
+    margin-bottom: 1rem;
 }
 
 .markdown-content ul {
-    @apply list-disc pl-6 mb-4;
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .markdown-content ol {
-    @apply list-decimal pl-6 mb-4;
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .markdown-content code {
-    @apply bg-gray-800 px-2 py-1 rounded text-green-400;
+    background-color: #1f2937;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    color: #4ade80;
 }
 
 .markdown-content pre {
-    @apply bg-gray-800 p-4 rounded-lg overflow-x-auto mb-4;
+    background-color: #1f2937;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin-bottom: 1rem;
 }
 
 /* Card hover effects */
@@ -145,10 +168,14 @@
 
 /* Add styles for the writeup header */
 .writeup-header {
-    @apply bg-gray-900 border-b border-gray-800 py-8;
+    background-color: #111827;
+    border-bottom: 1px solid #1f2937;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 /* Ensure proper spacing in the content area */
 .writeup-content {
-    @apply py-8;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }

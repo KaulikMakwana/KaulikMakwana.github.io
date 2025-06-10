@@ -29,30 +29,28 @@
     <style>
         body {
             font-family: 'JetBrains Mono', monospace;
-            @apply bg-gray-900 text-gray-100;
+            background-color: #111827;
+            color: #f3f4f6;
         }
         .nav-link {
-            @apply px-4 py-2 hover:text-green-400 transition-colors;
+            padding: 0.5rem 1rem;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: #4ade80;
         }
         .section {
-            @apply py-16 px-4 md:px-8;
+            padding: 4rem 1rem;
         }
-        .status-bar {
-            @apply text-xs bg-gray-800 border-b border-gray-700 text-gray-400;
+        @media (min-width: 768px) {
+            .section {
+                padding: 4rem 2rem;
+            }
         }
     </style>
     {% seo %}
 </head>
 <body class="min-h-screen flex flex-col">
-    <!-- Status Bar -->
-    <div class="status-bar p-1 text-center">
-        <div class="container mx-auto flex justify-between items-center px-4">
-            <span>UTC: 2025-06-10 14:29:47</span>
-            <span class="hidden md:inline">@KaulikMakwana</span>
-            <span class="hidden md:inline">Cybersecurity Engineer | Penetration Tester</span>
-        </div>
-    </div>
-
     <!-- Navigation -->
     <nav class="sticky top-0 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 z-50">
         <div class="max-w-6xl mx-auto px-4">
@@ -129,29 +127,6 @@
             duration: 800,
             once: true
         });
-
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        if (mobileMenuBtn && mobileMenu) {
-            let isMenuOpen = false;
-            
-            mobileMenuBtn.addEventListener('click', () => {
-                isMenuOpen = !isMenuOpen;
-                mobileMenu.classList.toggle('hidden');
-                mobileMenuBtn.setAttribute('aria-expanded', isMenuOpen);
-            });
-
-            // Close menu on window resize if open
-            window.addEventListener('resize', () => {
-                if (window.innerWidth >= 768 && isMenuOpen) {
-                    mobileMenu.classList.add('hidden');
-                    isMenuOpen = false;
-                    mobileMenuBtn.setAttribute('aria-expanded', false);
-                }
-            });
-        }
     </script>
 </body>
 </html>
