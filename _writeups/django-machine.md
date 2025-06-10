@@ -1,12 +1,14 @@
 ---
 title: "DJANGO Machine"
-date: 2025-06-09
-difficulty: "Medium"
-tags: ["Windows", "Web", "Privilege Escalation"]
-layout: writeup
-description: "Detailed walkthrough of DJANGO machine exploitation featuring XAMPP stack and privilege escalation to SYSTEM"
+date: 2025-06-07
+difficulty: Medium
+tags:
+  - Windows
+  - XAMPP
+  - Web Exploitation
+summary: |
+  Windows 7 machine exploitation featuring XAMPP stack, privilege escalation to SYSTEM, and multiple flag captures.
 ---
-
 # DJANGO Machine Write-up
 **Target IP**: 10.150.150.212
 
@@ -20,12 +22,6 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 | Operating System | Windows 7 Home Basic 7601 Service Pack 1 |
 | Domain | PWNTILLDAWN |
 | Architecture | x64 |
-
-## flags are 
-```
-pwd
-ls
-```
 
 ## Captured Flags
 - FLAG11: `7a763d39f68ece1edd1037074ff8d129451af0b1`

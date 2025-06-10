@@ -1,0 +1,8 @@
+<nav class="navbar">
+  <div class="nav-logo"><a href="{{ '/' | relative_url }}">KM</a></div>
+  <ul class="nav-links">
+    {% for link in site.nav_links %}
+      <li><a href="{{ link.url | relative_url }}">{{ link.title }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>

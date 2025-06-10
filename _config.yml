@@ -1,31 +1,32 @@
-title: Kaulik Makwana
-description: |
-  Offensive Security Engineer & Penetration Tester
-  Specializing in ethical hacking and securing digital infrastructure through advanced techniques.
-author:
-  name: Kaulik Makwana
-  bio: |
-    Cybersecurity Engineer:
-    - Work in offensive security, with a primary focus on ethical hacking and securing digital infrastructure through advanced techniques.
-
-    Penetration Tester:
-    - Core expertise lies in simulating real-world attacks, identifying vulnerabilities, and assessing the security posture of systems and networks.
-
-baseurl: ""
-url: "https://kaulikmakwana.github.io"
-
-# Build settings
-markdown: kramdown
-highlighter: rouge
+title: "Kaulik Makwana"
+description: "Offensive Security Engineer & Penetration Tester Portfolio"
+baseurl: "" # for user.github.io root
+url: "https://KaulikMakwana.github.io"
+theme: minima
 
 collections:
   writeups:
     output: true
-    permalink: /writeups/:name/
+    permalink: /writeups/:title/
 
-defaults:
-  - scope:
-      path: ""
-      type: "writeups"
-    values:
-      layout: "writeup"
+# Navigation links for use in layouts
+nav_links:
+  - title: "About"
+    url: "/#about"
+  - title: "Expertise"
+    url: "/#expertise"
+  - title: "CTF Writeups"
+    url: "/#writeups"
+  - title: "Contact"
+    url: "/#contact"
+
+sass:
+  style: compressed
+
+# Exclude node_modules etc.
+exclude:
+  - node_modules
+  - vendor
+  - README.md
+  - Gemfile
+  - Gemfile.lock
