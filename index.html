@@ -1,79 +1,57 @@
 ---
 layout: default
-title: "Kaulik Makwana"
+title: Home
 ---
 
-<section class="hero" id="home">
-  <h1>Kaulik Makwana</h1>
-  <h2>Offensive Security Engineer & Penetration Tester</h2>
-  <p>
-    Specializing in ethical hacking and advanced security assessments.<br>
-    Expert in real-world attack simulation and vulnerability assessment.
-  </p>
+<!-- Hero Section -->
+<section class="section min-h-screen flex items-center justify-center bg-gray-900">
+    <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+            <span class="text-green-400">Kaulik Makwana</span>
+        </h1>
+        <h2 class="text-xl md:text-2xl mb-8 text-gray-400">
+            Penetration Tester | Offensive Security Enthusiast
+        </h2>
+        <p class="text-lg md:text-xl mb-12 text-gray-300">
+            I break things to understand them, and build systems that can't be broken.
+        </p>
+        <a href="/about" class="inline-block bg-green-400 text-gray-900 px-8 py-3 rounded-lg hover:bg-green-500 transition-colors">
+            Learn More
+        </a>
+    </div>
 </section>
 
-<section class="section" id="about">
-  <div class="section-title">About Me</div>
-  <div class="about-text">
-    I work in offensive security, with a primary focus on ethical hacking and securing digital infrastructure through advanced techniques.<br>
-    My core expertise lies in simulating real-world attacks, identifying vulnerabilities, and assessing the security posture of systems and networks.
-  </div>
-  <div class="expertise-list">
-    <div class="card">
-      <span class="icon">🛡️</span>
-      <h3>Offensive Security</h3>
-      <div>Red Teaming & Attack Simulation</div>
+<!-- About Section -->
+<section class="section bg-gray-800" data-aos="fade-up">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold mb-8 text-center">About Me</h2>
+        <p class="text-lg text-gray-300 leading-relaxed">
+            A cybersecurity engineer from Gujarat with eJPT certification. Specializes in offensive security, real-world exploitation, and ethical red teaming. Comfortable in Kali Linux, with hands-on experience in tools like Burp Suite, Nmap, Metasploit, and Wireshark.
+        </p>
     </div>
-    <div class="card">
-      <span class="icon">🐞</span>
-      <h3>Penetration Testing</h3>
-      <div>Networks & Applications</div>
-    </div>
-  </div>
 </section>
 
-<section class="section" id="expertise">
-  <div class="section-title">Technical Expertise</div>
-  <div class="expertise-list">
-    <div class="card">
-      <span class="icon">🔎</span>
-      <h3>Penetration Testing</h3>
-      <div class="meta">Web, Network, Mobile</div>
-    </div>
-    <div class="card">
-      <span class="icon">🦠</span>
-      <h3>Vulnerability Assessment</h3>
-      <div class="meta">Security Audits & Analysis</div>
-    </div>
-    <div class="card">
-      <span class="icon">🛡️</span>
-      <h3>Security Assessment</h3>
-      <div class="meta">Risk Analysis & Mitigation</div>
-    </div>
-    <div class="card">
-      <span class="icon">💻</span>
-      <h3>Exploit Development</h3>
-      <div class="meta">Custom Tool Creation</div>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="writeups">
-  <div class="section-title">CTF Writeups</div>
-  <div class="writeup-list">
-    {% assign writeups = site.writeups | sort: 'date' | reverse %}
-    {% for writeup in writeups %}
-      <div class="card">
-        <h3>{{ writeup.title }}</h3>
-        <div class="meta">
-          {{ writeup.difficulty | capitalize }} &nbsp; | &nbsp; {{ writeup.date | date: "%b %-d, %Y" }}
+<!-- Skills Section -->
+<section class="section bg-gray-900" data-aos="fade-up">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold mb-8 text-center">Skills</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {% assign skills = "Penetration Testing,Vulnerability Assessment,Red Teaming,Exploit Development,Linux Internals,Bash/Python Automation" | split: "," %}
+            {% for skill in skills %}
+            <div class="p-4 bg-gray-800 rounded-lg text-center hover:bg-gray-700 transition-colors">
+                {{ skill }}
+            </div>
+            {% endfor %}
         </div>
-        <div class="tags">
-          {% for tag in writeup.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
-        </div>
-        <div>{{ writeup.summary }}</div>
-        <a class="card-btn" href="{{ writeup.url | relative_url }}">View Writeup</a>
-      </div>
-    {% endfor %}
-  </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section bg-gray-800" data-aos="fade-up">
+    <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-8">Get In Touch</h2>
+        <a href="https://github.com/KaulikMakwana" class="inline-block bg-green-400 text-gray-900 px-8 py-3 rounded-lg hover:bg-green-500 transition-colors">
+            View My GitHub
+        </a>
+    </div>
 </section>
