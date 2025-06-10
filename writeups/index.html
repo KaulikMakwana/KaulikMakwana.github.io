@@ -7,22 +7,35 @@ title: CTF Writeups
     <div class="max-w-4xl mx-auto" data-aos="fade-up">
         <h1 class="text-4xl font-bold mb-8">CTF Writeups</h1>
         
-        <div class="grid gap-6">
-            {% for writeup in site.writeups %}
-            <article class="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-colors">
-                <h2 class="text-2xl font-bold mb-2">
-                    <a href="{{ writeup.url }}" class="hover:text-green-400">
-                        {{ writeup.title }}
-                    </a>
+        <!-- Group writeups by platform -->
+        {% assign writeups_by_platform = site.writeups | group_by: "platform" %}
+        
+        <div class="space-y-12">
+            {% for platform in writeups_by_platform %}
+            {% if platform.name != "" %}
+            <div class="platform-section">
+                <h2 class="text-2xl font-bold mb-6 text-green-400 flex items-center">
+                    <span class="mr-2">{{ platform.name }}</span>
+                    <div class="h-px flex-grow bg-gray-800 ml-4"></div>
                 </h2>
-                <div class="text-gray-400 mb-4">
-                    {{ writeup.date | date: "%B %d, %Y" }}
-                    {% if writeup.platform %}
-                    • {{ writeup.platform }}
-                    {% endif %}
+                
+                <div class="grid gap-6">
+                    {% for writeup in platform.items %}
+                    <article class="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-colors">
+                        <h3 class="text-xl font-bold mb-2">
+                            <a href="{{ writeup.url }}" class="hover:text-green-400">
+                                {{ writeup.title }}
+                            </a>
+                        </h3>
+                        <div class="text-gray-400 mb-4">
+                            {{ writeup.date | date: "%B %d, %Y" }}
+                        </div>
+                        <p class="text-gray-300">{{ writeup.excerpt | strip_html | truncate: 160 }}</p>
+                    </article>
+                    {% endfor %}
                 </div>
-                <p class="text-gray-300">{{ writeup.excerpt | strip_html | truncate: 160 }}</p>
-            </article>
+            </div>
+            {% endif %}
             {% endfor %}
         </div>
     </div>

@@ -9,7 +9,7 @@ timezone: UTC
 collections:
   writeups:
     output: true
-    permalink: /writeups/:title/
+    permalink: /writeups/:path/
 
 # Default front matter
 defaults:
