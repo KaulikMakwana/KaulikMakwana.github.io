@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: writeup
 title: "Sample CTF Writeup"
 date: 2025-06-10
 platform: HackTheBox
@@ -24,3 +24,7 @@ Details about privilege escalation...
 ## Lessons Learned
 
 Key takeaways from this challenge...
+
+```shell
+nmap -sV localhost
+```
