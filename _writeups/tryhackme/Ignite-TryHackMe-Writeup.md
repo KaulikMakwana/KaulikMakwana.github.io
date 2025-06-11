@@ -24,20 +24,19 @@ Identify open ports on the target:
 
 ```shell
 sudo nmap --min-rate 10000 -p- 10.10.116.82
-# Output: port 80/tcp found open
+-> Output: port 80/tcp found open
 ```
 
 Service enumeration and version discovery:
 
 ```shell
-sudo nmap -sS -sV -sC -A -T4 10.10.116.82
-# Output:
-# PORT   STATE SERVICE VERSION
-# 80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
-# |_http-server-header: Apache/2.4.18 (Ubuntu)
-# | http-robots.txt: 1 disallowed entry 
-# |_/fuel/
-# |_http-title: Welcome to FUEL CMS
+`sudo nmap -sS -sV -sC -A -T4 10.10.116.82`
+  PORT   STATE SERVICE VERSION
+  80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+  |_http-server-header: Apache/2.4.18 (Ubuntu)
+  | http-robots.txt: 1 disallowed entry 
+  |_/fuel/
+  |_http-title: Welcome to FUEL CMS
 ```
 
 ---
@@ -59,7 +58,7 @@ sudo nmap -sS -sV -sC -A -T4 10.10.116.82
 ### Vulnerability: Fuel CMS 1.4 - Remote Code Execution (RCE)
 
 - **Exploit Sourced From:**  
-  ```
+  ```shell
   searchsploit fuel cms
   ```
   Chose exploit: `/usr/share/exploitdb/exploits/php/webapps/50477.py`
@@ -106,7 +105,7 @@ sudo nmap -sS -sV -sC -A -T4 10.10.116.82
   cat /home/www-data/flag.txt
   ```
 - **Flag:**  
-  ```
+  ```shell
   6470e394cbf6dab6a91682cc8585059b
   ```
 
@@ -127,7 +126,7 @@ sudo nmap -sS -sV -sC -A -T4 10.10.116.82
   cat /root/root.txt
   ```
 - **Flag:**  
-  ```
+  ```shell
   b9bbcb33e11b80be759c4e844862482d
   ```
 
