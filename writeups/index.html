@@ -7,18 +7,27 @@ title: CTF Writeups
     <div class="max-w-4xl mx-auto" data-aos="fade-up">
         <h1 class="text-4xl font-bold mb-8">CTF Writeups</h1>
         
-        <!-- Group writeups by platform -->
         {% assign writeups_by_platform = site.writeups | group_by: "platform" %}
         
+        <!-- Platform tabs -->
+        <div class="flex space-x-4 mb-8 border-b border-gray-700">
+            {% for platform in writeups_by_platform %}
+            {% if platform.name != "" %}
+            <button 
+                class="platform-tab py-2 px-4 font-medium text-gray-400 hover:text-green-400 border-b-2 border-transparent hover:border-green-400 transition-colors {% if forloop.first %}active text-green-400 border-green-400{% endif %}" 
+                data-platform="{{ platform.name | downcase | replace: ' ', '-' }}"
+            >
+                {{ platform.name }}
+            </button>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Platform content sections -->
         <div class="space-y-12">
             {% for platform in writeups_by_platform %}
             {% if platform.name != "" %}
-            <div class="platform-section">
-                <h2 class="text-2xl font-bold mb-6 text-green-400 flex items-center">
-                    <span class="mr-2">{{ platform.name }}</span>
-                    <div class="h-px flex-grow bg-gray-800 ml-4"></div>
-                </h2>
-                
+            <div class="platform-content {% unless forloop.first %}hidden{% endunless %}" id="platform-{{ platform.name | downcase | replace: ' ', '-' }}">
                 <div class="grid gap-6">
                     {% for writeup in platform.items %}
                     <article class="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-colors">
@@ -40,3 +49,34 @@ title: CTF Writeups
         </div>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll('.platform-tab');
+    const contents = document.querySelectorAll('.platform-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active classes
+            tabs.forEach(t => {
+                t.classList.remove('active', 'text-green-400', 'border-green-400');
+                t.classList.add('text-gray-400');
+            });
+            
+            // Add active class to clicked tab
+            tab.classList.add('active', 'text-green-400', 'border-green-400');
+            tab.classList.remove('text-gray-400');
+
+            // Hide all content
+            contents.forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Show selected content
+            const platform = tab.dataset.platform;
+            const content = document.getElementById(`platform-${platform}`);
+            content.classList.remove('hidden');
+        });
+    });
+});
+</script>
