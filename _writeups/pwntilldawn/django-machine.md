@@ -2,7 +2,7 @@
 layout: writeup
 title: "django-machine Writeup"
 date: 2025-06-10
-platform: PwnTilDawn
+platform: PwnTillDawn
 ---
 
 # DJANGO Machine Write-up

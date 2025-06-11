@@ -2,7 +2,7 @@
 layout: writeup
 title: "MonsieurCandie Server Writeup"
 date: 2025-06-10
-platform: PwnTilDawn
+platform: PwnTillDawn
 ---
 
 # MonsieurCandie Server - CTF Walkthrough
