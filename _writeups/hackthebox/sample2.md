@@ -1,7 +1,7 @@
 ---
 layout: writeup
 title: "Sample 2 CTF Writeup"
-date: 2025w-06-10
+date: 2025-06-10
 platform: HackTheBox
 ---
 
