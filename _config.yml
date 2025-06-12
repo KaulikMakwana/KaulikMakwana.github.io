@@ -5,10 +5,6 @@ baseurl: ""
 url: "https://kaulikmakwana.github.io"
 timezone: UTC
 
-# Build settings
-markdown: kramdown
-highlighter: rouge
-
 # Collections
 collections:
   writeups:
@@ -22,7 +18,7 @@ defaults:
       type: "writeups"
     values:
       layout: "writeup"
-  - scope:
-      path: ""
-    values:
-      layout: "default"
+      
+# Build settings
+markdown: kramdown
+highlighter: rouge
