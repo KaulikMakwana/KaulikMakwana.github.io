@@ -1,7 +1,7 @@
 ---
 layout: writeup
 title: "Snare Machine Writeup"
-date: 2025-06-10
+date: 2025-05-12
 platform: PwnTillDawn
 ---
 

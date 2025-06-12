@@ -1,11 +1,9 @@
 ---
 layout: writeup
 title: "MonsieurCandie Server Writeup"
-date: 2025-06-10
+date: 2025-05-10
 platform: PwnTillDawn
 ---
-
-# MonsieurCandie Server - CTF Walkthrough
 
 ## Overview
 This document details the penetration testing process for the MonsieurCandie Server CTF machine, including specific commands executed during the exploitation process.

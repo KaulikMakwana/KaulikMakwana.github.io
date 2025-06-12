@@ -1,7 +1,7 @@
 ---
 layout: writeup
 title: "Vega Machine Writeup"
-date: 2025-06-10
+date: 2025-05-09
 platform: PwnTillDawn
 ---
 
