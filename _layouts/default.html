@@ -3,156 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Kaulik Makwana - Cybersecurity Engineer & Penetration Tester">
     <title>{{ page.title }} - {{ site.title }}</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/images/favicon/favicon.png">
-    
-    <!-- TailwindCSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- JetBrains Mono Font -->
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- AOS CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
+    <meta name="description" content="{{ site.description }}">
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-    
-    <!-- Prism.js for syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
-    
-    <!-- Marked.js for Markdown rendering -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
-    <!-- Custom styles -->
-    <style>
-        body {
-            font-family: 'JetBrains Mono', monospace;
-            background-color: #111827;
-            color: #f3f4f6;
-            line-height: 1.6;
-            letter-spacing: -0.01em;
-        }
-        h1, h2, h3, h4, h5, h6 {
-            letter-spacing: -0.025em;
-            line-height: 1.25;
-        }
-        p {
-            margin-bottom: 1.5rem;
-        }
-        .nav-link {
-            padding: 0.5rem 1rem;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-        .nav-link:hover {
-            color: #4ade80;
-        }
-        .section {
-            padding: 5rem 1rem;
-        }
-        .prose {
-            max-width: 65ch;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        @media (min-width: 768px) {
-            .section {
-                padding: 6rem 2rem;
-            }
-            h1 {
-                font-size: 3.75rem;
-                line-height: 1.1;
-            }
-            h2 {
-                font-size: 2.25rem;
-                line-height: 1.2;
-            }
-        }
-    </style>
-    {% seo %}
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body class="min-h-screen flex flex-col">
-    <!-- Navigation -->
-    <nav class="sticky top-0 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 z-50">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="flex justify-between items-center h-16">
-                <a href="/" class="text-green-400 font-bold flex items-center space-x-2">
-                    <span class="text-xl">KM</span>
-                    <span class="hidden md:inline text-sm text-gray-400">/ Offensive Security</span>
-                </a>
-                
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-4">
-                    <a href="/" class="nav-link {% if page.url == '/' %}text-green-400{% endif %}">Home</a>
-                    <a href="/about" class="nav-link {% if page.url == '/about/' %}text-green-400{% endif %}">About</a>
-                    <a href="/writeups" class="nav-link {% if page.url contains '/writeups/' %}text-green-400{% endif %}">Writeups</a>
-                </div>
-                
-                <!-- Mobile Menu Button -->
-                <button class="md:hidden text-gray-100" id="mobile-menu-button" aria-label="Toggle menu" aria-expanded="false">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- Mobile Menu -->
-            <div class="hidden md:hidden" id="mobile-menu">
-                <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="/" class="block nav-link {% if page.url == '/' %}text-green-400{% endif %}">Home</a>
-                    <a href="/about" class="block nav-link {% if page.url == '/about/' %}text-green-400{% endif %}">About</a>
-                    <a href="/writeups" class="block nav-link {% if page.url contains '/writeups/' %}text-green-400{% endif %}">Writeups</a>
-                </div>
+<body>
+    <nav class="site-nav">
+        <div class="container">
+            <div class="nav-content">
+                <a href="{{ '/' | relative_url }}" class="nav-link">Home</a>
+                <a href="{{ '/about' | relative_url }}" class="nav-link">About</a>
+                <a href="{{ '/writeups' | relative_url }}" class="nav-link">Writeups</a>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="flex-grow">
+    <main class="container">
         {{ content }}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 border-t border-gray-800 py-8">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="text-center md:text-left mb-4 md:mb-0">
-                    <p class="text-gray-400">&copy; {{ site.time | date: '%Y' }} {{ site.title }}</p>
-                    <p class="text-sm text-gray-500">Cybersecurity Engineer & Penetration Tester</p>
-                </div>
-                <div class="flex space-x-4">
-                    <a href="https://github.com/KaulikMakwana" class="text-gray-400 hover:text-green-400 transition-colors" target="_blank" rel="noopener noreferrer">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                    <a href="https://www.linkedin.com/in/kaulik-makwana" class="text-gray-400 hover:text-green-400 transition-colors" target="_blank" rel="noopener noreferrer">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                </div>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; {{ site.time | date: '%Y' }} {{ site.title }} | Cybersecurity Engineer & Penetration Tester</p>
+            <div class="social-links">
+                <a href="https://github.com/KaulikMakwana" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://linkedin.com/in/kaulikmakwana" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             </div>
         </div>
     </footer>
-
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
-    <!-- Custom JS -->
-    <script src="{{ site.baseurl }}/assets/js/markdown-viewer.js"></script>
-    
-    <!-- Initialize AOS -->
-    <script>
-        AOS.init({
-            duration: 800,
-            once: true
-        });
-    </script>
 </body>
 </html>

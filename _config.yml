@@ -32,9 +32,3 @@ markdown: kramdown
 highlighter: rouge
 sass:
   style: compressed
-
-# Plugins
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
-  - jekyll-sitemap
