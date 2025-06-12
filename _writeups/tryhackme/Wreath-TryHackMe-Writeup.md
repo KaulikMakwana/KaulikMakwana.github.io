@@ -1,7 +1,7 @@
 ---
 layout: writeup
 title: "Wreath TryHackMe Writeup"
-date: 2025-06-10
+date: 2025-04-25
 platform: TryHackMe
 ---
 

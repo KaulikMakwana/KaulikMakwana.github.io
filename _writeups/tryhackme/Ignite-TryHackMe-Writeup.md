@@ -1,7 +1,7 @@
 ---
 layout: writeup
 title: "Ignite TryHackMe Writeup"
-date: 2025-06-10
+date: 2025-04-30
 platform: TryHackMe
 ---
 
