@@ -5,6 +5,10 @@ baseurl: ""
 url: "https://kaulikmakwana.github.io"
 timezone: UTC
 
+# Theme settings
+theme: jekyll-theme-minimal
+remote_theme: jekyll/minimal
+
 # Collections
 collections:
   writeups:
@@ -18,7 +22,19 @@ defaults:
       type: "writeups"
     values:
       layout: "writeup"
-      
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
 # Build settings
 markdown: kramdown
 highlighter: rouge
+sass:
+  style: compressed
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
