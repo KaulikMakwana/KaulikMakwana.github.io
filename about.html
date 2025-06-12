@@ -3,163 +3,42 @@ layout: default
 title: About
 ---
 
-<div class="about-page">
-    <div class="terminal">
-        <h1>About Me</h1>
-        <p class="typing-text">> Loading profile information...</p>
+<section class="section pt-24 min-h-screen">
+    <div class="max-w-4xl mx-auto" data-aos="fade-up">
+        <h1 class="text-4xl font-bold mb-8">About Me</h1>
+        
+        <div class="prose prose-invert max-w-none">
+            <p class="text-lg text-gray-300 leading-relaxed mb-4">
+                I work in offensive security, with a primary focus on ethical hacking and securing digital infrastructure through advanced techniques.
+            </p>
+            <p class="text-lg text-gray-300 leading-relaxed mb-6">
+                My core expertise lies in simulating real-world attacks, identifying vulnerabilities, and assessing the security posture of systems and networks.
+            </p>
+
+            <h2 class="text-2xl font-bold mt-8 mb-4">Certifications</h2>
+            <ul class="list-disc pl-6 text-gray-300">
+                <li>eJPT (eLearnSecurity Junior Penetration Tester)</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold mt-8 mb-4">Technical Expertise</h2>
+            <ul class="list-disc pl-6 text-gray-300">
+                <li>Penetration Testing & Vulnerability Assessment</li>
+                <li>Red Team Operations</li>
+                <li>Exploit Development</li>
+                <li>Network Security</li>
+                <li>Web Application Security</li>
+                <li>Security Tool Development</li>
+            </ul>
+
+            <h2 class="text-2xl font-bold mt-8 mb-4">Tools & Technologies</h2>
+            <ul class="list-disc pl-6 text-gray-300">
+                <li>Kali Linux</li>
+                <li>Burp Suite</li>
+                <li>Nmap</li>
+                <li>Metasploit Framework</li>
+                <li>Wireshark</li>
+                <li>Python & Bash Scripting</li>
+            </ul>
+        </div>
     </div>
-
-    <section class="about-content">
-        <div class="about-section">
-            <h2>Who Am I?</h2>
-            <p>I am a Cybersecurity Engineer and Penetration Tester with a passion for offensive security. My expertise lies in identifying and exploiting vulnerabilities to help organizations strengthen their security posture.</p>
-        </div>
-
-        <div class="about-section">
-            <h2>Professional Experience</h2>
-            <div class="experience-card">
-                <h3>Penetration Tester</h3>
-                <p>Specializing in web application security, network penetration testing, and red team operations.</p>
-            </div>
-            <div class="experience-card">
-                <h3>Security Researcher</h3>
-                <p>Conducting vulnerability research and developing custom security tools.</p>
-            </div>
-        </div>
-
-        <div class="about-section">
-            <h2>Technical Skills</h2>
-            <div class="skills-grid">
-                <div class="skill-item">
-                    <h3>Penetration Testing</h3>
-                    <ul>
-                        <li>Web Application Security</li>
-                        <li>Network Security</li>
-                        <li>Mobile Security</li>
-                        <li>API Security</li>
-                    </ul>
-                </div>
-                <div class="skill-item">
-                    <h3>Tools & Technologies</h3>
-                    <ul>
-                        <li>Burp Suite</li>
-                        <li>Metasploit</li>
-                        <li>Nmap</li>
-                        <li>Custom Scripting</li>
-                    </ul>
-                </div>
-                <div class="skill-item">
-                    <h3>Certifications</h3>
-                    <ul>
-                        <li>OSCP</li>
-                        <li>CEH</li>
-                        <li>Security+</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="about-section">
-            <h2>Connect With Me</h2>
-            <div class="social-links">
-                <a href="https://github.com/KaulikMakwana" target="_blank" rel="noopener noreferrer" class="social-link">
-                    GitHub
-                </a>
-                <a href="https://linkedin.com/in/kaulikmakwana" target="_blank" rel="noopener noreferrer" class="social-link">
-                    LinkedIn
-                </a>
-            </div>
-        </div>
-    </section>
-</div>
-
-<style>
-.about-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem 0;
-}
-
-.about-content {
-    margin-top: 3rem;
-}
-
-.about-section {
-    margin-bottom: 3rem;
-}
-
-.about-section h2 {
-    color: var(--terminal-green);
-    margin-bottom: 1.5rem;
-}
-
-.experience-card {
-    background-color: var(--secondary-color);
-    border: 1px solid var(--accent-color);
-    border-radius: 4px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.experience-card h3 {
-    color: var(--terminal-green);
-    margin-bottom: 0.5rem;
-}
-
-.skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-}
-
-.skill-item {
-    background-color: var(--secondary-color);
-    border: 1px solid var(--accent-color);
-    border-radius: 4px;
-    padding: 1.5rem;
-}
-
-.skill-item h3 {
-    color: var(--terminal-green);
-    margin-bottom: 1rem;
-}
-
-.skill-item ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.skill-item li {
-    margin-bottom: 0.5rem;
-    padding-left: 1.5rem;
-    position: relative;
-}
-
-.skill-item li:before {
-    content: '>';
-    color: var(--terminal-green);
-    position: absolute;
-    left: 0;
-}
-
-.social-links {
-    display: flex;
-    gap: 1rem;
-}
-
-.social-link {
-    display: inline-block;
-    padding: 0.8rem 1.5rem;
-    background-color: var(--secondary-color);
-    border: 1px solid var(--accent-color);
-    color: var(--accent-color);
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-.social-link:hover {
-    background-color: var(--accent-color);
-    color: var(--background-color);
-}
-</style>
+</section>

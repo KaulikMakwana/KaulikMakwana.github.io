@@ -3,6 +3,7 @@ title: "Kaulik Makwana"
 description: "Cybersecurity Engineer & Penetration Tester specializing in offensive security"
 baseurl: ""
 url: "https://kaulikmakwana.github.io"
+timezone: UTC
 
 # Build settings
 markdown: kramdown
