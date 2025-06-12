@@ -15,6 +15,8 @@ body {
   color: var(--text-color);
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
@@ -23,119 +25,156 @@ body {
   padding: 0 2rem;
 }
 
-// Navigation
+/* Navigation */
 .site-nav {
   background-color: var(--secondary-color);
   border-bottom: 1px solid var(--accent-color);
   padding: 1rem 0;
-  
-  .nav-link {
-    color: var(--text-color);
-    text-decoration: none;
-    margin: 0 1rem;
-    position: relative;
-    
-    &:after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: -4px;
-      left: 0;
-      background-color: var(--accent-color);
-      transition: width 0.3s ease;
-    }
-    
-    &:hover:after {
-      width: 100%;
-    }
-  }
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-// Terminal-like elements
+.nav-content {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  color: var(--text-color);
+  text-decoration: none;
+  position: relative;
+  padding: 0.5rem 0;
+}
+
+.nav-link:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--accent-color);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover:after {
+  width: 100%;
+}
+
+/* Terminal-like elements */
 .terminal {
   background-color: var(--secondary-color);
   border: 1px solid var(--accent-color);
   border-radius: 4px;
-  padding: 1rem;
-  margin: 1rem 0;
+  padding: 2rem;
+  margin: 2rem 0;
   position: relative;
-  
-  &:before {
-    content: '>';
-    color: var(--terminal-green);
-    margin-right: 0.5rem;
-  }
 }
 
-// Code blocks
-pre, code {
-  background-color: var(--secondary-color);
-  border: 1px solid var(--accent-color);
-  border-radius: 4px;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+.terminal h1 {
+  color: var(--terminal-green);
+  margin-top: 0;
 }
 
-// Links
-a {
-  color: var(--accent-color);
-  text-decoration: none;
-  transition: color 0.3s ease;
-  
-  &:hover {
-    color: var(--terminal-green);
-  }
+.typing-text {
+  color: var(--terminal-green);
+  overflow: hidden;
+  border-right: 2px solid var(--terminal-green);
+  white-space: nowrap;
+  animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
 }
 
-// Headers
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--terminal-green) }
+}
+
+/* Content sections */
+.about-section, .skills-section {
+  margin: 3rem 0;
+}
+
 h1, h2, h3, h4, h5, h6 {
   color: var(--terminal-green);
   margin-top: 2rem;
   margin-bottom: 1rem;
 }
 
-// Writeup cards
-.writeup-card {
+/* Cards */
+.skill-card, .writeup-card {
   background-color: var(--secondary-color);
   border: 1px solid var(--accent-color);
   border-radius: 4px;
   padding: 1.5rem;
   margin: 1rem 0;
   transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 255, 0, 0.1);
-  }
-  
-  h3 {
-    margin-top: 0;
-  }
 }
 
-// Footer
+.skill-card:hover, .writeup-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 255, 0, 0.1);
+}
+
+/* Grid layouts */
+.skills-grid, .writeups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+/* Footer */
 .site-footer {
   border-top: 1px solid var(--accent-color);
   margin-top: 3rem;
-  padding-top: 1rem;
+  padding: 2rem 0;
   text-align: center;
-  color: var(--text-color);
 }
 
-// Responsive design
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.social-link {
+  color: var(--accent-color);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background-color: var(--accent-color);
+  color: var(--background-color);
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;
   }
   
-  .site-nav {
-    .nav-link {
-      margin: 0 0.5rem;
-    }
+  .nav-content {
+    gap: 1rem;
+  }
+  
+  .skills-grid, .writeups-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-// Custom scrollbar
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
