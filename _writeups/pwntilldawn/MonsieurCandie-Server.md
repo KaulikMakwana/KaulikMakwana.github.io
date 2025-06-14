@@ -6,7 +6,7 @@ platform: PwnTillDawn
 ---
 
 ## Overview
-This document details the penetration testing process for the MonsieurCandie Server CTF machine, including specific commands executed during the exploitation process.
+This writeup details the penetration testing process for the MonsieurCandie Server CTF machine, including specific commands executed during the exploitation process.
 
 ## Initial Reconnaissance
 

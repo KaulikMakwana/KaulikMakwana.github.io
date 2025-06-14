@@ -5,7 +5,7 @@ date: 2025-05-05
 platform: PwnTillDawn
 ---
 
-# DJANGO Machine Write-up
+# Overview
 **Target IP**: 10.150.150.212
 
 ## TL;DR

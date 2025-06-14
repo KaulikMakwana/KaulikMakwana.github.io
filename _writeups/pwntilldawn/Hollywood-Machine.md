@@ -5,8 +5,7 @@ date: 2025-05-03
 platform: PwnTillDawn
 ---
 
-# Hollywood Machine Walkthrough
-
+# Overview
 **Target IP**: 10.150.150.219  
 **OS**: Windows 7 Ultimate (6.1 Build 7601, Service Pack 1)
 

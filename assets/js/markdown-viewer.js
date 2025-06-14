@@ -1,5 +1,12 @@
 // Initialize marked.js options for markdown rendering
 marked.setOptions({
+    gfm: true,
+    breaks: false,
+    pedantic: false,
+    sanitize: false,
+    smartLists: true,
+    smartypants: true,
+    xhtml: false,
     highlight: function(code, lang) {
         if (Prism.languages[lang]) {
             return Prism.highlight(code, Prism.languages[lang], lang);
@@ -63,6 +70,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize code highlighting for markdown content
     const markdownContent = document.querySelector('.markdown-content');
     if (markdownContent) {
+        // Process lists to ensure proper nesting and numbering
+        const lists = markdownContent.querySelectorAll('ol, ul');
+        lists.forEach(list => {
+            const items = list.querySelectorAll('li');
+            items.forEach(item => {
+                // Check for nested lists
+                const nestedList = item.querySelector('ol, ul');
+                if (nestedList) {
+                    // Ensure proper indentation and styling
+                    nestedList.style.marginLeft = '1rem';
+                    nestedList.style.marginTop = '0.5rem';
+                    nestedList.style.marginBottom = '0.5rem';
+                }
+            });
+        });
+
+        // Add line numbers to code blocks
         const codeBlocks = markdownContent.querySelectorAll('pre code');
         codeBlocks.forEach(block => {
             Prism.highlightElement(block);

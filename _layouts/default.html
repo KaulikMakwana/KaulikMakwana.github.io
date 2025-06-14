@@ -1,16 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Kaulik Makwana - Cybersecurity Engineer & Penetration Tester">
-    <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+    <title>{{ page.title }} | {{ site.title }}</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ site.baseurl }}/assets/images/favicon/favicon.png">
     
     <!-- TailwindCSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-green': '#4ade80',
+                        'cyber-black': '#0a0a0a',
+                        'cyber-gray': '#1a1a1a',
+                    },
+                    animation: {
+                        'terminal-cursor': 'blink 1s step-end infinite',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- JetBrains Mono Font -->
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,7 +42,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/style.css">
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/styles.css">
     
     <!-- Prism.js for syntax highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
@@ -30,108 +53,239 @@
     
     <!-- Custom styles -->
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+        :root {
+            --cyber-black: #111111;
+            --cyber-gray: #1a1a1a;
+            --cyber-green: #4ade80;
+            --animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Core styles */
         body {
             font-family: 'JetBrains Mono', monospace;
-            background-color: #111827;
-            color: #f3f4f6;
-            line-height: 1.6;
-            letter-spacing: -0.01em;
+            background-color: var(--cyber-black);
+            color: #e5e7eb;
+            opacity: 0;
+            animation: fadeIn 0.5s var(--animation-timing) forwards;
         }
-        h1, h2, h3, h4, h5, h6 {
-            letter-spacing: -0.025em;
-            line-height: 1.25;
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        p {
-            margin-bottom: 1.5rem;
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2); }
+            70% { box-shadow: 0 0 10px 5px rgba(74, 222, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
         }
+
+        @keyframes terminalCursor {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes gridPulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0.3; }
+        }
+
+        /* Terminal cursor animation */
+        .terminal-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background-color: var(--cyber-green);
+            margin-left: 0.2em;
+            animation: terminalCursor 1s infinite;
+        }
+
+        /* Enhanced glass effect */
+        .glass {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            transition: all 0.3s var(--animation-timing);
+        }
+
+        .glass:hover {
+            background: rgba(26, 26, 26, 0.8);
+            border-color: rgba(74, 222, 128, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Grid background animation */
+        .grid-bg {
+            animation: gridPulse 4s var(--animation-timing) infinite;
+        }
+
+        /* Enhanced link animations */
         .nav-link {
-            padding: 0.5rem 1rem;
-            transition: all 0.2s ease;
-            font-weight: 500;
+            position: relative;
+            color: #9ca3af;
+            transition: color 0.3s var(--animation-timing);
         }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--cyber-green);
+            transition: width 0.3s var(--animation-timing);
+        }
+
         .nav-link:hover {
-            color: #4ade80;
+            color: var(--cyber-green);
         }
-        .section {
-            padding: 5rem 1rem;
+
+        .nav-link:hover::after {
+            width: 100%;
         }
-        .prose {
-            max-width: 65ch;
-            margin-left: auto;
-            margin-right: auto;
+
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s var(--animation-timing);
         }
-        @media (min-width: 768px) {
-            .section {
-                padding: 6rem 2rem;
+
+        .card-hover:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 4px 20px rgba(74, 222, 128, 0.1);
+        }
+
+        /* Button animations */
+        .btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s var(--animation-timing);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(74, 222, 128, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300%;
+            height: 300%;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--cyber-green);
+            z-index: 1000;
+            transform-origin: left;
+            transition: transform 0.1s var(--animation-timing);
+        }
+
+        /* Mobile menu animations */
+        @media (max-width: 768px) {
+            .mobile-nav {
+                transform: translateX(-100%);
+                transition: transform 0.3s var(--animation-timing);
             }
-            h1 {
-                font-size: 3.75rem;
-                line-height: 1.1;
+
+            .mobile-nav.active {
+                transform: translateX(0);
             }
-            h2 {
-                font-size: 2.25rem;
-                line-height: 1.2;
+
+            .menu-button span {
+                transition: all 0.3s var(--animation-timing);
+            }
+
+            .menu-button.active span:nth-child(1) {
+                transform: translateY(8px) rotate(45deg);
+            }
+
+            .menu-button.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-button.active span:nth-child(3) {
+                transform: translateY(-8px) rotate(-45deg);
             }
         }
     </style>
     {% seo %}
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-gradient-to-b from-cyber-black to-cyber-gray">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator"></div>
+
     <!-- Navigation -->
-    <nav class="sticky top-0 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 z-50">
+    <nav class="fixed w-full top-0 glass z-50">
         <div class="max-w-6xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
-                <a href="/" class="text-green-400 font-bold flex items-center space-x-2">
-                    <span class="text-xl">KM</span>
-                    <span class="hidden md:inline text-sm text-gray-400">/ Offensive Security</span>
+                <a href="/" class="group flex items-center space-x-2">
+                    <span class="text-xl font-bold text-cyber-green">[KM]</span>
+                    <span class="hidden md:inline text-sm text-gray-400 group-hover:text-cyber-green transition-colors">~/offensive-security</span>
+                    <span class="terminal-cursor"></span>
                 </a>
                 
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-4">
-                    <a href="/" class="nav-link {% if page.url == '/' %}text-green-400{% endif %}">Home</a>
-                    <a href="/about" class="nav-link {% if page.url == '/about/' %}text-green-400{% endif %}">About</a>
-                    <a href="/writeups" class="nav-link {% if page.url contains '/writeups/' %}text-green-400{% endif %}">Writeups</a>
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="nav-link {% if page.url == '/' %}active text-cyber-green{% endif %}">~/home</a>
+                    <a href="/about" class="nav-link {% if page.url == '/about/' %}active text-cyber-green{% endif %}">~/about</a>
+                    <a href="/writeups" class="nav-link {% if page.url contains '/writeups/' %}active text-cyber-green{% endif %}">~/writeups</a>
                 </div>
-                
+
                 <!-- Mobile Menu Button -->
-                <button class="md:hidden text-gray-100" id="mobile-menu-button" aria-label="Toggle menu" aria-expanded="false">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
+                <button class="md:hidden menu-button" id="menuButton" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
             </div>
-            
-            <!-- Mobile Menu -->
-            <div class="hidden md:hidden" id="mobile-menu">
-                <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="/" class="block nav-link {% if page.url == '/' %}text-green-400{% endif %}">Home</a>
-                    <a href="/about" class="block nav-link {% if page.url == '/about/' %}text-green-400{% endif %}">About</a>
-                    <a href="/writeups" class="block nav-link {% if page.url contains '/writeups/' %}text-green-400{% endif %}">Writeups</a>
-                </div>
-            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav md:hidden" id="mobileNav">
+            <a href="/" class="{% if page.url == '/' %}text-cyber-green{% endif %}">~/home</a>
+            <a href="/about" class="{% if page.url == '/about/' %}text-cyber-green{% endif %}">~/about</a>
+            <a href="/writeups" class="{% if page.url contains '/writeups/' %}text-cyber-green{% endif %}">~/writeups</a>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow">
+    <main class="flex-grow pt-16">
         {{ content }}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 border-t border-gray-800 py-8">
+    <footer class="glass mt-16 py-8">
         <div class="max-w-6xl mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="text-center md:text-left mb-4 md:mb-0">
                     <p class="text-gray-400">&copy; {{ site.time | date: '%Y' }} {{ site.title }}</p>
-                    <p class="text-sm text-gray-500">Cybersecurity Engineer & Penetration Tester</p>
+                    <p class="text-sm text-gray-500 terminal-text">Cybersecurity Engineer & Penetration Tester</p>
                 </div>
-                <div class="flex space-x-4">
-                    <a href="https://github.com/KaulikMakwana" class="text-gray-400 hover:text-green-400 transition-colors" target="_blank" rel="noopener noreferrer">
+                <div class="flex space-x-6">
+                    <a href="https://github.com/KaulikMakwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
                         </svg>
                     </a>
-                    <a href="https://www.linkedin.com/in/kaulik-makwana" class="text-gray-400 hover:text-green-400 transition-colors" target="_blank" rel="noopener noreferrer">
+                    <a href="https://www.linkedin.com/in/kaulik-makwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
                         </svg>
@@ -147,12 +301,75 @@
     <!-- Custom JS -->
     <script src="{{ site.baseurl }}/assets/js/markdown-viewer.js"></script>
     
-    <!-- Initialize AOS -->
+    <!-- Initialize animations and interactions -->
     <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize AOS
         AOS.init({
             duration: 800,
-            once: true
+            easing: 'ease-out',
+            once: false,
+            mirror: true
         });
+
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', () => {
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollIndicator.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Mobile Menu Toggle
+        const menuButton = document.getElementById('menuButton');
+        const mobileNav = document.getElementById('mobileNav');
+        
+        if (menuButton && mobileNav) {
+            menuButton.addEventListener('click', () => {
+                menuButton.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+            });
+        }
+
+        // Add hover effect to cards
+        document.querySelectorAll('.glass').forEach(card => {
+            card.classList.add('card-hover');
+        });
+
+        // Add button animations
+        document.querySelectorAll('a[href], button').forEach(button => {
+            if (!button.classList.contains('menu-button')) {
+                button.classList.add('btn');
+            }
+        });
+
+        // Terminal typing effect
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.textContent = '';
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Apply typing effect to terminal text
+        document.querySelectorAll('.terminal-text').forEach(el => {
+            const originalText = el.textContent;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        typeWriter(el, originalText);
+                        observer.unobserve(el);
+                    }
+                });
+            });
+            observer.observe(el);
+        });
+    });
     </script>
 </body>
 </html>

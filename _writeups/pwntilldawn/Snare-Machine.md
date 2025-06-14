@@ -5,7 +5,9 @@ date: 2025-05-12
 platform: PwnTillDawn
 ---
 
-# Snare Machine (10.150.150.18) - Walkthrough
+# Overview
+
+**Target IP**: (10.150.150.18)
 
 ## Initial Enumeration
 

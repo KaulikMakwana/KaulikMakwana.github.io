@@ -5,7 +5,10 @@ date: 2025-04-25
 platform: TryHackMe
 ---
 
-# TryHackMe Active Directory Environment Compromise & Pivoting Writeup
+# Overview 
+TryHackMe Active Directory Environment Compromise & Pivoting Writeup
+
+---
 
 ## 1. Environment Overview
 

@@ -5,7 +5,8 @@ date: 2025-04-30
 platform: TryHackMe
 ---
 
-# TryHackMe Ignite CTF - Writeup
+# Overview
+ Exploiting Fuel CMS
 
 ## Target Environment
 

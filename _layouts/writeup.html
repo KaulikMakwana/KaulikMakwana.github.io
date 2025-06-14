@@ -4,32 +4,84 @@ layout: default
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
 
-<article class="section pt-24 min-h-screen">
-    <div class="max-w-4xl mx-auto" data-aos="fade-up">
-        <!-- Back to Writeups Link -->
-        <div class="mb-8">
-            <a href="{{ site.baseurl }}/writeups" class="inline-flex items-center text-green-400 hover:text-green-500 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                </svg>
-                Back to Writeups
-            </a>
-        </div>
+<article class="pt-24 min-h-screen relative">
+    <!-- Animated background grid -->
+    <div class="absolute inset-0 grid-bg bg-[linear-gradient(rgba(26,26,26,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(26,26,26,0.5)_2px,transparent_2px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]"></div>
+    
+    <div class="max-w-4xl mx-auto px-4 relative">
+        <div class="glass p-8 rounded-2xl border border-cyber-green/10" data-aos="fade-up" data-aos-duration="1000">
+            <!-- Back to Writeups Link -->
+            <div class="mb-8" data-aos="fade-right" data-aos-delay="200">
+                <a href="{{ site.baseurl }}/writeups" class="group inline-flex items-center justify-center bg-cyber-black/50 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-mono">cd ../writeups</span>
+                </a>
+            </div>
 
-        <header class="mb-8">
-            <h1 class="text-4xl font-bold text-green-400">{{ page.title | default: "Untitled Writeup" }}</h1>
-            <div class="text-gray-400 mt-2">
-                {% if page.date %}
-                    {{ page.date | date: "%B %d, %Y" }}
-                    {% if page.platform %}
-                    • <span class="text-green-400">{{ page.platform }}</span>
+            <header class="mb-12">
+                <div class="terminal-text mb-4 text-cyber-green text-sm font-mono opacity-60" data-aos="fade-up" data-aos-delay="400">
+                    <span class="opacity-50">$</span> cat {{ page.title | slugify }}.md
+                </div>
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent" data-aos="fade-up" data-aos-delay="600">{{ page.title }}</h1>
+                <div class="text-gray-400 mt-4 font-mono" data-aos="fade-up" data-aos-delay="800">
+                    {% if page.date %}
+                        <span class="text-cyber-green">></span> {{ page.date | date: "%B %d, %Y" }}
+                        {% if page.platform %}
+                        <span class="text-cyber-green mx-2">|</span> <span class="text-cyber-green">{{ page.platform }}</span>
+                        {% endif %}
                     {% endif %}
+                </div>
+            </header>
+
+            <div class="markdown-content prose prose-invert max-w-none font-mono" data-aos="fade-up" data-aos-delay="1000">
+                {{ content }}
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-12 flex flex-col md:flex-row items-center justify-between gap-4" data-aos="fade-up" data-aos-delay="1200">
+                {% assign writeups = site.writeups | sort: 'date' %}
+                {% for writeup in writeups %}
+                    {% if writeup.url == page.url %}
+                        {% assign index = forloop.index0 %}
+                        {% assign prev_index = index | minus: 1 %}
+                        {% assign next_index = index | plus: 1 %}
+                        {% break %}
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Previous Writeup -->
+                {% if prev_index >= 0 %}
+                    {% assign prev_writeup = writeups[prev_index] %}
+                    <a href="{{ prev_writeup.url }}" class="group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-right" data-aos-delay="1400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-mono">Previous</span>
+                    </a>
+                {% else %}
+                    <div class="w-full md:w-auto"></div>
+                {% endif %}
+
+                <!-- Back to Index -->
+                <a href="{{ site.baseurl }}/writeups" class="group flex items-center justify-center bg-cyber-black/50 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-up" data-aos-delay="1600">
+                    <span class="font-mono">cd ../writeups</span>
+                </a>
+
+                <!-- Next Writeup -->
+                {% if next_index < writeups.size %}
+                    {% assign next_writeup = writeups[next_index] %}
+                    <a href="{{ next_writeup.url }}" class="group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-left" data-aos-delay="1400">
+                        <span class="font-mono">Next</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                {% else %}
+                    <div class="w-full md:w-auto"></div>
                 {% endif %}
             </div>
-        </header>
-
-        <div class="markdown-content prose prose-invert max-w-none">
-            {{ content }}
         </div>
     </div>
 </article>
@@ -43,27 +95,31 @@ layout: default
 .markdown-content table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #1f2937;
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
     border-radius: 0.5rem;
     overflow: hidden;
     margin: 1.5rem 0;
 }
 
 .markdown-content th {
-    background-color: #374151;
+    background: rgba(55, 65, 81, 0.5);
     text-align: left;
     padding: 1rem;
     font-weight: 600;
-    border-bottom: 1px solid #4b5563;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    color: #4ade80;
 }
 
 .markdown-content td {
     padding: 1rem;
-    border-bottom: 1px solid #374151;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
 }
 
 .markdown-content tr:hover {
-    background-color: #374151;
+    background: rgba(74, 222, 128, 0.05);
     transition: background-color 0.2s;
 }
 
@@ -71,14 +127,19 @@ layout: default
 .markdown-content pre[class*="language-"] {
     border-radius: 0.5rem;
     margin: 1.5rem 0;
+    background: rgba(26, 26, 26, 0.7) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .markdown-content :not(pre) > code {
     border-radius: 0.25rem;
     padding: 0.2rem 0.4rem;
-    background-color: #374151;
+    background: rgba(55, 65, 81, 0.3);
     font-size: 0.875em;
+    color: #4ade80;
 }
 
 .markdown-content pre code {
@@ -88,29 +149,31 @@ layout: default
 
 /* Command prompt styling */
 .markdown-content .command-prompt {
-    background-color: #1f2937;
+    background: rgba(31, 41, 55, 0.7);
     padding: 1rem;
     border-radius: 0.5rem;
-    border: 1px solid #374151;
+    border: 1px solid rgba(74, 222, 128, 0.1);
     margin: 1rem 0;
-    font-family: monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: #4ade80;
+    display: block;
 }
 
 .markdown-content .command-prompt::before {
     content: "$ ";
-    color: #6b7280;
+    color: rgba(74, 222, 128, 0.5);
 }
 
 /* Terminal output styling */
 .markdown-content .terminal-output {
-    background-color: #111827;
+    background: rgba(17, 24, 39, 0.7);
     padding: 1rem;
     border-radius: 0.5rem;
     margin: 1rem 0;
-    font-family: monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: #d1d5db;
     white-space: pre-wrap;
+    display: block;
 }
 
 /* Additional markdown content styles */
@@ -127,6 +190,18 @@ layout: default
     margin-top: 2rem;
     margin-bottom: 1rem;
     font-weight: 600;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.markdown-content h1::before,
+.markdown-content h2::before,
+.markdown-content h3::before,
+.markdown-content h4::before {
+    content: "#";
+    position: absolute;
+    left: 0;
+    color: rgba(74, 222, 128, 0.5);
 }
 
 .markdown-content h1 { font-size: 2.25rem; }
@@ -141,27 +216,212 @@ layout: default
 .markdown-content a {
     color: #4ade80;
     text-decoration: none;
+    transition: all 0.2s;
+    border-bottom: 1px dashed rgba(74, 222, 128, 0.3);
 }
 
 .markdown-content a:hover {
-    text-decoration: underline;
+    border-bottom-style: solid;
+    border-bottom-color: #4ade80;
 }
 
-.markdown-content ul,
+/* Enhanced list styling */
 .markdown-content ol {
+    counter-reset: section;
+    list-style-type: none;
+    padding-left: 2.5rem;
     margin: 1rem 0;
-    padding-left: 2rem;
 }
 
-.markdown-content li {
+.markdown-content ol > li {
+    counter-increment: section;
+    position: relative;
+    margin: 0.75rem 0;
+    padding-left: 0.5rem;
+}
+
+.markdown-content ol > li::before {
+    content: counter(section) ".";
+    position: absolute;
+    left: -2.5rem;
+    width: 2rem;
+    text-align: right;
+    color: #4ade80;
+    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.markdown-content ol > li > ol {
+    counter-reset: subsection;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.markdown-content ol > li > ol > li {
+    counter-increment: subsection;
     margin: 0.5rem 0;
 }
 
-.markdown-content blockquote {
-    border-left: 4px solid #4ade80;
-    padding-left: 1rem;
-    margin: 1.5rem 0;
-    color: #9ca3af;
+.markdown-content ol > li > ol > li::before {
+    content: counter(section) "." counter(subsection);
+}
+
+.markdown-content ul {
+    list-style-type: none;
+    padding-left: 1.75rem;
+    margin: 1rem 0;
+}
+
+.markdown-content ul > li {
+    position: relative;
+    margin: 0.5rem 0;
+    padding-left: 0.5rem;
+}
+
+.markdown-content ul > li::before {
+    content: ">";
+    position: absolute;
+    left: -1.5rem;
+    color: #4ade80;
+    opacity: 0.8;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.markdown-content ul > li > ul {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.markdown-content ul > li > ul > li::before {
+    content: "-";
+}
+
+/* Ensure proper spacing between list items */
+.markdown-content li > p {
+    margin: 0.5rem 0;
+}
+
+.markdown-content li > :first-child {
+    margin-top: 0;
+}
+
+.markdown-content li > :last-child {
+    margin-bottom: 0;
+}
+
+/* Line numbers styling */
+.line-numbers .line-numbers-rows {
+    border-right: 1px solid rgba(74, 222, 128, 0.2) !important;
+}
+
+.line-numbers-rows > span:before {
+    color: rgba(74, 222, 128, 0.5) !important;
+}
+
+/* Enhanced code block animations */
+.markdown-content pre[class*="language-"] {
+    position: relative;
+    transition: all 0.3s var(--animation-timing);
+}
+
+.markdown-content pre[class*="language-"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.1);
+}
+
+/* Enhanced list animations */
+.markdown-content ul > li,
+.markdown-content ol > li {
+    opacity: 0;
+    transform: translateX(-10px);
+    animation: slideInFromLeft 0.5s var(--animation-timing) forwards;
+    animation-delay: calc(var(--li-index, 0) * 100ms);
+}
+
+@keyframes slideInFromLeft {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Enhanced heading animations */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+    position: relative;
+    overflow: hidden;
+}
+
+.markdown-content h1::after,
+.markdown-content h2::after,
+.markdown-content h3::after,
+.markdown-content h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, var(--cyber-green), transparent);
+    transform: translateX(-100%);
+    animation: slideIn 0.6s var(--animation-timing) forwards;
+}
+
+@keyframes slideIn {
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* Enhanced link animations */
+.markdown-content a {
+    position: relative;
+    text-decoration: none;
+    color: var(--cyber-green);
+    transition: all 0.3s var(--animation-timing);
+}
+
+.markdown-content a::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--cyber-green);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s var(--animation-timing);
+}
+
+.markdown-content a:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Enhanced table animations */
+.markdown-content table {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s var(--animation-timing) forwards;
+    animation-delay: 0.2s;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.markdown-content tr {
+    transition: all 0.3s var(--animation-timing);
+}
+
+.markdown-content tr:hover {
+    background: rgba(74, 222, 128, 0.1);
 }
 </style>
 
@@ -185,6 +445,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
             block.innerHTML = formattedLines.join('\n');
         }
+    });
+
+    // Add hover effect to code blocks
+    document.querySelectorAll('pre[class*="language-"]').forEach((block) => {
+        block.addEventListener('mouseenter', () => {
+            block.style.borderColor = 'rgba(74, 222, 128, 0.3)';
+            block.style.transform = 'translateY(-2px)';
+            block.style.transition = 'all 0.3s ease';
+        });
+        block.addEventListener('mouseleave', () => {
+            block.style.borderColor = 'rgba(74, 222, 128, 0.1)';
+            block.style.transform = 'translateY(0)';
+        });
+    });
+});
+
+// Initialize list item animations
+document.addEventListener('DOMContentLoaded', () => {
+    const listItems = document.querySelectorAll('.markdown-content ul > li, .markdown-content ol > li');
+    listItems.forEach((item, index) => {
+        item.style.setProperty('--li-index', index);
     });
 });
 </script>

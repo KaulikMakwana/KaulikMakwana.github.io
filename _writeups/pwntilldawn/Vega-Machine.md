@@ -5,8 +5,6 @@ date: 2025-05-09
 platform: PwnTillDawn
 ---
 
-# Vega Machine Writeup
-
 ## Machine Overview
 - **IP Address**: 10.150.150.222
 - **Difficulty**: Medium
