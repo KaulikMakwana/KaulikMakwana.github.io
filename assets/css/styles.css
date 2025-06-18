@@ -1,0 +1,96 @@
+/* Custom Scrollbar Styles */
+.scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(31, 41, 55, 0.5);
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(74, 222, 128, 0.5);
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(74, 222, 128, 0.7);
+}
+
+/* Firefox scrollbar styles */
+.scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(74, 222, 128, 0.5) rgba(31, 41, 55, 0.5);
+}
+
+/* Card Flip Styles */
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.card-flipper {
+    transform-style: preserve-3d;
+}
+
+.card-front,
+.card-back {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+
+/* Ensure the back is fully rotated */
+.card-back {
+    transform: rotateY(180deg);
+}
+
+/* Add smooth transition */
+.transition-transform {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Transform with GPU */
+.transform-gpu {
+    transform: translate3d(0, 0, 0);
+}
+
+/* Ensure text remains readable after flip */
+.flip-card-back * {
+    transform: rotateY(180deg);
+}
+
+/* Terminal Typewriter Animation */
+.typewriter-init {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid #4ADE80;
+    width: 0;
+    animation: typing 1s steps(30, end) forwards,
+               blink 1s step-end infinite;
+    animation-delay: 0.5s;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink {
+    from, to { border-color: transparent }
+    50% { border-color: #4ADE80 }
+}
+
+/* Add animation for About section */
+.terminal-text[data-command]::before {
+    content: attr(data-command);
+    display: inline-block;
+    width: 0;
+    overflow: hidden;
+    animation: typing 1s steps(30, end) forwards;
+    white-space: nowrap;
+    border-right: 2px solid #4ADE80;
+} 

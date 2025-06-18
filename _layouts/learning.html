@@ -10,40 +10,44 @@ layout: default
     
     <div class="max-w-4xl mx-auto px-4 relative">
         <div class="glass p-8 rounded-2xl border border-cyber-green/10" data-aos="fade-up" data-aos-duration="1000">
-            <!-- Back to Writeups Link -->
+            <!-- Back to Learnings Link -->
             <div class="mb-8" data-aos="fade-right" data-aos-delay="200">
-                <a href="{{ site.baseurl }}/writeups" class="group inline-flex items-center justify-center bg-cyber-black/50 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40">
+                <a href="{{ site.baseurl }}/learnings" class="group inline-flex items-center justify-center bg-cyber-black/50 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                     </svg>
-                    <span class="font-mono">cd ../writeups</span>
+                    <span class="font-mono">cd ../learnings</span>
                 </a>
             </div>
 
-            <header class="mb-12">
-                <div class="terminal-text mb-4 text-cyber-green text-sm font-mono opacity-60" data-aos="fade-up" data-aos-delay="400">
-                    <span class="opacity-50">$</span> cat {{ page.title | slugify }}.md
-                </div>
-                <h1 class="text-4xl font-bold bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent" data-aos="fade-up" data-aos-delay="600">{{ page.title }}</h1>
-                <div class="text-gray-400 mt-4 font-mono" data-aos="fade-up" data-aos-delay="800">
-                    {% if page.date %}
-                        <span class="text-cyber-green">></span> {{ page.date | date: "%B %d, %Y" }}
-                        {% if page.platform %}
-                        <span class="text-cyber-green mx-2">|</span> <span class="text-cyber-green">{{ page.platform }}</span>
-                        {% endif %}
-                    {% endif %}
-                </div>
-            </header>
+            <!-- Terminal-style header -->
+            <div class="terminal-text mb-4 text-cyber-green text-sm font-mono opacity-60" data-aos="fade-up" data-aos-delay="400">
+                <span class="opacity-50">$</span> cat {{ page.title | slugify }}.md
+            </div>
 
-            <div class="markdown-content prose prose-invert max-w-none font-mono" data-aos="fade-up" data-aos-delay="1000">
+            <!-- Title -->
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent mb-8" data-aos="fade-up" data-aos-delay="600">{{ page.title }}</h1>
+
+            <!-- Metadata -->
+            <div class="text-gray-400 mt-4 font-mono" data-aos="fade-up" data-aos-delay="800">
+                {% if page.date %}
+                    <span class="text-cyber-green">></span> {{ page.date | date: "%B %d, %Y" }}
+                    {% if page.category %}
+                    <span class="text-cyber-green mx-2">|</span> <span class="text-cyber-green">{{ page.category }}</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- Content -->
+            <div class="markdown-content prose prose-invert max-w-none font-mono mt-8" data-aos="fade-up" data-aos-delay="1000">
                 {{ content }}
             </div>
 
             <!-- Navigation Buttons -->
             <div class="mt-12 flex flex-col md:flex-row items-center justify-between gap-4" data-aos="fade-up" data-aos-duration="600">
-                {% assign writeups = site.writeups | sort: 'date' %}
-                {% for writeup in writeups %}
-                    {% if writeup.url == page.url %}
+                {% assign category_learnings = site.learnings | where: "category", page.category | sort: 'date' %}
+                {% for learning in category_learnings %}
+                    {% if learning.url == page.url %}
                         {% assign index = forloop.index0 %}
                         {% assign prev_index = index | minus: 1 %}
                         {% assign next_index = index | plus: 1 %}
@@ -51,10 +55,10 @@ layout: default
                     {% endif %}
                 {% endfor %}
 
-                <!-- Previous Writeup -->
+                <!-- Previous Learning -->
                 {% if prev_index >= 0 %}
-                    {% assign prev_writeup = writeups[prev_index] %}
-                    <a href="{{ prev_writeup.url }}" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-right" data-aos-duration="400">
+                    {% assign prev_learning = category_learnings[prev_index] %}
+                    <a href="{{ prev_learning.url }}" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-right" data-aos-duration="400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 transform transition-transform duration-200 ease-spring group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                         </svg>
@@ -65,14 +69,14 @@ layout: default
                 {% endif %}
 
                 <!-- Back to Index -->
-                <a href="{{ site.baseurl }}/writeups" class="nav-button group flex items-center justify-center bg-cyber-black/50 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-up" data-aos-duration="400">
-                    <span class="font-mono">cd ../writeups</span>
+                <a href="{{ site.baseurl }}/learnings" class="nav-button group flex items-center justify-center bg-cyber-black/50 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-up" data-aos-duration="400">
+                    <span class="font-mono">cd ../learnings</span>
                 </a>
 
-                <!-- Next Writeup -->
-                {% if next_index < writeups.size %}
-                    {% assign next_writeup = writeups[next_index] %}
-                    <a href="{{ next_writeup.url }}" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-left" data-aos-duration="400">
+                <!-- Next Learning -->
+                {% if next_index < category_learnings.size %}
+                    {% assign next_learning = category_learnings[next_index] %}
+                    <a href="{{ next_learning.url }}" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-left" data-aos-duration="400">
                         <span class="font-mono">Next</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transform transition-transform duration-200 ease-spring group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -85,10 +89,6 @@ layout: default
         </div>
     </div>
 </article>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
 <style>
 /* Custom styles for tables */
@@ -489,6 +489,24 @@ layout: default
         padding: 0.75rem 1rem;
         font-size: 0.875rem;
     }
+
+    /* Command Line Blocks */
+    .command-prompt {
+        margin: 1rem -1rem;
+        padding: 1rem;
+        border-radius: 0;
+        font-size: 0.875rem;
+    }
+
+    /* Terminal Output */
+    .terminal-output {
+        margin: 1rem -1rem;
+        padding: 1rem;
+        border-radius: 0;
+        font-size: 0.875rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 /* Enhanced Code Block Scrolling */
@@ -532,8 +550,24 @@ layout: default
     .markdown-content p {
         margin: 1rem 0;
     }
+
+    /* Enhanced List Spacing */
+    .markdown-content ul > li,
+    .markdown-content ol > li {
+        margin: 0.5rem 0;
+    }
+
+    /* Code Block Line Numbers */
+    .line-numbers-rows {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
 }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -605,4 +639,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-</script>
+</script> 

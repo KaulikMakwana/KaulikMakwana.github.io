@@ -10,6 +10,9 @@ collections:
   writeups:
     output: true
     permalink: /writeups/:path/
+  learnings:
+    output: true
+    permalink: /learnings/:path/
 
 # Default front matter
 defaults:
@@ -18,6 +21,11 @@ defaults:
       type: "writeups"
     values:
       layout: "writeup"
+  - scope:
+      path: ""
+      type: "learnings"
+    values:
+      layout: "learning"
       
 # Build settings
 markdown: kramdown
