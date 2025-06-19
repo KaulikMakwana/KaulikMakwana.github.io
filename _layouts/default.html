@@ -329,6 +329,141 @@
                 padding-bottom: max(1rem, env(safe-area-inset-bottom));
             }
         }
+
+        /* Markdown Content Styles */
+        .markdown-content ul {
+            list-style-type: none;
+            padding-left: 1.75rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ul > li {
+            position: relative;
+            margin: 0.5rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ul > li::before {
+            content: ">";
+            position: absolute;
+            left: -1.5rem;
+            color: var(--cyber-green);
+            opacity: 0.8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ul > li > ul {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ul > li > ul > li::before {
+            content: "-";
+        }
+
+        .markdown-content ol {
+            counter-reset: section;
+            list-style-type: none;
+            padding-left: 2.5rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ol > li {
+            counter-increment: section;
+            position: relative;
+            margin: 0.75rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ol > li::before {
+            content: counter(section) ".";
+            position: absolute;
+            left: -2.5rem;
+            width: 2rem;
+            text-align: right;
+            color: var(--cyber-green);
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ol > li > ol {
+            counter-reset: subsection;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ol > li > ol > li {
+            counter-increment: subsection;
+            margin: 0.5rem 0;
+        }
+
+        .markdown-content ol > li > ol > li::before {
+            content: counter(section) "." counter(subsection);
+        }
+
+        /* Table Styles */
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .markdown-content th {
+            background: rgba(55, 65, 81, 0.5);
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            color: var(--cyber-green);
+            white-space: nowrap;
+        }
+
+        .markdown-content td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            min-width: 100px;
+        }
+
+        .markdown-content tr:hover {
+            background: rgba(74, 222, 128, 0.05);
+            transition: background-color 0.2s;
+        }
+
+        @media (max-width: 768px) {
+            .markdown-content table {
+                margin: 1rem -1rem;
+                border-radius: 0;
+            }
+
+            .markdown-content th,
+            .markdown-content td {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .markdown-content ul {
+                padding-left: 1.5rem;
+            }
+
+            .markdown-content ol {
+                padding-left: 2rem;
+            }
+
+            .markdown-content ul > li::before {
+                left: -1.25rem;
+            }
+
+            .markdown-content ol > li::before {
+                left: -2rem;
+                width: 1.75rem;
+            }
+        }
     </style>
     {% seo %}
 </head>

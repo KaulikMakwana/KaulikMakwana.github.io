@@ -1,14 +1,13 @@
 ---
 layout: default
-title: My Learnings
+title: Learnings
 ---
 
-<section class="pt-24 min-h-screen relative">
-    <!-- Animated background grid -->
+<!-- Main Container with Border (matches home page) -->
+<div class="min-h-screen relative py-6 md:py-12">
     <div class="absolute inset-0 bg-[linear-gradient(rgba(26,26,26,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(26,26,26,0.5)_2px,transparent_2px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]"></div>
-    
-    <div class="max-w-6xl mx-auto px-4 relative" data-aos="fade-up">
-        <div class="glass p-8 rounded-2xl border border-cyber-green/10">
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 relative">
+        <div class="glass border border-cyber-green/10 rounded-2xl p-4 sm:p-8">
             <div class="terminal-text mb-8 text-cyber-green text-base md:text-lg font-mono">
                 <span class="opacity-50">$</span> ls -la ~/learnings/
             </div>
@@ -28,16 +27,16 @@ title: My Learnings
             {% assign learnings_by_category = site.learnings | group_by: "category" %}
             
             <!-- Category tabs -->
-            <div class="flex flex-wrap gap-4 mb-10 border-b border-cyber-green/10 pb-3 overflow-x-auto scrollbar-thin scrollbar-thumb-cyber-green scrollbar-track-gray-800">
+            <div class="flex flex-wrap justify-center sm:justify-start gap-4 md:gap-6 mb-10 border-b border-cyber-green/10 pb-4 pt-1 overflow-x-auto scrollbar-thin scrollbar-thumb-cyber-green scrollbar-track-gray-800">
                 {% for category_group in learnings_by_category %}
                 {% if category_group.name != "" %}
                 <button 
-                    class="category-tab py-2 md:py-3 px-4 md:px-6 font-mono text-base md:text-lg text-gray-400 hover:text-cyber-green focus:outline-none focus:ring-2 focus:ring-cyber-green/20 rounded transition-all duration-300 {% if forloop.first %}active text-cyber-green{% endif %}" 
+                    class="category-tab py-1.5 md:py-2.5 px-4 md:px-6 font-mono text-base md:text-lg text-gray-400 hover:text-cyber-green focus:outline-none focus:ring-2 focus:ring-cyber-green/20 focus:ring-offset-2 focus:ring-offset-black rounded transition-all duration-300 flex items-center justify-center hover:bg-cyber-green/5 hover:shadow-[0_0_10px_rgba(0,255,127,0.1)] {% if forloop.first %}active text-cyber-green bg-cyber-green/5{% endif %}" 
                     data-category="{{ category_group.name | downcase | replace: ' ', '-' }}"
                 >
-                    <span class="opacity-50">[</span>
-                    {{ category_group.name }}
-                    <span class="opacity-50">]</span>
+                    <span class="opacity-50 mr-4 md:mr-6">[</span>
+                    <span class="mx-2 md:mx-3">{{ category_group.name }}</span>
+                    <span class="opacity-50 ml-4 md:ml-6">]</span>
                 </button>
                 {% endif %}
                 {% endfor %}
@@ -92,7 +91,7 @@ title: My Learnings
             </div>
         </div>
     </div>
-</section>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -102,12 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function activateTab(tab) {
         // Remove active classes from all tabs
         tabs.forEach(t => {
-            t.classList.remove('active', 'text-cyber-green', 'bg-cyber-green/10');
+            t.classList.remove('active', 'text-cyber-green', 'bg-cyber-green/5');
             t.classList.add('text-gray-400');
         });
         
         // Add active classes to clicked tab
-        tab.classList.add('active', 'text-cyber-green', 'bg-cyber-green/10');
+        tab.classList.add('active', 'text-cyber-green', 'bg-cyber-green/5');
         tab.classList.remove('text-gray-400');
 
         // Hide all content sections with fade out
@@ -137,4 +136,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-</script> 
+</script>

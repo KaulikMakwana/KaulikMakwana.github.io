@@ -4,32 +4,27 @@ layout: default
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
 
-<article class="pt-24 min-h-screen relative">
-    <!-- Animated background grid -->
-    <div class="absolute inset-0 grid-bg bg-[linear-gradient(rgba(26,26,26,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(26,26,26,0.5)_2px,transparent_2px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]"></div>
-    
-    <div class="max-w-4xl mx-auto px-4 relative">
-        <div class="glass p-8 rounded-2xl border border-cyber-green/10" data-aos="fade-up" data-aos-duration="1000">
+<!-- Main Container with Border (matches home page) -->
+<article class="min-h-screen relative py-6 md:py-12">
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(26,26,26,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(26,26,26,0.5)_2px,transparent_2px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]"></div>
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 relative">
+        <div class="glass border border-cyber-green/10 rounded-2xl p-4 sm:p-8 flex flex-col min-h-[60vh] justify-center">
             <!-- Back to Learnings Link -->
-            <div class="mb-8" data-aos="fade-right" data-aos-delay="200">
-                <a href="{{ site.baseurl }}/learnings" class="group inline-flex items-center justify-center bg-cyber-black/50 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
+            <div class="mb-3 sm:mb-4 md:mb-6 lg:mb-8 w-full" data-aos="fade-right" data-aos-delay="200">
+                <a href="{{ site.baseurl }}/learnings" class="group inline-flex items-center justify-center bg-cyber-black/50 text-cyber-green px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 text-xs sm:text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                     </svg>
                     <span class="font-mono">cd ../learnings</span>
                 </a>
             </div>
 
-            <!-- Terminal-style header -->
-            <div class="terminal-text mb-4 text-cyber-green text-sm font-mono opacity-60" data-aos="fade-up" data-aos-delay="400">
+            <header class="mb-4 sm:mb-6 md:mb-8 lg:mb-10 w-full">
+                <div class="terminal-text mb-2 sm:mb-3 text-cyber-green text-xs sm:text-sm font-mono opacity-60" data-aos="fade-up" data-aos-delay="400">
                 <span class="opacity-50">$</span> cat {{ page.title | slugify }}.md
             </div>
-
-            <!-- Title -->
-            <h1 class="text-4xl font-bold bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent mb-8" data-aos="fade-up" data-aos-delay="600">{{ page.title }}</h1>
-
-            <!-- Metadata -->
-            <div class="text-gray-400 mt-4 font-mono" data-aos="fade-up" data-aos-delay="800">
+                <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent break-words" data-aos="fade-up" data-aos-delay="600">{{ page.title }}</h1>
+                <div class="text-gray-400 mt-1.5 sm:mt-2 font-mono text-xs sm:text-sm" data-aos="fade-up" data-aos-delay="800">
                 {% if page.date %}
                     <span class="text-cyber-green">></span> {{ page.date | date: "%B %d, %Y" }}
                     {% if page.category %}
@@ -37,14 +32,14 @@ layout: default
                     {% endif %}
                 {% endif %}
             </div>
+            </header>
 
-            <!-- Content -->
-            <div class="markdown-content prose prose-invert max-w-none font-mono mt-8" data-aos="fade-up" data-aos-delay="1000">
+            <div class="markdown-content prose prose-invert max-w-none font-mono text-xs sm:text-sm w-full" data-aos="fade-up" data-aos-delay="1000">
                 {{ content }}
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="mt-12 flex flex-col md:flex-row items-center justify-between gap-4" data-aos="fade-up" data-aos-duration="600">
+            <div class="mt-8 sm:mt-12 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4" data-aos="fade-up" data-aos-duration="600">
                 {% assign category_learnings = site.learnings | where: "category", page.category | sort: 'date' %}
                 {% for learning in category_learnings %}
                     {% if learning.url == page.url %}
@@ -58,8 +53,8 @@ layout: default
                 <!-- Previous Learning -->
                 {% if prev_index >= 0 %}
                     {% assign prev_learning = category_learnings[prev_index] %}
-                    <a href="{{ prev_learning.url }}" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-right" data-aos-duration="400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 transform transition-transform duration-200 ease-spring group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                    <a href="{{ prev_learning.url }}" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto text-sm sm:text-base" data-aos="fade-right" data-aos-duration="400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 sm:h-5 w-4 sm:w-5 mr-2 transform transition-transform duration-200 ease-spring group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                         </svg>
                         <span class="font-mono">Previous</span>
@@ -69,16 +64,16 @@ layout: default
                 {% endif %}
 
                 <!-- Back to Index -->
-                <a href="{{ site.baseurl }}/learnings" class="nav-button group flex items-center justify-center bg-cyber-black/50 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-up" data-aos-duration="400">
+                <a href="{{ site.baseurl }}/learnings" class="nav-button group flex items-center justify-center bg-cyber-black/50 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto text-sm sm:text-base" data-aos="fade-up" data-aos-duration="400">
                     <span class="font-mono">cd ../learnings</span>
                 </a>
 
                 <!-- Next Learning -->
                 {% if next_index < category_learnings.size %}
                     {% assign next_learning = category_learnings[next_index] %}
-                    <a href="{{ next_learning.url }}" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-6 py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-left" data-aos-duration="400">
+                    <a href="{{ next_learning.url }}" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto text-sm sm:text-base" data-aos="fade-left" data-aos-duration="400">
                         <span class="font-mono">Next</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transform transition-transform duration-200 ease-spring group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 sm:h-5 w-4 sm:w-5 ml-2 transform transition-transform duration-200 ease-spring group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
                     </a>
@@ -100,22 +95,30 @@ layout: default
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(74, 222, 128, 0.1);
     border-radius: 0.5rem;
-    overflow: hidden;
-    margin: 1.5rem 0;
+    margin: 1rem 0 1.5rem;
+    display: table;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.markdown-content thead {
+    background: rgba(55, 65, 81, 0.5);
 }
 
 .markdown-content th {
-    background: rgba(55, 65, 81, 0.5);
+    background: transparent;
     text-align: left;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     font-weight: 600;
     border-bottom: 1px solid rgba(74, 222, 128, 0.1);
     color: #4ade80;
+    white-space: nowrap;
 }
 
 .markdown-content td {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    min-width: 100px;
 }
 
 .markdown-content tr:hover {
@@ -123,15 +126,73 @@ layout: default
     transition: background-color 0.2s;
 }
 
+.markdown-content tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table wrapper for horizontal scrolling on mobile */
+.markdown-content .table-wrapper {
+    overflow-x: auto;
+    margin: 1rem -1rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    .markdown-content table {
+        font-size: 0.875rem;
+    }
+
+    .markdown-content th,
+    .markdown-content td {
+        padding: 0.625rem 0.875rem;
+    }
+}
+
 /* Custom styles for code blocks */
 .markdown-content pre[class*="language-"] {
     border-radius: 0.5rem;
-    margin: 1.5rem 0;
-    background: rgba(26, 26, 26, 0.7) !important;
+    margin: 1rem 0 1.5rem;
+    background: rgba(17, 17, 17, 0.95) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(74, 222, 128, 0.1);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    font-size: 0.875rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem;
+}
+
+/* Hide line numbers on desktop */
+@media (min-width: 641px) {
+    .line-numbers-rows {
+        display: none !important;
+    }
+    
+    .line-numbers {
+        padding-left: 1rem !important;
+    }
+}
+
+/* Show line numbers only on mobile */
+@media (max-width: 640px) {
+    .line-numbers .line-numbers-rows {
+        border-right: none !important;
+    }
+
+    .line-numbers-rows > span:before {
+        color: rgba(74, 222, 128, 0.3) !important;
+    }
+}
+
+/* Topic separator line */
+.markdown-content hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, rgba(74, 222, 128, 0.05), rgba(74, 222, 128, 0.2), rgba(74, 222, 128, 0.05));
+    margin: 2rem 0;
+    border-radius: 1px;
 }
 
 .markdown-content :not(pre) > code {
@@ -140,23 +201,28 @@ layout: default
     background: rgba(55, 65, 81, 0.3);
     font-size: 0.875em;
     color: #4ade80;
+    word-break: break-word;
 }
 
 .markdown-content pre code {
     background-color: transparent;
     padding: 0;
+    font-size: inherit;
 }
 
 /* Command prompt styling */
 .markdown-content .command-prompt {
     background: rgba(31, 41, 55, 0.7);
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: 0.5rem;
     border: 1px solid rgba(74, 222, 128, 0.1);
     margin: 1rem 0;
     font-family: 'JetBrains Mono', monospace;
     color: #4ade80;
     display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
 }
 
 .markdown-content .command-prompt::before {
@@ -167,13 +233,16 @@ layout: default
 /* Terminal output styling */
 .markdown-content .terminal-output {
     background: rgba(17, 24, 39, 0.7);
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: 0.5rem;
     margin: 1rem 0;
     font-family: 'JetBrains Mono', monospace;
     color: #d1d5db;
     white-space: pre-wrap;
     display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
 }
 
 /* Additional markdown content styles */
@@ -187,11 +256,11 @@ layout: default
 .markdown-content h3,
 .markdown-content h4 {
     color: #4ade80;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     margin-bottom: 1rem;
     font-weight: 600;
     position: relative;
-    padding-left: 1.5rem;
+    padding-left: 1.25rem;
 }
 
 .markdown-content h1::before,
@@ -204,10 +273,17 @@ layout: default
     color: rgba(74, 222, 128, 0.5);
 }
 
-.markdown-content h1 { font-size: 2.25rem; }
-.markdown-content h2 { font-size: 1.875rem; }
-.markdown-content h3 { font-size: 1.5rem; }
-.markdown-content h4 { font-size: 1.25rem; }
+.markdown-content h1 { font-size: 1.75rem; }
+.markdown-content h2 { font-size: 1.5rem; }
+.markdown-content h3 { font-size: 1.25rem; }
+.markdown-content h4 { font-size: 1.125rem; }
+
+@media (min-width: 640px) {
+    .markdown-content h1 { font-size: 2.25rem; }
+    .markdown-content h2 { font-size: 1.875rem; }
+    .markdown-content h3 { font-size: 1.5rem; }
+    .markdown-content h4 { font-size: 1.25rem; }
+}
 
 .markdown-content p {
     margin: 1rem 0;
@@ -218,6 +294,7 @@ layout: default
     text-decoration: none;
     transition: all 0.2s;
     border-bottom: 1px dashed rgba(74, 222, 128, 0.3);
+    word-break: break-word;
 }
 
 .markdown-content a:hover {
@@ -229,7 +306,7 @@ layout: default
 .markdown-content ol {
     counter-reset: section;
     list-style-type: none;
-    padding-left: 2.5rem;
+    padding-left: 2rem;
     margin: 1rem 0;
 }
 
@@ -243,324 +320,60 @@ layout: default
 .markdown-content ol > li::before {
     content: counter(section) ".";
     position: absolute;
-    left: -2.5rem;
-    width: 2rem;
+    left: -2rem;
+    width: 1.75rem;
     text-align: right;
     color: #4ade80;
     font-weight: 500;
-    font-family: 'JetBrains Mono', monospace;
 }
 
-.markdown-content ol > li > ol {
-    counter-reset: subsection;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.markdown-content ol > li > ol > li {
-    counter-increment: subsection;
-    margin: 0.5rem 0;
-}
-
-.markdown-content ol > li > ol > li::before {
-    content: counter(section) "." counter(subsection);
-}
-
-.markdown-content ul {
-    list-style-type: none;
-    padding-left: 1.75rem;
+/* Images */
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
     margin: 1rem 0;
 }
 
-.markdown-content ul > li {
-    position: relative;
-    margin: 0.5rem 0;
-    padding-left: 0.5rem;
+/* Blockquotes */
+.markdown-content blockquote {
+    border-left: 3px solid #4ade80;
+    margin: 1rem 0;
+    padding: 0.5rem 0 0.5rem 1rem;
+    background: rgba(74, 222, 128, 0.05);
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
 }
 
-.markdown-content ul > li::before {
-    content: ">";
-    position: absolute;
-    left: -1.5rem;
-    color: #4ade80;
-    opacity: 0.8;
-    font-family: 'JetBrains Mono', monospace;
-}
-
-.markdown-content ul > li > ul {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.markdown-content ul > li > ul > li::before {
-    content: "-";
-}
-
-/* Ensure proper spacing between list items */
-.markdown-content li > p {
-    margin: 0.5rem 0;
-}
-
-.markdown-content li > :first-child {
-    margin-top: 0;
-}
-
-.markdown-content li > :last-child {
-    margin-bottom: 0;
-}
-
-/* Line numbers styling */
-.line-numbers .line-numbers-rows {
-    border-right: 1px solid rgba(74, 222, 128, 0.2) !important;
-}
-
-.line-numbers-rows > span:before {
-    color: rgba(74, 222, 128, 0.5) !important;
-}
-
-/* Enhanced code block animations */
-.markdown-content pre[class*="language-"] {
-    position: relative;
-    transition: all 0.3s var(--animation-timing);
-}
-
-.markdown-content pre[class*="language-"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.1);
-}
-
-/* Enhanced list animations */
-.markdown-content ul > li,
-.markdown-content ol > li {
-    opacity: 0;
-    transform: translateX(-10px);
-    animation: slideInFromLeft 0.5s var(--animation-timing) forwards;
-    animation-delay: calc(var(--li-index, 0) * 100ms);
-}
-
-@keyframes slideInFromLeft {
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Enhanced heading animations */
-.markdown-content h1,
-.markdown-content h2,
-.markdown-content h3,
-.markdown-content h4 {
-    position: relative;
-    overflow: hidden;
-}
-
-.markdown-content h1::after,
-.markdown-content h2::after,
-.markdown-content h3::after,
-.markdown-content h4::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, var(--cyber-green), transparent);
-    transform: translateX(-100%);
-    animation: slideIn 0.6s var(--animation-timing) forwards;
-}
-
-@keyframes slideIn {
-    to {
-        transform: translateX(0);
-    }
-}
-
-/* Enhanced link animations */
-.markdown-content a {
-    position: relative;
-    text-decoration: none;
-    color: var(--cyber-green);
-    transition: all 0.3s var(--animation-timing);
-}
-
-.markdown-content a::before {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background-color: var(--cyber-green);
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.3s var(--animation-timing);
-}
-
-.markdown-content a:hover::before {
-    transform: scaleX(1);
-    transform-origin: left;
-}
-
-/* Enhanced table animations */
-.markdown-content table {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.6s var(--animation-timing) forwards;
-    animation-delay: 0.2s;
-}
-
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.markdown-content tr {
-    transition: all 0.3s var(--animation-timing);
-}
-
-.markdown-content tr:hover {
-    background: rgba(74, 222, 128, 0.1);
-}
-
-/* Mobile Optimizations */
-@media (max-width: 768px) {
-    .markdown-content {
-        font-size: 0.9375rem;
-        line-height: 1.7;
+/* Mobile-specific styles */
+@media screen and (max-width: 640px) {
+    .nav-button {
+        font-size: 0.875rem !important;
+        padding: 0.5rem 1rem !important;
+        margin: 0.25rem 0 !important;
+        width: 100% !important;
+        justify-content: center !important;
+        background-color: rgba(74, 222, 128, 0.1) !important;
+        border: 1px solid rgba(74, 222, 128, 0.2) !important;
+        border-radius: 4px !important;
     }
 
-    .markdown-content pre {
-        margin: 1rem -1rem;
-        padding: 1rem;
-        border-radius: 0;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    .nav-button.bg-cyber-black\/50 {
+        background-color: rgba(17, 17, 17, 0.8) !important;
     }
 
-    .markdown-content table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin: 1rem -1rem;
-        padding: 0 1rem;
+    .mt-8 {
+        margin-top: 1.5rem !important;
     }
 
-    .markdown-content img {
-        max-width: 100%;
-        height: auto;
-        margin: 1rem 0;
-    }
-
-    .markdown-content blockquote {
-        margin: 1rem 0;
-        padding: 0.75rem 1rem;
-    }
-
-    .markdown-content ul,
-    .markdown-content ol {
-        padding-left: 1.25rem;
+    .gap-3 {
+        gap: 0.5rem !important;
     }
 
     .glass {
-        padding: 1.5rem 1rem;
-    }
-
-    h1 {
-        font-size: 1.75rem !important;
-        line-height: 1.3 !important;
-    }
-
-    h2 {
-        font-size: 1.5rem !important;
-        line-height: 1.35 !important;
-    }
-
-    h3 {
-        font-size: 1.25rem !important;
-        line-height: 1.4 !important;
-    }
-
-    .nav-button {
-        width: 100%;
-        justify-content: center;
-        padding: 0.75rem 1rem;
-        font-size: 0.875rem;
-    }
-
-    /* Command Line Blocks */
-    .command-prompt {
-        margin: 1rem -1rem;
-        padding: 1rem;
-        border-radius: 0;
-        font-size: 0.875rem;
-    }
-
-    /* Terminal Output */
-    .terminal-output {
-        margin: 1rem -1rem;
-        padding: 1rem;
-        border-radius: 0;
-        font-size: 0.875rem;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
-/* Enhanced Code Block Scrolling */
-.markdown-content pre::-webkit-scrollbar {
-    height: 4px;
-}
-
-.markdown-content pre::-webkit-scrollbar-track {
-    background: rgba(26, 26, 26, 0.5);
-}
-
-.markdown-content pre::-webkit-scrollbar-thumb {
-    background: rgba(74, 222, 128, 0.3);
-    border-radius: 2px;
-}
-
-.markdown-content pre::-webkit-scrollbar-thumb:hover {
-    background: rgba(74, 222, 128, 0.5);
-}
-
-/* Table Scrolling */
-.markdown-content table::-webkit-scrollbar {
-    height: 4px;
-}
-
-.markdown-content table::-webkit-scrollbar-track {
-    background: rgba(26, 26, 26, 0.5);
-}
-
-.markdown-content table::-webkit-scrollbar-thumb {
-    background: rgba(74, 222, 128, 0.3);
-    border-radius: 2px;
-}
-
-/* Touch-friendly Links */
-@media (max-width: 768px) {
-    .markdown-content a {
-        padding: 0.125rem 0;
-    }
-
-    .markdown-content p {
-        margin: 1rem 0;
-    }
-
-    /* Enhanced List Spacing */
-    .markdown-content ul > li,
-    .markdown-content ol > li {
-        margin: 0.5rem 0;
-    }
-
-    /* Code Block Line Numbers */
-    .line-numbers-rows {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
     }
 }
 </style>
@@ -639,4 +452,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-</script> 
+</script>

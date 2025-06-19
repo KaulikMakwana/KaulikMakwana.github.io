@@ -12,23 +12,28 @@ platform: PwnTillDawn
 Successfully compromised a Windows 7 machine running XAMPP, escalated privileges to SYSTEM, and captured multiple flags through FTP enumeration, web application exploitation, and local privilege escalation.
 
 ## Machine Overview
-| Detail | Value |
+| Detail | Value  |
 |--------|--------|
 | Hostname | DJANGO |
 | Operating System | Windows 7 Home Basic 7601 Service Pack 1 |
 | Domain | PWNTILLDAWN |
 | Architecture | x64 |
+|---|---|
+
+---
 
 ## Captured Flags
+```shell
 - FLAG11: `7a763d39f68ece1edd1037074ff8d129451af0b1`
 - FLAG18: `ad1357d394eba91febe5a6d33dd3ec6dd0abc056`
 - FLAG19: `a393b6fb540379e942b0010afa3058985fb8cec3`
 - FLAG20: `a9435c140b6667cf2f24fcf6a9a1ea6b8574c3e7`
+```
 
 ## Initial Reconnaissance
 
 ### Port Scan Results
-```
+```shell
 21/tcp    - FTP
 80/tcp    - HTTP (Apache 2.4.34)
 135/tcp   - MSRPC
@@ -39,7 +44,6 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 8089/tcp  - Splunkd
 49152-49158/tcp - MSRPC
 ```
-
 ### Initial Access Vector
 1. **Anonymous FTP Access**
    - Anonymous FTP login was enabled
@@ -71,7 +75,7 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
 1. **Initial Access**
    - Gained meterpreter shell as limited user
    - System Information:
-     ```
+     ```shell
      OS: Windows 7 (6.1 Build 7601, SP1)
      Architecture: x64
      Domain: PWNTILLDAWN
@@ -88,7 +92,7 @@ Successfully compromised a Windows 7 machine running XAMPP, escalated privileges
    
 ### System Access
 Post exploitation revealed the following user accounts:
-```
+```shell
 Administrator
 chuck.norris
 Guest
@@ -133,3 +137,4 @@ rambo
 4. Shell Access - Reverse shell establishment
 5. Privilege Escalation - SYSTEM access obtained
 6. Post-Exploitation - Flag collection and system enumeration
+
