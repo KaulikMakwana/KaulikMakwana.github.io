@@ -1,0 +1,47 @@
+# Site settings
+title: "Kaulik Makwana"
+description: "Cybersecurity Engineer & Penetration Tester specializing in offensive security"
+baseurl: ""
+url: "https://kaulikmakwana.github.io"
+timezone: UTC
+
+# Collections
+collections:
+  writeups:
+    output: true
+    permalink: /writeups/:path/
+  learnings:
+    output: true
+    permalink: /learnings/:path/
+
+# Default front matter
+defaults:
+  - scope:
+      path: ""
+      type: "writeups"
+    values:
+      layout: "writeup"
+  - scope:
+      path: ""
+      type: "learnings"
+    values:
+      layout: "learning"
+      
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+  auto_ids: true
+  toc_levels: 1..3
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+  hard_wrap: false
+  footnote_nr: 1
+  parse_block_html: true
+  parse_span_html: true
+  auto_id_stripping: false
+  auto_id_prefix: section-
+  transliterated_header_ids: false
+  template: ''
