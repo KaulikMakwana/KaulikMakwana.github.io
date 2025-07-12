@@ -91,6 +91,11 @@ document.addEventListener('DOMContentLoaded', function() {
         codeBlocks.forEach(block => {
             Prism.highlightElement(block);
         });
+
+        // Terminal effect for shell code blocks
+        markdownContent.querySelectorAll('pre code.language-shell').forEach(block => {
+            block.parentNode.classList.add('terminal-shell-effect');
+        });
     }
 
     // Add copy button to code blocks

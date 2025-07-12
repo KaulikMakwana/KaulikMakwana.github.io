@@ -51,6 +51,9 @@
     <!-- Marked.js for Markdown rendering -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
+    <!-- Alpine.js for interactive tabs -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     <!-- Custom styles -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
@@ -483,6 +486,10 @@
 {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-05-12T00:00:00+00:00","datePublished":"2025-05-12T00:00:00+00:00","description":"Overview","headline":"Snare Machine Writeup","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/pwntilldawn/Snare-Machine/"},"url":"https://kaulikmakwana.github.io/writeups/pwntilldawn/Snare-Machine/"}</script>
 <!-- End Jekyll SEO tag -->
 
+<style>
+.certificate-key { color: #e6b800 !important; font-weight: 600; }
+.certificate-value { color: #39ff14 !important; font-weight: 500; }
+</style>
 </head>
 <body class="min-h-screen flex flex-col bg-gradient-to-b from-cyber-black to-cyber-gray">
     <!-- Scroll Progress Indicator -->
@@ -494,8 +501,8 @@
             <div class="flex justify-between items-center h-16">
                 <a href="/" class="group flex items-center space-x-2">
                     <span class="text-xl font-bold text-cyber-green">[KM]</span>
-                    <span class="hidden md:inline text-sm text-gray-400 group-hover:text-cyber-green transition-colors">~/offensive-security</span>
-                    <span class="terminal-cursor"></span>
+                    <span class="hidden md:inline text-sm text-gray-400 group-hover:text-cyber-green transition-colors">~/Red Teamer</span>
+                    
                 </a>
                 
                 <!-- Desktop Navigation -->
@@ -545,10 +552,7 @@
             </div>
 
             <header class="mb-4 sm:mb-6 md:mb-8 lg:mb-10 w-full">
-                <div class="terminal-text mb-2 sm:mb-3 text-cyber-green text-xs sm:text-sm font-mono opacity-60" data-aos="fade-up" data-aos-delay="400">
-                    <span class="opacity-50">$</span> cat snare-machine-writeup.md
-                </div>
-                <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent break-words" data-aos="fade-up" data-aos-delay="600">Snare Machine Writeup</h1>
+                <h1 class="terminal-title text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-8 tracking-tight text-cyber-green">Snare Machine Writeup</h1>
                 <div class="text-gray-400 mt-1.5 sm:mt-2 font-mono text-xs sm:text-sm" data-aos="fade-up" data-aos-delay="800">
                     
                         <span class="text-cyber-green">></span> May 12, 2025
@@ -560,6 +564,14 @@
             </header>
 
             <div class="markdown-content prose prose-invert max-w-none font-mono text-xs sm:text-sm w-full" data-aos="fade-up" data-aos-delay="1000">
+                <style>
+                    .markdown-content h2 {
+                        @apply terminal-title text-2xl sm:text-3xl font-bold mt-8 mb-4 text-cyber-green;
+                    }
+                    .markdown-content h3 {
+                        @apply terminal-text text-xl sm:text-2xl font-semibold mt-6 mb-3 text-cyber-green;
+                    }
+                </style>
                 <h1 id="section-overview">Overview</h1>
 
 <p><strong>Target IP</strong>: (10.150.150.18)</p>
@@ -1259,6 +1271,25 @@ snare
         padding-right: 0.5rem !important;
     }
 }
+
+/* Image zoom functionality for mobile */
+.markdown-content img.zoomable {
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.markdown-content img.zoomable.zoomed {
+    cursor: zoom-out;
+    transform: scale(1.5);
+    z-index: 10;
+    position: relative;
+}
+
+@media (max-width: 640px) {
+    .markdown-content img.zoomable.zoomed {
+        transform: scale(1.2);
+    }
+}
 </style>
 
 <script>
@@ -1362,27 +1393,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<style>
-/* Image zoom functionality for mobile */
-.markdown-content img.zoomable {
-    cursor: zoom-in;
-    transition: transform 0.3s ease;
-}
-
-.markdown-content img.zoomable.zoomed {
-    cursor: zoom-out;
-    transform: scale(1.5);
-    z-index: 10;
-    position: relative;
-}
-
-@media (max-width: 640px) {
-    .markdown-content img.zoomable.zoomed {
-        transform: scale(1.2);
-    }
-}
-</style>
-
     </main>
 
     <!-- Footer -->
@@ -1393,23 +1403,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="text-gray-400">&copy; 2025 Kaulik Makwana</p>
                     <p class="text-sm text-gray-500 terminal-text">Cybersecurity Engineer & Penetration Tester</p>
                 </div>
-                <div class="flex space-x-6">
-                    <a href="https://github.com/KaulikMakwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                    <a href="https://www.linkedin.com/in/kaulik-makwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                    <a href="mailto:kaulik81@gmail.com" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                </div>
+                
             </div>
         </div>
     </footer>
@@ -1418,6 +1412,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <!-- Custom JS -->
+    <script src="/assets/js/terminal-animation.js"></script>
     <script src="/assets/js/markdown-viewer.js"></script>
     
     <!-- Initialize animations and interactions -->
@@ -1509,5 +1504,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     </script>
+<script src="/assets/js/tab-ux.js"></script>
 </body>
 </html>

@@ -51,6 +51,9 @@
     <!-- Marked.js for Markdown rendering -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
+    <!-- Alpine.js for interactive tabs -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     <!-- Custom styles -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
@@ -482,6 +485,10 @@
 {"@context":"https://schema.org","@type":"WebPage","description":"Cybersecurity Engineer &amp; Penetration Tester specializing in offensive security","headline":"Learnings","url":"https://kaulikmakwana.github.io/learnings/"}</script>
 <!-- End Jekyll SEO tag -->
 
+<style>
+.certificate-key { color: #e6b800 !important; font-weight: 600; }
+.certificate-value { color: #39ff14 !important; font-weight: 500; }
+</style>
 </head>
 <body class="min-h-screen flex flex-col bg-gradient-to-b from-cyber-black to-cyber-gray">
     <!-- Scroll Progress Indicator -->
@@ -493,8 +500,8 @@
             <div class="flex justify-between items-center h-16">
                 <a href="/" class="group flex items-center space-x-2">
                     <span class="text-xl font-bold text-cyber-green">[KM]</span>
-                    <span class="hidden md:inline text-sm text-gray-400 group-hover:text-cyber-green transition-colors">~/offensive-security</span>
-                    <span class="terminal-cursor"></span>
+                    <span class="hidden md:inline text-sm text-gray-400 group-hover:text-cyber-green transition-colors">~/Red Teamer</span>
+                    
                 </a>
                 
                 <!-- Desktop Navigation -->
@@ -529,53 +536,58 @@
 <div class="min-h-screen relative py-6 md:py-12">
     <div class="absolute inset-0 bg-[linear-gradient(rgba(26,26,26,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(26,26,26,0.5)_2px,transparent_2px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]"></div>
     <div class="max-w-7xl mx-auto px-2 sm:px-4 relative">
-        <div class="glass border border-cyber-green/10 rounded-2xl p-4 sm:p-8">
-            <div class="terminal-text mb-8 text-cyber-green text-base md:text-lg font-mono">
-                <span class="opacity-50">$</span> ls -la ~/learnings/
-            </div>
-            
-            <h1 class="text-4xl md:text-5xl font-bold mb-10 bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent">My Learnings</h1>
+        <div class="glass border border-cyber-green/10 rounded-2xl p-4 sm:p-8" data-terminal-group>
+            <h1 class="terminal-title text-4xl md:text-5xl font-bold mb-10 bg-gradient-to-r from-cyber-green to-emerald-400 bg-clip-text text-transparent">My Learnings</h1>
             
             <!-- Introduction -->
             <div class="mb-8 text-gray-300 font-mono">
-                <div class="terminal-text text-cyber-green text-base opacity-60 mb-2">
-                    <span class="opacity-50">$</span> echo "Welcome to my learning notes"
-                </div>
                 <p class="leading-relaxed">
-                    Here, I share my notes and learnings that I have gathered during my cyber journey. <span class="terminal-cursor"></span>
+                    Here, I share my notes and learnings that I have gathered during my cyber journey. 
                 </p>
             </div>
             
             
             
             <!-- Category tabs -->
-            <div class="flex flex-wrap justify-center sm:justify-start gap-4 md:gap-6 mb-10 border-b border-cyber-green/10 pb-4 pt-1 overflow-x-auto scrollbar-thin scrollbar-thumb-cyber-green scrollbar-track-gray-800">
+            <div class="tab-bar-row grid grid-cols-2 sm:flex sm:flex-wrap justify-center sm:justify-start gap-4 md:gap-6 mb-10 border-b border-cyber-green/10 pb-4 pt-1 overflow-x-auto scrollbar-thin scrollbar-thumb-cyber-green scrollbar-track-gray-800 px-2 md:px-6">
                 
                 
                 <button 
-                    class="category-tab py-1.5 md:py-2.5 px-4 md:px-6 font-mono text-base md:text-lg text-gray-400 hover:text-cyber-green focus:outline-none focus:ring-2 focus:ring-cyber-green/20 focus:ring-offset-2 focus:ring-offset-black rounded transition-all duration-300 flex items-center justify-center hover:bg-cyber-green/5 hover:shadow-[0_0_10px_rgba(0,255,127,0.1)] active text-cyber-green bg-cyber-green/5" 
-                    data-category="web-exploitation"
-                >
-                    <span class="opacity-50 mr-4 md:mr-6">[</span>
-                    <span class="mx-2 md:mx-3">Web Exploitation</span>
-                    <span class="opacity-50 ml-4 md:ml-6">]</span>
-                </button>
+    class="category-tab sm:w-auto py-1.5 md:py-2.5 px-4 md:px-6 font-mono text-base md:text-lg text-gray-400 hover:text-cyber-green focus:outline-none focus:ring-2 focus:ring-cyber-green/20 focus:ring-offset-2 focus:ring-offset-black rounded transition-all duration-300 flex items-center justify-center gap-x-2 hover:bg-cyber-green/5 hover:shadow-[0_0_10px_rgba(0,255,127,0.1)] active text-cyber-green bg-cyber-green/5 tab-btn"
+    data-category="web-exploitation"
+    data-tab-btn
+>
+    <span class="tab-number">1</span>
+    <span class="tab-label">Web Exploitation</span>
+</button>
                 
                 
                 
                 <button 
-                    class="category-tab py-1.5 md:py-2.5 px-4 md:px-6 font-mono text-base md:text-lg text-gray-400 hover:text-cyber-green focus:outline-none focus:ring-2 focus:ring-cyber-green/20 focus:ring-offset-2 focus:ring-offset-black rounded transition-all duration-300 flex items-center justify-center hover:bg-cyber-green/5 hover:shadow-[0_0_10px_rgba(0,255,127,0.1)] " 
-                    data-category="medium"
-                >
-                    <span class="opacity-50 mr-4 md:mr-6">[</span>
-                    <span class="mx-2 md:mx-3">Medium</span>
-                    <span class="opacity-50 ml-4 md:ml-6">]</span>
-                </button>
+    class="category-tab sm:w-auto py-1.5 md:py-2.5 px-4 md:px-6 font-mono text-base md:text-lg text-gray-400 hover:text-cyber-green focus:outline-none focus:ring-2 focus:ring-cyber-green/20 focus:ring-offset-2 focus:ring-offset-black rounded transition-all duration-300 flex items-center justify-center gap-x-2 hover:bg-cyber-green/5 hover:shadow-[0_0_10px_rgba(0,255,127,0.1)]  tab-btn"
+    data-category="medium"
+    data-tab-btn
+>
+    <span class="tab-number">2</span>
+    <span class="tab-label">Medium</span>
+</button>
                 
                 
             </div>
 
             <!-- Category content sections -->
+            <div class="tab-carousel-dots flex items-center justify-center gap-2 mt-2">
+  
+    
+      <span class="tab-dot tab-dot-active"></span>
+    
+  
+    
+      <span class="tab-dot "></span>
+    
+  
+</div>
+
             <div class="space-y-8 md:space-y-12">
                 
                 
@@ -583,10 +595,6 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                         
                         <article class="glass glass-hover rounded-lg p-4 md:p-6 border border-cyber-green/10 group">
-                            <div class="terminal-text text-cyber-green text-sm md:text-base font-mono opacity-60">
-                                <span class="opacity-50">$</span> cat sql-injection-from-basics-to-advanced.md
-                            </div>
-                            
                             <h3 class="text-xl md:text-2xl font-bold my-3 md:my-4 font-mono group-hover:text-cyber-green transition-colors">
                                 <a href="/learnings/Web-Exploitation/sql-injection/" class="hover:text-cyber-green block">
                                     SQL Injection - From Basics to Advanced
@@ -632,10 +640,6 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                         
                         <article class="glass glass-hover rounded-lg p-4 md:p-6 border border-cyber-green/10 group">
-                            <div class="terminal-text text-cyber-green text-sm md:text-base font-mono opacity-60">
-                                <span class="opacity-50">$</span> cat my-journey-to-passing-the-ejpt-certification.md
-                            </div>
-                            
                             <h3 class="text-xl md:text-2xl font-bold my-3 md:my-4 font-mono group-hover:text-cyber-green transition-colors">
                                 <a href="/learnings/Medium/ejpt-medium-blog/" class="hover:text-cyber-green block">
                                     My Journey to Passing the eJPT Certification
@@ -679,6 +683,7 @@
     </div>
 </div>
 
+<script src="/assets/js/tab-ux.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.category-tab');
@@ -733,23 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="text-gray-400">&copy; 2025 Kaulik Makwana</p>
                     <p class="text-sm text-gray-500 terminal-text">Cybersecurity Engineer & Penetration Tester</p>
                 </div>
-                <div class="flex space-x-6">
-                    <a href="https://github.com/KaulikMakwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                    <a href="https://www.linkedin.com/in/kaulik-makwana" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                    <a href="mailto:kaulik81@gmail.com" class="text-gray-400 hover:text-cyber-green transition-colors transform hover:scale-110" target="_blank" rel="noopener noreferrer">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                </div>
+                
             </div>
         </div>
     </footer>
@@ -758,6 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <!-- Custom JS -->
+    <script src="/assets/js/terminal-animation.js"></script>
     <script src="/assets/js/markdown-viewer.js"></script>
     
     <!-- Initialize animations and interactions -->
@@ -849,5 +839,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     </script>
+<script src="/assets/js/tab-ux.js"></script>
 </body>
 </html>
