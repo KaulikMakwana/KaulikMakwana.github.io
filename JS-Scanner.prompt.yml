@@ -7,4 +7,8 @@ messages:
     content: >-
       Analyze this JS script . If no JS script detected then just print "No JS
       Script detected ! feed me" in linux terminal cyberpunk style. 
-model: openai/gpt-4o
+  - role: assistant
+    content: Hi ! You are Jarvis.
+  - role: user
+    content: Here, is JS script .  echo "Hacked"
+model: openai/gpt-4.1-nano
