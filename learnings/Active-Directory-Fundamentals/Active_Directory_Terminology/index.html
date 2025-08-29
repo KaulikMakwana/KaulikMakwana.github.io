@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Kaulik Makwana - Cybersecurity Engineer & Penetration Tester">
+    <title>AD basics | Kaulik Makwana</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/images/favicon/favicon.png">
+    
+    <!-- TailwindCSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-green': '#4ade80',
+                        'cyber-black': '#0a0a0a',
+                        'cyber-gray': '#1a1a1a',
+                    },
+                    animation: {
+                        'terminal-cursor': 'blink 1s step-end infinite',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- JetBrains Mono Font -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    
+    <!-- Prism.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Alpine.js for interactive tabs -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+        :root {
+            --cyber-black: #111111;
+            --cyber-gray: #1a1a1a;
+            --cyber-green: #4ade80;
+            --animation-timing: cubic-bezier(0.16, 1, 0.3, 1);
+            --animation-quick: 0.2s;
+            --animation-normal: 0.3s;
+            --animation-slow: 0.5s;
+            --spring-timing: cubic-bezier(0.37, 0, 0.63, 1);
+        }
+
+        /* Core styles */
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--cyber-black);
+            color: #e5e7eb;
+            opacity: 0;
+            animation: fadeIn 0.4s var(--spring-timing) forwards;
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2); }
+            50% { box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.1); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
+        @keyframes terminalCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Enhanced button animations */
+        .nav-button {
+            position: relative;
+            overflow: hidden;
+            transition: all var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(74, 222, 128, 0.1);
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: inherit;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .nav-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Enhanced glass effect */
+        .glass {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            transition: all var(--animation-normal) var(--spring-timing);
+        }
+
+        .glass:hover {
+            border-color: rgba(74, 222, 128, 0.2);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.1);
+        }
+
+        /* Navigation link animations */
+        .nav-link {
+            position: relative;
+            transition: color var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--cyber-green);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Terminal cursor animation */
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background: var(--cyber-green);
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+            opacity: 0.7;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Enhanced scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyber-green), transparent);
+            z-index: 1000;
+            transform-origin: left;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .mobile-nav {
+                display: none;
+                position: fixed;
+                top: 4rem;
+                left: 0;
+                right: 0;
+                background: rgba(26, 26, 26, 0.95);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                padding: 1rem;
+                z-index: 50;
+                border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            }
+
+            .mobile-nav.active {
+                display: block;
+                animation: slideDown 0.2s ease-out;
+            }
+
+            @keyframes slideDown {
+                from {
+                    transform: translateY(-10px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            .mobile-nav a {
+                display: block;
+                padding: 0.75rem 1rem;
+                color: #e5e7eb;
+                font-size: 1rem;
+                border-radius: 0.375rem;
+                transition: all 0.2s ease;
+                margin-bottom: 0.5rem;
+                border: 1px solid transparent;
+            }
+
+            .mobile-nav a:hover,
+            .mobile-nav a.active {
+                background: rgba(74, 222, 128, 0.1);
+                border-color: rgba(74, 222, 128, 0.2);
+                color: var(--cyber-green);
+            }
+
+            .menu-button {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                width: 24px;
+                height: 20px;
+                padding: 0;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+            }
+
+            .menu-button span {
+                display: block;
+                width: 100%;
+                height: 2px;
+                background: var(--cyber-green);
+                transition: all 0.2s ease;
+            }
+
+            .menu-button.active span:nth-child(1) {
+                transform: translateY(9px) rotate(45deg);
+            }
+
+            .menu-button.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-button.active span:nth-child(3) {
+                transform: translateY(-9px) rotate(-45deg);
+            }
+
+            /* Typography Adjustments */
+            h1 { font-size: 1.875rem !important; }
+            h2 { font-size: 1.5rem !important; }
+            h3 { font-size: 1.25rem !important; }
+
+            /* Content Spacing */
+            .content-wrapper {
+                padding-top: 1rem;
+            }
+
+            /* Navigation Adjustments */
+            .nav-link {
+                padding: 0.5rem;
+            }
+
+            /* Button Adjustments */
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Preserve Desktop Styles */
+        @media (min-width: 769px) {
+            .menu-button {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        /* Safe Area Insets */
+        @supports(padding: max(0px)) {
+            .container {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+
+            .mobile-nav {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Markdown Content Styles */
+        .markdown-content ul {
+            list-style-type: none;
+            padding-left: 1.75rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ul > li {
+            position: relative;
+            margin: 0.5rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ul > li::before {
+            content: ">";
+            position: absolute;
+            left: -1.5rem;
+            color: var(--cyber-green);
+            opacity: 0.8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ul > li > ul {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ul > li > ul > li::before {
+            content: "-";
+        }
+
+        .markdown-content ol {
+            counter-reset: section;
+            list-style-type: none;
+            padding-left: 2.5rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ol > li {
+            counter-increment: section;
+            position: relative;
+            margin: 0.75rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ol > li::before {
+            content: counter(section) ".";
+            position: absolute;
+            left: -2.5rem;
+            width: 2rem;
+            text-align: right;
+            color: var(--cyber-green);
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ol > li > ol {
+            counter-reset: subsection;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ol > li > ol > li {
+            counter-increment: subsection;
+            margin: 0.5rem 0;
+        }
+
+        .markdown-content ol > li > ol > li::before {
+            content: counter(section) "." counter(subsection);
+        }
+
+        /* Table Styles */
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .markdown-content th {
+            background: rgba(55, 65, 81, 0.5);
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            color: var(--cyber-green);
+            white-space: nowrap;
+        }
+
+        .markdown-content td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            min-width: 100px;
+        }
+
+        .markdown-content tr:hover {
+            background: rgba(74, 222, 128, 0.05);
+            transition: background-color 0.2s;
+        }
+
+        @media (max-width: 768px) {
+            .markdown-content table {
+                margin: 1rem -1rem;
+                border-radius: 0;
+            }
+
+            .markdown-content th,
+            .markdown-content td {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .markdown-content ul {
+                padding-left: 1.5rem;
+            }
+
+            .markdown-content ol {
+                padding-left: 2rem;
+            }
+
+            .markdown-content ul > li::before {
+                left: -1.25rem;
+            }
+
+            .markdown-content ol > li::before {
+                left: -2rem;
+                width: 1.75rem;
+            }
+        }
+    </style>
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>AD basics | Kaulik Makwana</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="AD basics" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Fundamentals of Active Directory…" />
+<meta property="og:description" content="Fundamentals of Active Directory…" />
+<link rel="canonical" href="https://kaulikmakwana.github.io/learnings/Active-Directory-Fundamentals/Active_Directory_Terminology/" />
+<meta property="og:url" content="https://kaulikmakwana.github.io/learnings/Active-Directory-Fundamentals/Active_Directory_Terminology/" />
+<meta property="og:site_name" content="Kaulik Makwana" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-08-29T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="AD basics" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-08-29T00:00:00+00:00","datePublished":"2025-08-29T00:00:00+00:00","description":"Fundamentals of Active Directory…","headline":"AD basics","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/learnings/Active-Directory-Fundamentals/Active_Directory_Terminology/"},"url":"https://kaulikmakwana.github.io/learnings/Active-Directory-Fundamentals/Active_Directory_Terminology/"}</script>
+<!-- End Jekyll SEO tag -->
+
+<style>
+.certificate-key { color: #e6b800 !important; font-weight: 600; }
+.certificate-value { color: #39ff14 !important; font-weight: 500; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col bg-gradient-to-b from-cyber-black to-cyber-gray">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 glass z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="group flex items-center space-x-2">
+                    <span class="text-xl font-bold text-cyber-green">[KM]</span>
+                    <span class="hidden md:inline text-sm text-gray-400 group-hover:text-cyber-green transition-colors">~/Red Teamer</span>
+                    
+                </a>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="nav-link ">~/home</a>
+                    <a href="/about" class="nav-link ">~/about</a>
+                    <a href="/writeups" class="nav-link ">~/writeups</a>
+                    <a href="/learnings" class="nav-link active text-cyber-green">~/learnings</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden menu-button" id="menuButton" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav md:hidden" id="mobileNav">
+            <a href="/" class="">~/home</a>
+            <a href="/about" class="">~/about</a>
+            <a href="/writeups" class="">~/writeups</a>
+            <a href="/learnings" class="active">~/learnings</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-16">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+
+<!-- Main Container with Border (matches home page) -->
+<article class="min-h-screen relative py-6 md:py-12">
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(26,26,26,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(26,26,26,0.5)_2px,transparent_2px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]"></div>
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 relative">
+        <div class="glass border border-cyber-green/10 rounded-2xl p-4 sm:p-8 flex flex-col min-h-[60vh] justify-center">
+            <!-- Back to Learnings Link -->
+            <div class="mb-3 sm:mb-4 md:mb-6 lg:mb-8 w-full" data-aos="fade-right" data-aos-delay="200">
+                <a href="/learnings" class="group inline-flex items-center justify-center bg-cyber-black/50 text-cyber-green px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 text-xs sm:text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-mono">cd ../learnings</span>
+                </a>
+            </div>
+
+            <header class="mb-4 sm:mb-6 md:mb-8 lg:mb-10 w-full">
+                <div class="terminal-text mb-2 sm:mb-3 text-cyber-green text-xs sm:text-sm font-mono opacity-60" data-aos="fade-up" data-aos-delay="400">
+                <span class="opacity-50">$</span> cat ad-basics.md
+            </div>
+                <h1 class="terminal-title text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-8 tracking-tight text-cyber-green">AD basics</h1>
+                <div class="text-gray-400 mt-1.5 sm:mt-2 font-mono text-xs sm:text-sm" data-aos="fade-up" data-aos-delay="800">
+                
+                    <span class="text-cyber-green">></span> August 29, 2025
+                    
+                    <span class="text-cyber-green mx-2">|</span> <span class="text-cyber-green">Active Directory</span>
+                    
+                
+            </div>
+            </header>
+
+            <div class="markdown-content prose prose-invert max-w-none font-mono text-xs sm:text-sm w-full" data-aos="fade-up" data-aos-delay="1000">
+                <style>
+                    .markdown-content h2 {
+                        @apply terminal-title text-2xl sm:text-3xl font-bold mt-8 mb-4 text-cyber-green;
+                    }
+                    .markdown-content h3 {
+                        @apply terminal-text text-xl sm:text-2xl font-semibold mt-6 mb-3 text-cyber-green;
+                    }
+                </style>
+                <h1 id="section--what-is-ad-">👉 What is AD ?</h1>
+<p>-&gt; <strong>Active Directory (AD)</strong> is a <strong>centralized directory service</strong> developed by Microsoft. It <strong>manages and authenticates users, computers, groups, and other resources</strong> in a <strong>Windows network domain</strong>.</p>
+
+<ul>
+  <li>A centralized <strong>identity management system</strong> for Windows.</li>
+  <li>Manages <strong>users, computers, groups, policies</strong> in an enterprise.</li>
+</ul>
+
+<hr />
+
+<h1 id="section-active-directory-structure">👉Active Directory Structure</h1>
+<p>Active Directory flaws and misconfigurations can often be used to obtain a foothold (internal access), move laterally and vertically within a network, and gain unauthorized access to protected resources such as databases, file shares, source code, and more</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Domain Computers</th>
+      <th>Domain Users</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Domain Group Information</td>
+      <td>Organizational Units (OUs)</td>
+    </tr>
+    <tr>
+      <td>Default Domain Policy</td>
+      <td>Functional Domain Levels</td>
+    </tr>
+    <tr>
+      <td>Password Policy</td>
+      <td>Group Policy Objects (GPOs)</td>
+    </tr>
+    <tr>
+      <td>Domain Trusts</td>
+      <td>Access Control Lists (ACLs)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h4 id="section-key-components">Key Components</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Domain</strong></td>
+      <td>Logical group of AD objects (e.g. <code class="language-plaintext highlighter-rouge">redteam.local</code>)</td>
+    </tr>
+    <tr>
+      <td><strong>Domain Controller (DC)</strong></td>
+      <td>The brain of the domain. Hosts AD DS.</td>
+    </tr>
+    <tr>
+      <td><strong>Forest</strong></td>
+      <td>Collection of domains (can be 1 or more)</td>
+    </tr>
+    <tr>
+      <td><strong>OU (Organizational Unit)</strong></td>
+      <td>Container to organize users/computers</td>
+    </tr>
+    <tr>
+      <td><strong>GPO (Group Policy Object)</strong></td>
+      <td>Rules applied to users/computers</td>
+    </tr>
+    <tr>
+      <td><strong>FSMO Roles</strong></td>
+      <td>5 special roles in AD (we’ll go deep later)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h4 id="section-protocols-in-ad">Protocols in AD</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Protocol</th>
+      <th>Use</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>LDAP/LDAPS</strong></td>
+      <td>Directory lookup</td>
+    </tr>
+    <tr>
+      <td><strong>Kerberos</strong></td>
+      <td>Authentication</td>
+    </tr>
+    <tr>
+      <td><strong>SMB</strong></td>
+      <td>File sharing</td>
+    </tr>
+    <tr>
+      <td><strong>DNS</strong></td>
+      <td>Name resolution</td>
+    </tr>
+    <tr>
+      <td><strong>RPC</strong></td>
+      <td>Remote procedure calls (used in many attacks!)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h4 id="section-example-ad-structure">Example AD Structure</h4>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>INLANEFREIGHT.LOCAL/
+├── ADMIN.INLANEFREIGHT.LOCAL
+│   ├── GPOs
+│   └── OU
+│       └── EMPLOYEES
+│           ├── COMPUTERS
+│           │   └── FILE01
+│           ├── GROUPS
+│           │   └── HQ Staff
+│           └── USERS
+│               └── barbara.jones
+├── CORP.INLANEFREIGHT.LOCAL
+└── DEV.INLANEFREIGHT.LOCAL
+</code></pre></div></div>
+
+<hr />
+
+<h1 id="section--active-directory-terminology">👉 Active Directory Terminology</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Term</th>
+      <th style="text-align: center">Short explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">Object</td>
+      <td style="text-align: center">ANY resource present within an AD</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Attributes</td>
+      <td style="text-align: center">pieces of information about an object.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Schema</td>
+      <td style="text-align: center">blueprint of any enterprise env</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Domain</td>
+      <td style="text-align: center">logical group of objects</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Forest</td>
+      <td style="text-align: center">collection of domains</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Tree</td>
+      <td style="text-align: center">A tree is a single domain with its own hierarchy of objects.                        corp.local<br />sales.corp.local</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Container</td>
+      <td style="text-align: center">holds objects in AD, like a folder</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Leaf</td>
+      <td style="text-align: center">end of branch</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Global Catalog</td>
+      <td style="text-align: center">domain controller that stores copies of ALL objects in AD forest</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Replication</td>
+      <td style="text-align: center">keeps all the domain controllers updated</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Service Principal Name (SPN)</td>
+      <td style="text-align: center">uniquely identifies a service instance and used by Kerberos authentication</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Group Policy Object (GPO)</td>
+      <td style="text-align: center"><strong>set of rules and settings</strong> that an admin can apply to AD</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Access Control List (ACL)</td>
+      <td style="text-align: center">applying permissions to users and services</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Access Control Entries (ACEs)</td>
+      <td style="text-align: center">rules</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Fully Qualified Domain Name (FQDN)</td>
+      <td style="text-align: center">complete name for a specific computer or hos</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Tombstone</td>
+      <td style="text-align: center">act as a recovery bin</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">SYSVOL</td>
+      <td style="text-align: center">is like the shared folder of important AD scripts and policies</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">NTDS.DIT</td>
+      <td style="text-align: center">Heart of AD - <code class="language-plaintext highlighter-rouge">C:\Windows\NTDS\</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h1 id="section--active-directory-objects">👉 Active Directory Objects</h1>
+
+<h4 id="section-️-users">▶️ Users</h4>
+<ul>
+  <li>considered <code class="language-plaintext highlighter-rouge">leaf objects</code></li>
+  <li>has SID and GUID
+    <h4 id="section-️-contacts">▶️ Contacts</h4>
+  </li>
+  <li>used to represent an external user</li>
+  <li>Don’t have SID and GUID
+    <h4 id="section-️-printers">▶️ Printers</h4>
+  </li>
+  <li>A printer object points to a printer accessible within the AD network
+    <h4 id="section-️-computers">▶️ Computers</h4>
+  </li>
+  <li>any computer joined to the AD just like Users
+    <h4 id="section-️-shared-folders">▶️ Shared Folders</h4>
+  </li>
+  <li> a shared folder on the specific computer where the folder resides.
+    <h4 id="section-️-groups">▶️ Groups</h4>
+  </li>
+  <li> considered a <code class="language-plaintext highlighter-rouge">container object</code> because it contains other objects
+    <h4 id="section-️-organizational-units-ous">▶️ Organizational Units (OUs)</h4>
+  </li>
+  <li>is a container that systems administrators can use to store similar objects for ease of administration.</li>
+  <li> often used for administrative delegation of tasks without granting a user account full administrative rights.
+    <h4 id="section-️-domain">▶️ Domain</h4>
+  </li>
+  <li> domain is the structure of an AD network.</li>
+  <li>Domains contain objects such as users and computers &amp; others
+    <h4 id="section-️-domain-controllers">▶️ Domain Controllers</h4>
+  </li>
+  <li>brains of an AD</li>
+  <li>handle authentication requests, verify users and control who can access various resources
+    <h4 id="section-️-sites">▶️ Sites</h4>
+  </li>
+  <li> set of computers across one or more subnets connected using high-speed links.
+    <h4 id="section-️-built-in">▶️ Built-in</h4>
+  </li>
+  <li>it is a container that holds <a href="https://docs.microsoft.com/en-us/windows/security/identity-protection/access-control/active-directory-security-groups">default groups</a> in an AD domain
+    <h4 id="section-️-foreign-security-principals">▶️ Foreign Security Principals</h4>
+  </li>
+  <li> foreign security principal (FSP) is an object created in AD to represent a security principal that belongs to a trusted external forest.</li>
+</ul>
+
+<hr />
+
+<h1 id="section-ad-functionality">👉AD Functionality</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left"><strong>Roles</strong></th>
+      <th style="text-align: left"><strong>Description</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">Schema Master</code></td>
+      <td style="text-align: left">This role manages the read/write copy of the AD schema, which defines all attributes that can apply to an object in AD.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">Domain Naming Master</code></td>
+      <td style="text-align: left">Manages domain names and ensures that two domains of the same name are not created in the same forest.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">Relative ID (RID) Master</code></td>
+      <td style="text-align: left">The RID Master assigns blocks of RIDs to other DCs within the domain that can be used for new objects. The RID Master helps ensure that multiple objects are not assigned the same SID. Domain object SIDs are the domain SID combined with the RID number assigned to the object to make the unique SID.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">PDC Emulator</code></td>
+      <td style="text-align: left">The host with this role would be the authoritative DC in the domain and respond to authentication requests, password changes, and manage Group Policy Objects (GPOs). The PDC Emulator also maintains time within the domain.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">Infrastructure Master</code></td>
+      <td style="text-align: left">This role translates GUIDs, SIDs, and DNs between domains. This role is used in organizations with multiple domains in a single forest. The Infrastructure Master helps them to communicate. If this role is not functioning properly, Access Control Lists (ACLs) will show SIDs instead of fully resolved names.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="section-️trusts">✌️Trusts</h2>
+
+<p>-&gt; A trust is used to establish <code class="language-plaintext highlighter-rouge">forest-forest</code> or <code class="language-plaintext highlighter-rouge">domain-domain</code> authentication, allowing users to access resources</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Trust Type</strong></th>
+      <th><strong>Description</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Parent-child</code></td>
+      <td>Domains within the same forest. The child domain has a two-way transitive trust with the parent domain.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Cross-link</code></td>
+      <td>a trust between child domains to speed up authentication.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">External</code></td>
+      <td>A non-transitive trust between two separate domains in separate forests which are not already joined by a forest trust. This type of trust utilizes SID filtering.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Tree-root</code></td>
+      <td>a two-way transitive trust between a forest root domain and a new tree root domain. They are created by design when you set up a new tree root domain within a forest.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Forest</code></td>
+      <td>a transitive trust between two forest root domains.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h1 id="section--ad-protocols">👉 AD Protocols</h1>
+<h2 id="section--kerberos-dns-ldap-msrpc">👉👉 Kerberos, DNS, LDAP, MSRPC</h2>
+<h3 id="section-️-kerberos">▶️ Kerberos</h3>
+<p> -&gt; default authentication protocol for domain accounts since Windows 2000
+ -&gt;  Kerberos is a stateless authentication protocol based on tickets instead of transmitting user passwords over the network.</p>
+<h3 id="section-️-kerberos-authentication-process">🛡️ Kerberos Authentication Process</h3>
+
+<ol>
+  <li>
+    <p>When a user logs in, their password is used to encrypt a timestamp, which is sent to the Key Distribution Center (KDC) to verify the integrity of the authentication by decrypting it. The KDC then issues a Ticket-Granting Ticket (TGT), encrypting it with the secret key of the krbtgt account. This TGT is used to request service tickets for accessing network resources, allowing authentication without repeatedly transmitting the user’s credentials. This process decouples the user’s credentials from requests to resources.</p>
+  </li>
+  <li>
+    <p>The KDC service on the DC checks the authentication service request (AS-REQ), verifies the user information, a nd creates a Ticket Granting Ticket (TGT), which is delivered to the user.</p>
+  </li>
+  <li>
+    <p>The user presents the TGT to the DC, requesting a Ticket Granting Service (TGS) ticket for a specific service. This is the TGS-REQ. If the TGT is successfully validated, its data is copied to create a TGS ticket.</p>
+  </li>
+  <li>
+    <p>The TGS is encrypted with the NTLM password hash of the service or computer account in whose context the service instance is running and is delivered to the user in the TGS_REP.</p>
+  </li>
+  <li>
+    <p>The user presents the TGS to the service, and if it is valid, the user is permitted to connect to the resource (AP_REQ)</p>
+  </li>
+</ol>
+
+<p>-&gt; Kerberos uses port 88</p>
+
+<hr />
+<h3 id="section-️-dns">▶️ DNS</h3>
+<p>–&gt; DNS is used to resolve hostnames to IP addresses and is broadly used across internal networks and the internet. Private internal networks use Active Directory DNS namespaces to facilitate communications between servers, clients, and peers. AD maintains a database of services running on the network in the form of service records (SRV). These service records allow clients in an AD environment to locate services that they need, such as a file server, printer, or Domain Controller.</p>
+
+<hr />
+
+<h3 id="section-️-ldap-lightweight-directory-access-protocol">▶️ LDAP (Lightweight Directory Access Protocol)</h3>
+<p>–&gt; LDAP is an open-source and cross-platform protocol used for authentication against various directory services
+-&gt; LDAP uses port 389, and LDAP over SSL (LDAPS) communicates over port 636.</p>
+<h4 id="section-️-ad-ldap-authentication">🛡️ AD LDAP Authentication</h4>
+
+<p>LDAP is set up to authenticate credentials against AD using a “BIND” operation to set the authentication state for an LDAP session. There are two types of LDAP authentication.</p>
+
+<ol>
+  <li>
+    <p>Simple Authentication: This includes anonymous authentication, unauthenticated authentication, and username/password authentication. Simple authentication means that a username and password create a BIND request to authenticate to the LDAP server.</p>
+  </li>
+  <li>
+    <p>SASL Authentication: The Simple Authentication and Security Layer (SASL) framework uses other authentication services, such as Kerberos, to bind to the LDAP server and then uses this authentication service (Kerberos in this example) to authenticate to LDAP. The LDAP server uses the LDAP protocol to send an LDAP message to the authorization service, which initiates a series of challenge/response messages resulting in either successful or unsuccessful authentication. SASL can provide additional security due to the separation of authentication methods from application protocols.</p>
+  </li>
+</ol>
+
+<hr />
+<h3 id="section-️-msrpc">▶️ MSRPC</h3>
+<p>Windows systems use MSRPC (MS Remote Procedure Call) to access systems in Active Directory using four key RPC interfaces.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>Interface Name</strong></th>
+      <th style="text-align: center"><strong>Description</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">lsarpc</td>
+      <td style="text-align: center">A set of RPC calls to the Local Security Authority (LSA) system which manages the local security policy on a computer, controls the audit policy, and provides interactive authentication services. LSARPC is used to perform management on domain security policies.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">netlogon</td>
+      <td style="text-align: center">Netlogon is a Windows process used to authenticate users and other services in the domain environment. It is a service that continuously runs in the background.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">samr</td>
+      <td style="text-align: center">Remote SAM (samr) provides management functionality for the domain account database, storing information about users and groups. IT administrators use the protocol to manage users, groups, and computers by enabling admins to create, read, update, and delete information about security principles. Attackers (and pentesters) can use the samr protocol to perform reconnaissance about the internal domain using tools such as BloodHound to visually map out the AD network and create “attack paths” to illustrate visually how administrative access or full domain compromise could be achieved. Organizations can protect against this type of reconnaissance by changing a Windows registry key to only allow administrators to perform remote SAM queries since, by default, all authenticated domain users can make these queries to gather a considerable amount of information about the AD domain.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">drsuapi</td>
+      <td style="text-align: center">drsuapi is the Microsoft API that implements the Directory Replication Service (DRS) Remote Protocol which is used to perform replication-related tasks across Domain Controllers in a multi-DC environment. Attackers can utilize drsuapi to create a copy of the Active Directory domain database (NTDS.dit) file to retrieve password hashes for all accounts in the domain, which can then be used to perform Pass-the-Hash attacks to access more systems or cracked offline using a tool such as Hashcat to obtain the cleartext password to log in to systems using remote management protocols such as Remote Desktop (RDP) and WinRM.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<hr />
+<h2 id="section-ntlm-authentication">NTLM Authentication</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>Hash/Protocol</strong></th>
+      <th style="text-align: center"><strong>Cryptographic technique</strong></th>
+      <th style="text-align: center"><strong>Mutual Authentication</strong></th>
+      <th style="text-align: center"><strong>Message Type</strong></th>
+      <th style="text-align: center"><strong>Trusted Third Party</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">NTLM</td>
+      <td style="text-align: center">Symmetric key cryptography</td>
+      <td style="text-align: center">No</td>
+      <td style="text-align: center">Random number</td>
+      <td style="text-align: center">Domain Controller</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">NTLMv1</td>
+      <td style="text-align: center">Symmetric key cryptography</td>
+      <td style="text-align: center">No</td>
+      <td style="text-align: center">MD4 hash, random number</td>
+      <td style="text-align: center">Domain Controller</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">NTLMv2</td>
+      <td style="text-align: center">Symmetric key cryptography</td>
+      <td style="text-align: center">No</td>
+      <td style="text-align: center">MD4 hash, random number</td>
+      <td style="text-align: center">Domain Controller</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Kerberos</td>
+      <td style="text-align: center">Symmetric key cryptography &amp; asymmetric cryptography</td>
+      <td style="text-align: center">Yes</td>
+      <td style="text-align: center">Encrypted ticket using DES, MD5 Domain</td>
+      <td style="text-align: center">Controller/Key Distribution Center (KDC)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>NTLM Hash Example</p>
+<div class="language-shell-session highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">
+Rachel:500:aad3c435b514a4eeaad3b935b51304fe:e46b9e548fa0d122de7f59fb6d48eaa2:::
+</span></code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Rachel</code> is the username</li>
+  <li><code class="language-plaintext highlighter-rouge">500</code> is the Relative Identifier (RID). 500 is the known RID for the <code class="language-plaintext highlighter-rouge">administrator</code> account</li>
+  <li><code class="language-plaintext highlighter-rouge">aad3c435b514a4eeaad3b935b51304fe</code> is the LM hash and, if LM hashes are disabled on the system, can not be used for anything</li>
+  <li><code class="language-plaintext highlighter-rouge">e46b9e548fa0d122de7f59fb6d48eaa2</code> is the NT hash. This hash can either be cracked offline to reveal the cleartext value (depending on the length/strength of the password) or used for a pass-the-hash attack.</li>
+</ul>
+
+<hr />
+
+<h1 id="section--user-and-machine-accounts">👉 User and Machine Accounts</h1>
+<h3 id="section-️-local-accounts">▶️ Local Accounts</h3>
+
+<ul>
+  <li>Administrator: this account has the SID S-1-5-domain-500 and is the first account created with a new Windows installation.</li>
+  <li>Guest: this account is disabled by default. The purpose of this account is to allow users without an account on the computer to log in temporarily with limited access rights.</li>
+  <li>SYSTEM: The SYSTEM (or NT AUTHORITY\SYSTEM) account on a Windows host is the  default account installed and used by the operating system to perform many of its internal functions.</li>
+  <li>Network Service: This is a predefined local account used by the Service Control Manager (SCM) for running Windows services.</li>
+  <li>Local Service: This is another predefined local account used by the Service Control Manager (SCM) for running Windows services.
+    <h3 id="section-️-domain-users">▶️ Domain Users</h3>
+  </li>
+</ul>
+
+<p>Domain users differ from local users in that they are granted rights from the domain to access resources such as file servers, printers, intranet hosts, and other objects based on the permissions granted to their user account or the group that account is a member of.</p>
+
+<p>Domain user accounts can log in to any host in the domain, unlike local users.</p>
+
+<p>One account to keep in mind is the KRBTGT account. This is a type of local account  built into the AD infrastructure. 
+This account acts as a service account for the Key Distribution service providing authentication and access for domain resources. 
+This account is a common target of many attackers since gaining control or access will enable an attacker to have unconstrained access to the domain.</p>
+
+<h3 id="section-️-user-naming-attributes">▶️ User Naming Attributes</h3>
+
+<p>|        Attribute        |                                                                                                                                 Description                                                                                                                                  |
+| :———————: | :————————————————————————————————————————————————————————————————————————————————————————–: |
+| UserPrincipalName (UPN) |                                                                                   This is the primary logon name for the user. By convention, the UPN uses the email address of the user.                                                                                    |
+|       ObjectGUID        |                                                                 This is a unique identifier of the user. In AD, the ObjectGUID attribute name never changes and remains unique even if the user is removed.                                                                  |
+|     SAMAccountName      |                                                                                           This is a logon name that supports the previous version of Windows clients and servers.                                                                                            |
+|        objectSID        |                                                                The user’s Security Identifier (SID). This attribute identifies a user and its group memberships during security interactions with the server.                                                                |
+|       sIDHistory        | This contains previous SIDs for the user object if moved from another domain and is typically seen in migration scenarios from domain to domain. After a migration occurs, the last SID will be added to the sIDHistory property, and the new SID will become its objectSID. |</p>
+<h2 id="section--domain-joined-vs-non-domain-joined-machines">👊 Domain-joined vs. Non-Domain-joined Machines</h2>
+
+<ol>
+  <li>Domain-joined :
+    <ul>
+      <li>Part of an Active Directory (AD) domain</li>
+      <li>Uses <strong>domain credentials</strong> (e.g., <code class="language-plaintext highlighter-rouge">username@company.local</code>) to log in.</li>
+    </ul>
+  </li>
+  <li>Non-Domain-Joined Machine :
+    <ul>
+      <li><strong>Standalone</strong> – no central management server.</li>
+      <li>No automatic GPO-based policy enforcement or centralized patching.</li>
+    </ul>
+  </li>
+</ol>
+
+<hr />
+
+<h1 id="section-active-directory-groups">👉Active Directory Groups</h1>
+<p>-&gt; can be used for similar users together and mass assign rights and access.
+-&gt; There are many built-in groups in AD  and also organizations also create their own groups to define rights and privileges, further managing access within the domain</p>
+<h2 id="section--types-of-groups">👉👉 Types of Groups</h2>
+<p>-&gt; AD has two fundamental characteristics: type and scope.</p>
+
+<h3 id="section-️-group-types">▶️ Group Types</h3>
+<ul>
+  <li>group type defines the group’s purpose,</li>
+  <li>When creating a new group, we must select a group type. There are two main types: security and distribution groups.
+  ▶️ security groups
+    <ul>
+      <li>assigning permissions and rights to a collection of users instead of one at a time. 
+  ▶️ distribution groups</li>
+      <li> used by email applications such as Microsoft Exchange to distribute messages to group members.</li>
+      <li> cannot be used to assign permissions to resources in AD environment
+        <h3 id="section-️-group-scopes">▶️ Group Scopes</h3>
+      </li>
+    </ul>
+  </li>
+  <li>group scope shows how the group can be used within the domain or forest.</li>
+  <li>There are three different group scopes that can be assigned when creating a new group.
+    <ol>
+      <li>Domain Local Group</li>
+      <li>Global Group</li>
+      <li>Universal Group</li>
+    </ol>
+  </li>
+</ul>
+
+<ol>
+  <li>
+    <p>Domain Local Group
+ -&gt; Can only be used to manage permissions to domain resources
+ -&gt; Local groups cannot be used in other domains but CAN contain users from OTHER  domains. 
+ -&gt; Local groups can be nested into (contained within) other local groups but NOT within global groups.</p>
+  </li>
+  <li>
+    <p>Global Group
+ -&gt; can be used to grant access to resources in another domain.
+ -&gt; can only contain accounts from the domain where it was created. 
+ -&gt; global groups can be added to both other global groups and local groups.</p>
+  </li>
+  <li>
+    <p>Universal Group
+ -&gt; can be used to manage resources distributed across multiple domains and can be given permissions to any object within the same forest.
+ -&gt; It is recommended that administrators maintain other groups (such as global groups) as members of universal groups because global group membership within universal groups is less likely to change than individual user membership in global groups.
+ -&gt; Replication is only triggered at the individual domain level when a user is removed from a global group.</p>
+  </li>
+</ol>
+
+<h3 id="section-️-nested-group-membership">▶️ Nested Group Membership</h3>
+<p>-&gt; nested groups
+-&gt; Tools like BloodHound are useful in uncovering privileges</p>
+<h4 id="section-️-group-attributes">▶️ Group Attributes</h4>
+
+<p>cn: The cn or Common-Name is the name of the group in Active Directory Domain Services.</p>
+
+<p>member: Which user, group, and contact objects are members of the group.</p>
+
+<p>groupType: An integer that specifies the group type and scope.</p>
+
+<p>memberOf: A listing of any groups that contain the group as a member (nested group membership).</p>
+
+<p>objectSid: This is the security identifier or SID of the group, which is the unique value used to identify the group as a security principal.</p>
+
+<hr />
+
+<h1 id="section--active-directory-rights-and-privileges">👉 Active Directory Rights and Privileges</h1>
+
+<p>Rights and privileges are the cornerstones of AD management and, if mismanaged, can easily lead to abuse by attackers or penetration testers.</p>
+
+<p>-&gt; <code class="language-plaintext highlighter-rouge">Rights</code> are typically assigned to users or groups and deal with permissions to <code class="language-plaintext highlighter-rouge">access</code> an object such as a file, 
+-&gt; <code class="language-plaintext highlighter-rouge">privileges</code> grant a user permission to <code class="language-plaintext highlighter-rouge">perform an action</code> such as run a program, shut down a system, reset passwords, etc.</p>
+
+<p>-&gt; AD contains many default or built-in security groups, some of which grant their members powerful rights and privileges which can be abuse if misconfigured.</p>
+
+<h2 id="section--user-rights-assignment">👉👉 User Rights Assignment</h2>
+
+<p>Depending on their current group membership, and other factors such as privileges that administrators can assign via Group Policy (GPO), users can have various rights assigned to their account.</p>
+
+<p>For example, let’s say we can gain write access over a Group Policy Object (GPO) applied to an OU containing one or more users that we control. In this example, we could potentially leverage a tool such as <a href="https://github.com/FSecureLABS/SharpGPOAbuse">SharpGPOAbuse</a> to assign targeted rights to a user. We may perform many actions in the domain to further our access with these new rights.</p>
+
+<ul>
+  <li>few Privilege examples
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">SeRemoteInteractiveLogonRight</code> –  right to log onto a host via RDP</li>
+      <li><code class="language-plaintext highlighter-rouge">SeBackupPrivilege</code>  – ability to create system backups and could be used to obtain copies of sensitive system files</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="section--security-in-active-directory">👉 Security in Active Directory</h1>
+<h4 id="section--cia-triad">👉👉 CIA Triad</h4>
+<h1 id="section-cia-triad">CIA Triad</h1>
+
+<p>The <strong>CIA Triad</strong> is the foundational model for information security, consisting of:</p>
+
+<hr />
+
+<h2 id="section--confidentiality">🔒 Confidentiality</h2>
+<p><strong>All About Access Control</strong></p>
+<ul>
+  <li>Confidentiality is the effort of keeping data private and ensuring only those with a need to know have access.</li>
+</ul>
+
+<hr />
+
+<h2 id="section--integrity">✅ Integrity</h2>
+<p><strong>Is The Data Complete And Authentic</strong></p>
+<ul>
+  <li>Integrity is the assurance that data provided to users has not been tampered with, and that while stored will remain in the same unaltered state.</li>
+</ul>
+
+<hr />
+
+<h2 id="section--availability">🌐 Availability</h2>
+<p><strong>Always UP, Always ACCESSIBLE</strong></p>
+<ul>
+  <li>Ensuring users can reach resources when needed is the name of the game with availability.</li>
+</ul>
+
+<hr />
+
+<h2 id="section-️-general-ad-hardening">🛡️ General AD Hardening</h2>
+
+<h4 id="section--laps-local-administrator-password-solution">👉 LAPS (Local Administrator Password Solution)</h4>
+
+<p>used to randomize and rotate local administrator passwords on Windows hosts and prevent lateral movement.</p>
+<h4 id="section--audit-policy-settings-logging-and-monitoring">👉 Audit Policy Settings (Logging and Monitoring)</h4>
+
+<p>Effective logging and monitoring can be used to detect an attacker or unauthorized employee adding a user or computer, modifying an object in AD, changing an account password, accessing a system in an unauthorized or non-standard manner, performing an attack such as password spraying, or more advanced attacks such as modern Kerberos attacks.</p>
+
+<h4 id="section--group-policy-security-settings">👉 Group Policy Security Settings</h4>
+
+<p>Group Policy Objects (GPOs) are virtual collections of policy settings that can be applied to specific users, groups, and computers at the OU level. These can be used to apply a wide variety of security policies to help harden Active Directory.</p>
+<ul>
+  <li>Account Policies</li>
+  <li>Local Policies</li>
+  <li>Software Restriction Policies</li>
+  <li>Application Control Policies</li>
+  <li>Advanced Audit Policy Configuration
+    <h4 id="section--update-management-sccmwsus">👉 Update Management (SCCM/WSUS)</h4>
+  </li>
+</ul>
+
+<p>The Windows Server Update Service (WSUS) can be installed as a role on a Windows Server and can be used to minimize the manual task of patching Windows systems. System Center Configuration Manager (SCCM) is a paid solution that relies on the WSUS Windows Server role being installed and offers more features than WSUS on its own.</p>
+
+<h4 id="section--group-managed-service-accounts-gmsa">👉 Group Managed Service Accounts (gMSA)</h4>
+
+<p>-&gt; An account managed by the domain that offers a higher level of security than other types of service accounts for use with non-interactive applications, services, processes, and tasks that are run automatically but require credentials to run.
+-&gt; They provide automatic password management with a 120 character password generated by the domain controller. 
+-&gt; The password is changed at a regular interval and does not need to be known by any user. It allows for credentials to be used across multiple hosts.</p>
+
+<h4 id="section--security-groups">👉 Security Groups</h4>
+
+<ul>
+  <li>offer an easy way to assign access to network resources .</li>
+  <li> They can be used to assign specific rights to the group (instead of directly to the user) to determine what members of the group can do within the AD environment.</li>
+</ul>
+
+<h4 id="section-account-separation">👉Account Separation</h4>
+
+<p>Administrators must have two separate accounts. One for their day-to-day work and a second for any administrative tasks they must perform.</p>
+
+<p>This can help ensure that if a user’s host is compromised (through a phishing attack, for example), the attacker would be limited to that host and would not obtain credentials for a highly privileged user with considerable access within the domain.</p>
+
+<h4 id="section--password-complexity-policies--passphrases--2fa">👉 Password Complexity Policies + Passphrases + 2FA</h4>
+
+<p> -&gt; minimum password length should be 12 char and longer for admin users
+ -&gt; implemente MFA for RDP to any host . this can help to prevent lateral movement.</p>
+
+<h4 id="section--limiting-domain-admin-account-usage">👉 Limiting Domain Admin Account Usage</h4>
+
+<p>All-powerful Domain Admin accounts should only be used to log in to Domain Controllers, not personal workstations, jump hosts, web servers, etc. This can significantly reduce the impact of an attack and cut down potential attack paths should a host be compromised. This would ensure that Domain Admin account passwords are not left in memory on hosts throughout the environment.</p>
+
+<h4 id="section--periodically-auditing-and-removing-stale-users-and-objects">👉 Periodically Auditing and Removing Stale Users and Objects</h4>
+
+<p>time to time check configuration and auditing AD</p>
+
+<h4 id="section--auditing-permissions-and-access">👉 Auditing Permissions and Access</h4>
+
+<p>periodically perform access control audits to ensure that users only have the level of access required for their day-to-day work. 
+-&gt; audit local admin rights, the number of Domain Admins, and Enterprise Admins to limit the attack surface, file share access, user rights</p>
+
+<h4 id="section--audit-policies--logging">👉 Audit Policies &amp; Logging</h4>
+
+<p>Visibility into the domain is a must. An organization can achieve this through robust logging and then using rules to detect anomalous activity. 
+This can also detect AD enumeration</p>
+
+<h4 id="section--using-restricted-groups">👉 Using Restricted Groups</h4>
+
+<p>Restricted Groups allow for administrators to configure group membership via Group Policy.
+could be used for various purpose such as controlling membership in the local admin group</p>
+
+<h4 id="section--limiting-server-roles">👉 Limiting Server Roles</h4>
+
+<p>It is important not to install additional roles on sensitive hosts, such as installing the Internet Information Server (IIS) role on a Domain Controller.
+-&gt; should be installed on a separate standalone web server.</p>
+
+<hr />
+<h1 id="section--group-policy-objects-gpos">👉🔐 Group Policy Objects (GPOs)</h1>
+
+<p>▶️ A Group Policy Object (GPO) is a virtual collection of policy settings that can be applied to user(s) or computer(s). Every GPO has a unique name and is assigned a unique identifier (a GUID). They can be linked to a specific OU, domain, or site. A single GPO can be linked to multiple containers, and any container can have multiple GPOs applied to it. They can be applied to individual users, hosts, or groups by being applied directly to an OU.</p>
+
+<p>GPO settings are processed using the hierarchical structure of AD and are applied using the Order of Precedence rule:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Level</th>
+      <th style="text-align: center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">Local Group Policy</td>
+      <td style="text-align: center">The policies are defined directly to the host locally outside the domain. Any setting here will be overwritten if a similar setting is defined at a higher level.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Site Policy</td>
+      <td style="text-align: center">Any policies specific to the Enterprise Site that the host resides in. Remember that enterprise environments can span large campuses and even across countries. So it stands to reason that a site might have its own policies to follow that could differentiate it from the rest of the organization. Access Control policies are a great example of this. Say a specific building or site performs secret or restricted research and requires a higher level of authorization for access to resources. You could specify those settings at the site level and ensure they are linked so as not to be overwritten by domain policy. This is also a great way to perform actions like printer and share mapping for users in specific sites.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Domain-wide Policy</td>
+      <td style="text-align: center">Any settings you wish to have applied across the domain as a whole. For example, setting the password policy complexity level, configuring a Desktop background for all users, and setting a Notice of Use and Consent to Monitor banner at the login screen.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Organizational Unit (OU)</td>
+      <td style="text-align: center">These settings would affect users and computers who belong to specific OUs. You would want to place any unique settings here that are role-specific. For example, the mapping of a particular share drive that can only be accessed by HR, access to specific resources like printers, or the ability for IT admins to utilize PowerShell and command-prompt.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Any OU Policies nested within other OU’s</td>
+      <td style="text-align: center">Settings at this level would reflect special permissions for objects within nested OUs. For example, providing Security Analysts a specific set of Applocker policy settings that differ from the standard IT Applocker settings.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>We can manage Group Policy from the Group Policy Management Console, custom applications, or using the PowerShell GroupPolicy module via command line.</p>
+
+<p>Windows performs periodic Group Policy updates, which by default is done every 90 minutes with a randomized offset of +/- 30 minutes for users and computers. 
+This random offset of +/- 30 minutes is set to avoid overwhelming domain controllers by having all clients request Group Policy from the domain controller simultaneously. 
+The period is only 5 minutes for domain controllers to update by default. When a new GPO is created and linked, it could take up to 2 hours (120 minutes) until the settings take effect.</p>
+
+<p>We can issue the command <code class="language-plaintext highlighter-rouge">gpupdate /force</code> to kick off the update process.</p>
+
+<p>We can modify the refresh interval via Group Policy by clicking on <code class="language-plaintext highlighter-rouge">Computer Configuration --&gt; Policies --&gt; Administrative Templates --&gt; System --&gt; Group Policy</code> and selecting <code class="language-plaintext highlighter-rouge">Set Group Policy refresh interval for computers</code>.</p>
+
+<h2 id="section--security-considerations-of-gpos">👉 Security Considerations of GPOs</h2>
+
+<p>-&gt; GPOs can be used to carry out attacks. 
+-&gt; These attacks typically happen when a user has the rights required to modify a GPO that applies to an OU that contains either a user account that we control or a computer.</p>
+<h3 id="section-example">👉👉Example</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tool : bloodhound
+</code></pre></div></div>
+
+<p> -&gt; <code class="language-plaintext highlighter-rouge">Domain Users</code> group can modify the <code class="language-plaintext highlighter-rouge">Disconnect Idle RDP</code> GPO due to nested group membership.
+  -&gt; In this case, we would next look to see which OUs this GPO applies to and if we can leverage these rights to gain control over a high-value user (administrator or Domain Admin) or computer (server, DC, or critical host) and move laterally to escalate privileges within the domain.</p>
+
+<hr />
+
+
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 sm:mt-12 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4" data-aos="fade-up" data-aos-duration="600">
+                
+                
+                    
+                        
+                        
+                        
+                        
+
+                <!-- Previous Learning -->
+                
+                    <div class="w-full md:w-auto"></div>
+                
+
+                <!-- Back to Index -->
+                <a href="/learnings" class="nav-button group flex items-center justify-center bg-cyber-black/50 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto text-sm sm:text-base" data-aos="fade-up" data-aos-duration="400">
+                    <span class="font-mono">cd ../learnings</span>
+                </a>
+
+                <!-- Next Learning -->
+                
+                    <div class="w-full md:w-auto"></div>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+<style>
+/* Custom styles for tables */
+.markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    border-radius: 0.5rem;
+    margin: 1rem 0 1.5rem;
+    display: table;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.markdown-content thead {
+    background: rgba(55, 65, 81, 0.5);
+}
+
+.markdown-content th {
+    background: transparent;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    white-space: nowrap;
+}
+
+.markdown-content td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    min-width: 100px;
+}
+
+.markdown-content tr:hover {
+    background: rgba(74, 222, 128, 0.05);
+    transition: background-color 0.2s;
+}
+
+.markdown-content tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table wrapper for horizontal scrolling on mobile */
+.markdown-content .table-wrapper {
+    overflow-x: auto;
+    margin: 1rem -1rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    .markdown-content table {
+        font-size: 0.875rem;
+    }
+
+    .markdown-content th,
+    .markdown-content td {
+        padding: 0.625rem 0.875rem;
+    }
+}
+
+/* Custom styles for code blocks */
+.markdown-content pre[class*="language-"] {
+    border-radius: 0.5rem;
+    margin: 1rem 0 1.5rem;
+    background: rgba(17, 17, 17, 0.95) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    font-size: 0.875rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem;
+}
+
+/* Hide line numbers on desktop */
+@media (min-width: 641px) {
+    .line-numbers-rows {
+        display: none !important;
+    }
+    
+    .line-numbers {
+        padding-left: 1rem !important;
+    }
+}
+
+/* Show line numbers only on mobile */
+@media (max-width: 640px) {
+    .line-numbers .line-numbers-rows {
+        border-right: none !important;
+    }
+
+    .line-numbers-rows > span:before {
+        color: rgba(74, 222, 128, 0.3) !important;
+    }
+}
+
+/* Topic separator line */
+.markdown-content hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, rgba(74, 222, 128, 0.05), rgba(74, 222, 128, 0.2), rgba(74, 222, 128, 0.05));
+    margin: 2rem 0;
+    border-radius: 1px;
+}
+
+.markdown-content :not(pre) > code {
+    border-radius: 0.25rem;
+    padding: 0.2rem 0.4rem;
+    background: rgba(55, 65, 81, 0.3);
+    font-size: 0.875em;
+    color: #4ade80;
+    word-break: break-word;
+}
+
+.markdown-content pre code {
+    background-color: transparent;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* Command prompt styling */
+.markdown-content .command-prompt {
+    background: rgba(31, 41, 55, 0.7);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: #4ade80;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
+}
+
+.markdown-content .command-prompt::before {
+    content: "$ ";
+    color: rgba(74, 222, 128, 0.5);
+}
+
+/* Terminal output styling */
+.markdown-content .terminal-output {
+    background: rgba(17, 24, 39, 0.7);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: #d1d5db;
+    white-space: pre-wrap;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
+}
+
+/* Additional markdown content styles */
+.markdown-content {
+    color: #e5e7eb;
+    line-height: 1.75;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+    color: #4ade80;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    position: relative;
+    padding-left: 1.25rem;
+}
+
+.markdown-content h1::before,
+.markdown-content h2::before,
+.markdown-content h3::before,
+.markdown-content h4::before {
+    content: "#";
+    position: absolute;
+    left: 0;
+    color: rgba(74, 222, 128, 0.5);
+}
+
+.markdown-content h1 { font-size: 1.75rem; }
+.markdown-content h2 { font-size: 1.5rem; }
+.markdown-content h3 { font-size: 1.25rem; }
+.markdown-content h4 { font-size: 1.125rem; }
+
+@media (min-width: 640px) {
+    .markdown-content h1 { font-size: 2.25rem; }
+    .markdown-content h2 { font-size: 1.875rem; }
+    .markdown-content h3 { font-size: 1.5rem; }
+    .markdown-content h4 { font-size: 1.25rem; }
+}
+
+.markdown-content p {
+    margin: 1rem 0;
+}
+
+.markdown-content a {
+    color: #4ade80;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-bottom: 1px dashed rgba(74, 222, 128, 0.3);
+    word-break: break-word;
+}
+
+.markdown-content a:hover {
+    border-bottom-style: solid;
+    border-bottom-color: #4ade80;
+}
+
+/* Enhanced list styling */
+.markdown-content ol {
+    counter-reset: section;
+    list-style-type: none;
+    padding-left: 2rem;
+    margin: 1rem 0;
+}
+
+.markdown-content ol > li {
+    counter-increment: section;
+    position: relative;
+    margin: 0.75rem 0;
+    padding-left: 0.5rem;
+}
+
+.markdown-content ol > li::before {
+    content: counter(section) ".";
+    position: absolute;
+    left: -2rem;
+    width: 1.75rem;
+    text-align: right;
+    color: #4ade80;
+    font-weight: 500;
+}
+
+/* Images */
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Blockquotes */
+.markdown-content blockquote {
+    border-left: 3px solid #4ade80;
+    margin: 1rem 0;
+    padding: 0.5rem 0 0.5rem 1rem;
+    background: rgba(74, 222, 128, 0.05);
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
+}
+
+/* Mobile-specific styles */
+@media screen and (max-width: 640px) {
+    .nav-button {
+        font-size: 0.875rem !important;
+        padding: 0.5rem 1rem !important;
+        margin: 0.25rem 0 !important;
+        width: 100% !important;
+        justify-content: center !important;
+        background-color: rgba(74, 222, 128, 0.1) !important;
+        border: 1px solid rgba(74, 222, 128, 0.2) !important;
+        border-radius: 4px !important;
+    }
+
+    .nav-button.bg-cyber-black\/50 {
+        background-color: rgba(17, 17, 17, 0.8) !important;
+    }
+
+    .mt-8 {
+        margin-top: 1.5rem !important;
+    }
+
+    .gap-3 {
+        gap: 0.5rem !important;
+    }
+
+    .glass {
+        margin: 0 !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+    }
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize AOS with optimized settings
+    AOS.init({
+        duration: 600,
+        easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        once: true,
+        mirror: false,
+        offset: 50
+    });
+
+    // Add line numbers to code blocks with optimized animation
+    document.querySelectorAll('pre').forEach((block) => {
+        block.classList.add('line-numbers');
+        block.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+    });
+
+    // Convert shell code blocks to command prompts with quick transitions
+    document.querySelectorAll('code[class*="language-shell"]').forEach((block) => {
+        if (block.parentElement.tagName === 'PRE') {
+            const lines = block.textContent.split('\n');
+            const formattedLines = lines.map(line => {
+                if (line.trim().startsWith('$') || line.trim().startsWith('>')) {
+                    return `<span class="command-prompt">${line.trim().substring(2)}</span>`;
+                } else {
+                    return `<span class="terminal-output">${line}</span>`;
+                }
+            });
+            block.innerHTML = formattedLines.join('\n');
+        }
+    });
+
+    // Add optimized hover effects to code blocks
+    document.querySelectorAll('pre[class*="language-"]').forEach((block) => {
+        block.addEventListener('mouseenter', () => {
+            block.style.transform = 'translateY(-2px)';
+            block.style.borderColor = 'rgba(74, 222, 128, 0.3)';
+            block.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.1)';
+        });
+        
+        block.addEventListener('mouseleave', () => {
+            block.style.transform = 'translateY(0)';
+            block.style.borderColor = 'rgba(74, 222, 128, 0.1)';
+            block.style.boxShadow = 'none';
+        });
+    });
+
+    // Initialize list item animations with optimized timing
+    const listItems = document.querySelectorAll('.markdown-content ul > li, .markdown-content ol > li');
+    listItems.forEach((item, index) => {
+        item.style.setProperty('--li-index', index);
+        item.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+    });
+
+    // Add smooth page transitions
+    document.querySelectorAll('a').forEach(link => {
+        if (link.hostname === window.location.hostname) {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                document.body.style.opacity = '0';
+                document.body.style.transform = 'translateY(10px)';
+                document.body.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+                
+                setTimeout(() => {
+                    window.location.href = link.href;
+                }, 200);
+            });
+        }
+    });
+});
+</script>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass mt-16 py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-gray-400">&copy; 2025 Kaulik Makwana</p>
+                    <p class="text-sm text-gray-500 terminal-text">Cybersecurity Engineer & Penetration Tester</p>
+                </div>
+                
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="/assets/js/terminal-animation.js"></script>
+    <script src="/assets/js/markdown-viewer.js"></script>
+    
+    <!-- Initialize animations and interactions -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out',
+            once: false,
+            mirror: true
+        });
+
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', () => {
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollIndicator.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Mobile Menu Toggle
+        const menuButton = document.getElementById('menuButton');
+        const mobileNav = document.getElementById('mobileNav');
+        
+        if (menuButton && mobileNav) {
+            menuButton.addEventListener('click', () => {
+                menuButton.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!menuButton.contains(e.target) && !mobileNav.contains(e.target)) {
+                    menuButton.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+            });
+
+            // Close menu when scrolling
+            let lastScroll = window.scrollY;
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.scrollY;
+                if (Math.abs(currentScroll - lastScroll) > 10) {
+                    menuButton.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+                lastScroll = currentScroll;
+            });
+        }
+
+        // Add hover effect to cards
+        document.querySelectorAll('.glass').forEach(card => {
+            card.classList.add('card-hover');
+        });
+
+        // Add button animations
+        document.querySelectorAll('a[href], button').forEach(button => {
+            if (!button.classList.contains('menu-button')) {
+                button.classList.add('btn');
+            }
+        });
+
+        // Terminal typing effect
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.textContent = '';
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Apply typing effect to terminal text
+        document.querySelectorAll('.terminal-text').forEach(el => {
+            const originalText = el.textContent;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        typeWriter(el, originalText);
+                        observer.unobserve(el);
+                    }
+                });
+            });
+            observer.observe(el);
+        });
+    });
+    </script>
+<script src="/assets/js/tab-ux.js"></script>
+</body>
+</html>
