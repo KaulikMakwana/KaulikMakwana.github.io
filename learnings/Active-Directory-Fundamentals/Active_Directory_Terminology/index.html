@@ -1079,13 +1079,37 @@ This account is a common target of many attackers since gaining control or acces
 
 <h3 id="section-️-user-naming-attributes">▶️ User Naming Attributes</h3>
 
-<p>|        Attribute        |                                                                                                                                 Description                                                                                                                                  |
-| :———————: | :————————————————————————————————————————————————————————————————————————————————————————–: |
-| UserPrincipalName (UPN) |                                                                                   This is the primary logon name for the user. By convention, the UPN uses the email address of the user.                                                                                    |
-|       ObjectGUID        |                                                                 This is a unique identifier of the user. In AD, the ObjectGUID attribute name never changes and remains unique even if the user is removed.                                                                  |
-|     SAMAccountName      |                                                                                           This is a logon name that supports the previous version of Windows clients and servers.                                                                                            |
-|        objectSID        |                                                                The user’s Security Identifier (SID). This attribute identifies a user and its group memberships during security interactions with the server.                                                                |
-|       sIDHistory        | This contains previous SIDs for the user object if moved from another domain and is typically seen in migration scenarios from domain to domain. After a migration occurs, the last SID will be added to the sIDHistory property, and the new SID will become its objectSID. |</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>Attribute</strong></th>
+      <th style="text-align: center"><strong>Description</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">UserPrincipalName (UPN)</td>
+      <td style="text-align: center">This is the primary logon name for the user. By convention, the UPN uses the email address of the user.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">ObjectGUID</td>
+      <td style="text-align: center">This is a unique identifier of the user. In AD, the ObjectGUID attribute name never changes and remains unique even if the user is removed.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">SAMAccountName</td>
+      <td style="text-align: center">This is a logon name that supports the previous version of Windows clients and servers.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">objectSID</td>
+      <td style="text-align: center">The user’s Security Identifier (SID). This attribute identifies a user and its group memberships during security interactions with the server.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">sIDHistory</td>
+      <td style="text-align: center">This contains previous SIDs for the user object if moved from another domain and is typically seen in migration scenarios from domain to domain. After a migration occurs, the last SID will be added to the sIDHistory property, and the new SID will become its objectSID.</td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 id="section--domain-joined-vs-non-domain-joined-machines">👊 Domain-joined vs. Non-Domain-joined Machines</h2>
 
 <ol>
