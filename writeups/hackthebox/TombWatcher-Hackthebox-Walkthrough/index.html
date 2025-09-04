@@ -583,6 +583,7 @@
 	- pass : H3nry_987TGV!</p>
 
 <hr />
+
 <h1 id="section-enumeration">Enumeration</h1>
 <h2 id="section-port-scan">Port scan</h2>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nmap <span class="nt">--min-rate</span> 10000 <span class="nt">-Pn</span> <span class="nt">-p-</span> <span class="nt">-v</span> <span class="nt">-oN</span> open_ports 10.10.11.72
@@ -694,51 +695,60 @@
 <ul>
   <li>
     <h2 id="section-on-port-80-nothing-usefull-so-moved-to-ad">on port 80 nothing usefull so moved to AD</h2>
-    <h2 id="section--ad-enumeration">🌐 AD enumeration</h2>
-    <h3 id="section--user-enumeration">👥 user enumeration</h3>
-    <p>```shell
-$ nxc ldap $ip -u $user1 -p $pass1 –users –users-export AD_users 
-  Administrator
-  Guest
-  krbtgt
-  Henry
-  Alfred
-  sam
-  john</p>
   </li>
 </ul>
 
-<h1 id="section-dcdomain-controller--dc01tombwatcherhtb--10101172">DC(domain controller) : DC01.tombwatcher.htb = 10.10.11.72</h1>
+<h2 id="section--ad-enumeration">🌐 AD enumeration</h2>
+<h3 id="section--user-enumeration">👥 user enumeration</h3>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nxc ldap <span class="nv">$ip</span> <span class="nt">-u</span> <span class="nv">$user1</span> <span class="nt">-p</span> <span class="nv">$pass1</span> <span class="nt">--users</span> <span class="nt">--users-export</span> AD_users 
+	Administrator
+	Guest
+	krbtgt
+	Henry
+	Alfred
+	sam
+	john
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
----
-### bloodhounud time
+<span class="c"># DC(domain controller) : DC01.tombwatcher.htb = 10.10.11.72</span>
 
-```shell
-bloodhound-python -d TOMBWATCHER.HTB -u henry -p 'H3nry_987TGV!' -gc dc01.tombwatcher.htb -c all -ns 10.10.11.72                                          ─╯
-INFO: BloodHound.py for BloodHound LEGACY (BloodHound 4.2 and 4.3)
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="section-bloodhounud-time">bloodhounud time</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bloodhound-python <span class="nt">-d</span> TOMBWATCHER.HTB <span class="nt">-u</span> henry <span class="nt">-p</span> <span class="s1">'H3nry_987TGV!'</span> <span class="nt">-gc</span> dc01.tombwatcher.htb <span class="nt">-c</span> all <span class="nt">-ns</span> 10.10.11.72                                          ─╯
+INFO: BloodHound.py <span class="k">for </span>BloodHound LEGACY <span class="o">(</span>BloodHound 4.2 and 4.3<span class="o">)</span>
 INFO: Found AD domain: tombwatcher.htb
-INFO: Getting TGT for user
-WARNING: Failed to get Kerberos TGT. Falling back to NTLM authentication. Error: [Errno Connection error (dc01.tombwatcher.htb:88)] [Errno -2] Name or service not known
+INFO: Getting TGT <span class="k">for </span>user
+WARNING: Failed to get Kerberos TGT. Falling back to NTLM authentication. Error: <span class="o">[</span>Errno Connection error <span class="o">(</span>dc01.tombwatcher.htb:88<span class="o">)]</span> <span class="o">[</span>Errno <span class="nt">-2</span><span class="o">]</span> Name or service not known
 INFO: Connecting to LDAP server: dc01.tombwatcher.htb
 INFO: Found 1 domains
-INFO: Found 1 domains in the forest
+INFO: Found 1 domains <span class="k">in </span>the forest
 INFO: Found 1 computers
 INFO: Connecting to LDAP server: dc01.tombwatcher.htb
-INFO: Found 9 users
-INFO: Found 53 groups
-INFO: Found 2 gpos
+INFO: Found 9 <span class="nb">users
+</span>INFO: Found 53 <span class="nb">groups
+</span>INFO: Found 2 gpos
 INFO: Found 2 ous
 INFO: Found 19 containers
 INFO: Found 0 trusts
 INFO: Starting computer enumeration with 10 workers
 INFO: Querying computer: DC01.tombwatcher.htb
-INFO: Done in 01M 46S
+INFO: Done <span class="k">in </span>01M 46S
 </code></pre></div></div>
 
-<p>![[Screenshot From 2025-09-03 17-02-26.png]]</p>
+<div align="center">
 
-<p>![[Screenshot From 2025-09-03 17-27-49.png]]</p>
+  <p><img src="/assets/images/writeups/hackthebox/TombWatcher/Screenshot From 2025-09-03 17-02-26.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
+
+</div>
+
+<div align="center">
+
+  <p><img src="/assets/images/writeups/hackthebox/TombWatcher/Screenshot From 2025-09-03 17-27-49.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
+
+</div>
 
 <p>Observed relationships that :  the user <strong>Henry</strong> has “WriteSPN (Service Pricipal Name)” to the user Alfred and  another one is to  user <strong>“JOHN”</strong>, who has remote access privileges.</p>
 
@@ -781,11 +791,21 @@ LDAP        10.10.11.72     389    DC01             <span class="o">[</span>+] t
 
 <p>again  coming back to bloodhound and enumerating user alfred ; found that user  has the ability to add itself, to the group INFRASTRUCTURE and then gain the same privileges that INFRASTRUCTURE has.</p>
 
-<p>![[Screenshot From 2025-09-04 12-53-39.png]]</p>
+<p><img src="/assets/images/writeups/hackthebox/TombWatcher/Screenshot From 2025-09-04 12-53-39.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
 
-<p>![[Screenshot From 2025-09-04 13-11-09.png]]</p>
+<p>&lt;/div&gt;</p>
 
-<p>![[Screenshot From 2025-09-04 13-12-14.png]]</p>
+<div align="center">
+
+  <p><img src="/assets/images/writeups/hackthebox/TombWatcher/Screenshot From 2025-09-04 13-11-09.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
+
+</div>
+
+<div align="center">
+
+  <p><img src="/assets/images/writeups/hackthebox/TombWatcher/Screenshot From 2025-09-04 13-12-14.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
+
+</div>
 
 <ul>
   <li>Now Alfred has ability to add itself to the group infrastructure and can be gain same privileges that group has .</li>
@@ -819,7 +839,11 @@ LDAPS       10.10.11.72     636    DC01             Account: ansible_dev<span cl
 
 <p>Now again bloodhound and we see that user sam has WriteOwner permission to user john and we can use it .</p>
 
-<p>![[Pasted image 20250904134356.png]]</p>
+<div align="center">
+
+  <p><img src="/assets/images/writeups/hackthebox/TombWatcher/Pasted image 20250904134356.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
+
+</div>
 
 <h3 id="section-modify-the-owner-of-theuserjohn">modify the owner of the user JOHN</h3>
 
@@ -863,7 +887,12 @@ Impacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies
 <h4 id="section-got-usertxt-now-time-for-roottxt">got user.txt now time for root.txt</h4>
 
 <hr />
-<p>![[Pasted image 20250904154001.png]]</p>
+
+<div align="center">
+
+  <p><img src="/assets/images/writeups/hackthebox/TombWatcher/Pasted image 20250904154001.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
+
+</div>
 
 <ul>
   <li>john has GenericAll permission for ADCS so now we can use Certipy to find something around certificates services</li>
